@@ -1,0 +1,59 @@
+<?php
+$this->headScript()->captureStart();
+?>
+$(function() {
+    $(".buttonset").CUI('buttonset');
+
+    $(".grid").CUI('grid', {
+        callback: function() {
+            $(".field-switcher").CUI('switcher', {url:"<?php echo $this->url(array('action' => 'switch'));?>"});
+        }
+    });
+    $("input.datepicker").CUI('datepicker', {dateFormat: '<?php echo $this->dateFormat; ?>'});
+});
+
+<?php
+$this->headScript()->captureEnd();
+?>
+
+<?php $this->placeholder('headling_1')->captureStart();?>
+<?php if (!isset($this->noAddButton)):?>
+    <div class="ui-button-big">
+        <a href="<?php echo $this->url(array_merge(array('action' => 'new')));?>" class="ui-button ui-button-bg-white ui-button-text-red ui-button-text-only">
+            <span class="ui-button-text"><?php echo $this->translate('Add a new %s', $this->placeholder('headling_1_add_button'))?></span>
+        </a>
+    </div>
+<?php endif;?>
+<h1><?php echo $this->placeholder('headling_1_content'); ?></h1>
+<?php $this->placeholder('headling_1')->captureEnd();?>
+
+<?php
+if (count($this->filter) > 1) {
+    $this->placeholder('aside')->captureStart();
+    echo $this->filter;
+    $this->placeholder('aside')->captureEnd();
+}
+?>
+
+<form action="<?php echo $this->url(array('action' => 'bash'))?>" method="post" id="grid-action-form">
+<?php
+$this->toolBarName = 'top';
+echo $this->partial('/grid/_toolbar.phtml', $this);
+
+echo $this->placeholder('toolbar');
+?>
+
+<?php echo $this->partial($this->_selectScript(array(sprintf('/%s/%s.phtml', $this->controller, $this->layout),
+                                             sprintf('/grid/%s.phtml', $this->layout),
+                                             '/grid/grid.phtml')), $this); ?>
+
+<?php
+$this->toolBarName = 'bottom';
+echo $this->partial('/grid/_toolbar.phtml', $this);?>
+</form>
+
+<span class="grid-loading">Loading</span>
+
+<span class="grid-debug" style="margin-top: 50px">&nbsp;</span>
+
+<div class="clear"></div>

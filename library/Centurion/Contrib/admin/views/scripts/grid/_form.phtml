@@ -1,0 +1,97 @@
+<?php
+$this->placeholder('headling_1')->captureStart(); ?>
+<h1>
+    <?php echo $this->placeholder('headling_1_content') ?>
+        <?php if ($this->previous):?>
+            <a class="icon icon-prev" href="<?php echo $this->url(array('id' => $this->previous->id));?>"><?php echo $this->translate('Previous'); ?></a>
+        <?php else:?>
+            &nbsp;
+        <?php
+        endif;
+        ?>
+        <?php if ($this->next):?>
+            <a class="icon icon-next" href="<?php echo $this->url(array('id' => $this->next->id));?>"><?php echo $this->translate('Next')?></a>
+        <?php else:?>
+            &nbsp;
+        <?php endif;?>
+</h1>
+<?php /*?>
+    <div class="pager" >
+
+
+        <span class="infos"><?php echo $this->translate('<strong>%d</strong> of <strong>%d</strong>', $this->currentCount,
+                                                    $this->totalCount);?></span>
+
+    </div>
+    <?php */ ?>
+<?php $this->placeholder('headling_1')->captureEnd();
+$this->headScript()->captureStart();
+?>
+$(function(){
+    $(".form .form-main .form-group").CUI('fieldset', {autoClose: <?php  echo (method_exists($this->form, 'hasInstance') && $this->form->hasInstance()) ? 'true':'false'?>});
+    $(".field-multiselect").CUI('multiselect');
+    $(".field-switcher").CUI('switcher');
+
+    $(".field-letterlimit").CUI('letterLimit', { maxChar: 100 });
+
+    $(".field-datepicker").CUI('datepicker', {
+        changeMonth: true,
+        changeYear: true,
+        dateFormat: '<?php echo $this->dateFormat; ?>'
+    });
+
+     $('.field-rte').CUI('rte', {
+        convert_urls : false,
+        content_css : "/layouts/frontoffice/css/rte.css"
+     });
+        $(".field-file").CUI('file');
+});
+<?php $this->headScript()->captureEnd();
+?>
+
+<?php
+
+$this->form->addElements(array(
+    //'_cancel'       =>  array('button', array('type' => 'button', 'label' => $this->form->getTranslator()->_('Cancel'))),
+    '_save'         =>  array('button', array('type' => 'submit', 'label' => $this->translate('Save@backoffice'))),
+    '_addanother'   =>  array('button', array('type' => 'submit', 'label' => $this->translate('Save and add another@backoffice'))),
+    //'_continue'     =>  array('button', array('type' => 'submit', 'label' => $this->form->getTranslator()->_('Save and continue'))),
+));
+
+$this->Cui_MakeSaveButton($this->form);
+
+$this->form->addDisplayGroup(array('_save', '_cancel', '_addanother', '_continue'), 'submit');
+
+$this->getHelper('gridForm')->makeOnOff($this->form);
+
+
+// move elements to ensure the form will be rendered correctly
+if ($this->form->_aside)
+    $this->form->moveElement('_aside', Centurion_Form::FIRST);
+
+if ($this->form->_main)
+    $this->form->moveElement('_main', Centurion_Form::FIRST);
+
+if ($this->form->_header)
+    $this->form->moveElement('_header', Centurion_Form::FIRST);
+
+$decoratorsArray = array(
+    'FormElements',
+    array('HtmlTag', array('tag' => 'div'))
+);
+
+if ($this->form->getDisplayGroup('_main')) {
+    $decoratorsArray = array(
+        'FormElements',
+        array('HtmlTag', array('tag' => 'div', 'class' => 'form-submit clear'))
+    );
+
+    $this->form->addInDisplayGroup('submit', '_main');
+}
+
+if (null !== $this->form->getDisplayGroup('_header')) {
+    $this->form->getDisplayGroup('_header')->addDecorators(array(array(array('tollbar' => 'ViewScript'), array('viewScript' => 'grid/_formtoolbar.phtml', 'toolbars' => $this->form->getToolbar()))));
+}
+
+$this->form->getDisplayGroup('submit')->setDecorators($decoratorsArray);
+echo $this->form->render(null, true);

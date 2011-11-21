@@ -1,0 +1,9 @@
+<?php
+    $this->form->Avatar->removeDecorator('Fieldset');
+    $this->form->Avatar->setAttrib('label', 'Upload an avatar')
+                       ->getDecorator('DtDdWrapperEv')->setOption('class', 'border-top');
+
+    $this->form->Avatar->setAttrib('class', 'nicyless border-top');
+    
+    echo $this->partial('centurion/form/_crud.phtml', array('form' => $this->form));
+?>

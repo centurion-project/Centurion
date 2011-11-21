@@ -1,0 +1,16 @@
+<div class="form-item<?php if(isset($this->element->large)) echo ' form-item-large'; if($this->element->isErrors()) echo ' form-item-warning'?>">
+<?php
+
+if (isset($this->class)) {
+    $class = $this->element->getAttrib('class');
+    $class .= ($class === null)?$this->class:' '.$this->class;
+    $this->element->setAttrib('class', $class);
+}
+
+$decorator = new Zend_Form_Decorator_FormElements();
+$decorator->setElement($this->element);
+$content = $decorator->render('');
+
+echo $content;
+?>
+</div>

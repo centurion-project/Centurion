@@ -1,0 +1,77 @@
+<?php $this->headScript()->captureStart(); ?>
+$(function() {
+    $("div.ui-button-big").click(function() {
+        $("fieldset")
+            .show();
+
+        /*selectedPosition = $$.attr("id").substr(8,2);*/
+        return false;
+     });
+});
+
+$(function(){
+    $('#autocomplete').CUI('autocomplete', {
+       source: "<?php echo $this->url(array('action' => 'autocomplete'));?>",
+       select: function(event, rws) {
+          $("#pk", $("#formAutocomplete")).val(rws.item.pk);
+          $("#model", $("#formAutocomplete")).val(rws.item.model);
+       }
+    });
+});
+
+var url = {
+<?php
+$urls = array();
+    if (isset($this->types)) :
+        foreach ($this->types as $type => $config):
+
+           $extraParam = array();
+           $extraParam['_next'] = $this->url(array('action' => 'add-proxy', 'proxy_pk' => '___pk___', 'proxy_model' => '___model___'));
+           $url = $this->url(array_merge($config['urlNew'], $extraParam));
+           $urls[] = '\'' . $type .'\' : "' . addslashes($url) . '"';
+        endforeach;
+    endif;
+    echo implode(",\n", $urls);
+    ?>
+        };
+
+
+$(function(){
+    $("#highlightCreate").live('click', function(){
+        $(this).attr('href', url[$('#highlight-model').val()]);
+        return true;
+    });
+});
+
+
+
+<?php $this->headScript()->captureEnd(); ?>
+<form id="formAutocomplete" class="form form-highlight" method="post" action="<?php $this->url(array('module' => 'admin', 'controller' => 'admin-navigation', 'action' => 'add-proxy'), 'default');?>" >
+    <fieldset>
+        <legend>Add a content</legend>
+        <div class="float-left">
+            <input type="hidden" name="position" id="position" value="" />
+            <h3>Choose a content</h3>
+            <input type="text" value="" id="autocomplete" name="autocomplete" value=""
+            class="ui-autocomplete-input ui-autocomplete-loading" role="textbox" aria-haspopup="true">
+            <input type="hidden" value="" id="proxy_model" name="proxy_model">
+            <input type="hidden" value="" id="proxy_pk" name="proxy_pk">
+            <button id="_saveBig" type="submit" class="ui-button ui-button-text-only ui-button" role="button" aria-disabled="false">
+                <span class="ui-button-text">Add</span>
+            </button>
+            <div class="clear"></div>
+        </div>
+        <div style="margin-left:400px;">
+            <h3>... or create one</h3>
+            <select class="select-normal" name="type" style="margin:5px 0" id="highlight-model">
+            <?php foreach ($this->types as $type => $config):?>
+                    <option value="<?php echo $type;?>"><?php echo ucfirst($type);?></option>
+            <?php endforeach;?>
+            </select>
+            <a id="highlightCreate" class="btn btn-normal-nicy" href="#"><span class="btn-style btn-bg-gray btn-txt-black btn-icon-black"><span class="btn-icon plus"></span> Create</span></a>
+        </div>
+    </fieldset>
+</form>
+<?php
+
+echo $this->partial('mptt/index.phtml', $this);

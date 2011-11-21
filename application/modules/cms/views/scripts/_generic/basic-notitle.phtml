@@ -1,0 +1,37 @@
+<?php
+Centurion_Cache_TagManager::addTag($this->flatpageRow);
+
+if ($this->flatpageRow->description)
+        $this->headMeta()->appendName('description', $this->flatpageRow->description);
+
+if ($this->flatpageRow->keywords)
+    $this->headMeta()->appendName('keywords', $this->flatpageRow->keywords);
+
+Centurion_Cache_TagManager::addTag($this->flatpageRow);
+$this->headTitle()->prepend(strip_tags($this->flatpageRow->title) . ' - ');
+?>
+<?php
+if ($this->flatpageRow->mptt_level == '1'):
+
+$this->placeholder('primary_menu_class')->set('active-'.$this->flatpageRow->getParent()->class);
+?>
+<ul class="<?php echo 'active-' . $this->flatpageRow->class ?> secondary-nav">
+<?php
+    $mainFlatpageRowset = $this->flatpageRow->getParent()->getDescendantsSelect()->where('is_published = 1')->fetchAll();
+
+    if (count($mainFlatpageRowset)):
+        foreach ($mainFlatpageRowset as $flatpageRow):
+        ?>
+            <li class="<?php echo $flatpageRow->class?>"><?php echo $this->partial('generic/nav_link_tag.phtml', array('flatpageRow' => $flatpageRow)); ?></li>
+        <?php
+        endforeach;
+    endif;
+?>
+</ul>
+<?php
+endif;
+?>
+
+<p class="description rte">
+    <?php echo $this->flatpageRow->body; ?>
+</p>

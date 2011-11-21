@@ -1,0 +1,6 @@
+<?php $this->placeholder('headling_1')->captureStart(); ?>
+<h1><?php echo $this->placeholder('headling_1_content') ?></h1>
+<?php $this->placeholder('headling_1')->captureEnd() ?>
+
+<?php echo $this->partial($this->_selectScript(array(sprintf('%s/form/_crud.phtml', $this->controller),
+                                                     'centurion/form/_crud.phtml')), $this); ?>

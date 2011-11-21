@@ -1,0 +1,25 @@
+# COPYRIGHTS
+
+## Image library
+
+Centurion contains a port of parts of PHPThumb
+
+Url:        http://github.com/masterexploder/PHPThumb
+Copyright:  Ian Selby
+
+## Inflector and ORM concepts
+
+Centurion contains a port of parts of Doctrine ORM
+
+Url:        http://doctrine-project.org
+Copyright:  Jonathan Wage and Doctrine team
+License:    LGPL - see LICENSE file
+
+## ORM concepts, global organization and inspiration
+
+Centurion contains a port of parts of Django
+
+Url:        http://www.djangoproject.com/
+Copyright:  Django Software Foundation and individual contributors
+License:    BSD license
+

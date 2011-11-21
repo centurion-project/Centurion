@@ -1,0 +1,36 @@
+RewriteEngine On
+RewriteCond %{REQUEST_URI} ^/attachment/.*
+RewriteRule ^attachment/(.*)$ /static/$1 [PT]
+
+RewriteCond %{REQUEST_FILENAME} !-s
+RewriteCond %{QUERY_STRING} ^([^:]*):([^:]*):([^:]*)(:([0-9a-z]*))?(.*)$ [NC]
+RewriteRule ^public/static/(.*)/(.*)$ public/files/%2/_%5.centurion [NC,PT]
+
+#Rewrite for static image (with effect)
+RewriteCond %{REQUEST_FILENAME} !-s
+RewriteCond %{QUERY_STRING} ^([^:]*):([^:]*):([^:]*):([0-9a-z]*)(.*)$ [NC]
+RewriteRule ^public/files/.*$ public/media/image/get/id/%1/fileid/%2/key/%3/effect/%4/extra/%5? [NC,PT]
+
+#Rewrite for static file
+RewriteCond %{REQUEST_FILENAME} !-s
+RewriteCond %{QUERY_STRING} ^([^:]*):([^:]*):([^:]*)(.*)$ [NC]
+RewriteRule ^public/files/.*$ public/media/file/get/id/%1/fileid/%2/key/%3/extra/%4? [NC,PT]
+
+#Rewrite for cached file
+#RewriteCond %{DOCUMENT_ROOT}/cached/index.html -f
+#RewriteRule ^public/?$ public/cached/index.html [L]
+#RewriteCond %{DOCUMENT_ROOT}/cached%{REQUEST_URI}.html -f
+#RewriteRule public/.* public/cached%{REQUEST_URI}.html [L]
+#RewriteCond %{DOCUMENT_ROOT}/cached%{REQUEST_URI}.css -f
+#RewriteRule public/.* public/cached%{REQUEST_URI}.css [L]
+#RewriteCond %{DOCUMENT_ROOT}/cached%{REQUEST_URI}.js -f
+#RewriteRule public/.* public/cached%{REQUEST_URI}.js [L]
+#RewriteCond %{DOCUMENT_ROOT}/cached%{REQUEST_URI}.xml -f
+#RewriteRule public/.* public/cached%{REQUEST_URI}.xml [L]
+
+RewriteCond %{REQUEST_FILENAME} -s [OR]
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -l [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^.*$ - [NC,L]
+RewriteRule ^.*$ public/index.php [NC,L]

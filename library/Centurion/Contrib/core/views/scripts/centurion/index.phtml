@@ -1,0 +1,201 @@
+<?php if (false !== $this->placeholder('headling_1_button')->getValue()): ?>
+    <?php $this->placeholder('headling_1_button')->captureStart(); ?>
+    <a href="<?php echo $this->url(array_merge($this->extraParam, array('controller' =>  $this->controller, 'module' =>  $this->module, 'id' =>  'new')), 'rest', true) ?>" class="btn btn-normal-nicy">
+        <span class="btn-style btn-txt-red btn-bg-gray">
+            <span class="btn-icon plus"/></span> <?php echo $this->translate('Add new record') ?>
+        </span>
+    </a>
+    <?php $this->placeholder('headling_1_button')->captureEnd() ?>
+<?php endif ?>
+
+<?php $this->placeholder('headling_1')->captureStart(); ?>
+<h1><?php echo $this->placeholder('headling_1_content') ?></h1>
+<div class="right">
+    <?php echo $this->placeholder('headling_1_button'); ?>
+</div>
+<?php $this->placeholder('headling_1')->captureEnd() ?>
+
+<?php
+    $this->headScript()->appendFile('/cui-stable/js/plugins/grid/grid.js');
+    $this->headScript()->captureStart();
+?>
+$(function() {
+    var grid = $("#grid").Grid({
+        model:[
+            <?php
+            $displays = array();
+            foreach (array_merge($this->sortColumnsList, $this->extras, $this->displays) as $key => $value) {
+                if (null === $value)
+                    continue;
+                $label = is_array($value) ? $value['label']:$value;
+                $current = sprintf("{label:'%s', name:'%s'", addslashes($label), $key);
+
+                if (in_array($key, array_keys($this->format))) {
+                    $format = '';
+                    switch ($this->format[$key]) {
+                        case Centurion_Rest_Controller_CRUD::FORMAT_SELECT:
+                            $format = sprintf('<select name="%s-###id###" class="on-off" selected="###%s###"><option value="0">Offline</option><option value="1">Online</option></select>', $key, $key);
+                            break;
+                        case Centurion_Rest_Controller_CRUD::FORMAT_LINK:
+                            $format = sprintf('<a class="link" href="http://###%s###">###%s###</a>', $key, $key);
+                            break;
+                    }
+
+                    $current .= sprintf(", format: '%s'", $format);
+                }
+
+                $current .= '}';
+
+                array_push($displays, $current);
+            }
+            ?>
+
+            <?php echo implode(", ", $displays);
+            if (count($this->links)):
+            ?>,
+            {label:'Actions', format:'<?php
+            $first = true;
+            foreach ($this->links as $key => $url):
+            $params = null;
+            if (is_array($url)){
+                $params = $url['params'];
+                $url = $url['url'];
+            }
+
+            if (!$first)
+                echo ' | ';
+            ?><a href="<?php echo $url?>"<?php echo (isset($params))?' '.implode(' ', $params):'';?>><?php echo $this->translate($key); ?></a> <?php $first = false; endforeach; ?>'}
+            <?php endif;?>
+        ],
+        <?php if (count($this->filters)): ?>
+        filter: [
+            <?php
+            foreach ($this->filters as $key => $filter) {
+                $current = '';
+                switch ($filter['type']) {
+                    case Centurion_Rest_Controller_CRUD::FILTER_RADIO:
+                    case Centurion_Rest_Controller_CRUD::FILTER_CHECKBOX:
+                    case Centurion_Rest_Controller_CRUD::FILTER_CHECKBOX_EXACT:
+                        $current = sprintf("{label:'%s', expand:true, type:'%s', list:[", addslashes($filter['label']), $filter['type']);
+
+                        $relation = Centurion_Db_Table_Select::OPERATOR_IN;
+                        if (Centurion_Rest_Controller_CRUD::FILTER_RADIO == $filter['type']) {
+                            $relation = Centurion_Db_Table_Select::OPERATOR_EXACT;
+                            $current .= sprintf("{label:'%s', expand:true, where:[{column:'1', relation:'=', value:undefined}]},", $this->translate('All'));
+                        }
+
+                        if (Centurion_Rest_Controller_CRUD::FILTER_CHECKBOX_EXACT == $filter['type']) {
+                            $relation = 'undefined';
+                        }
+
+                        $multi = array();
+                        foreach ($filter['data'] as $label => $item)
+                            $multi[] = sprintf("{label:'%s', expand:true, where:[{column:'%s', relation:'%s', value:'%s'}]}", addslashes(is_string($label) ? $label:(string) $item), $key, $relation, (string) $item);
+
+                        $current .= implode(', ', $multi);
+                        $current .= "]}";
+                        break;
+                    case Centurion_Rest_Controller_CRUD::FILTER_RECORD:
+                        $current = sprintf("{label:'%s', expand:true, type:'%s', list:[", addslashes($filter['label']), $filter['type']);
+
+                        $relation = Centurion_Db_Table_Select::OPERATOR_ISNULL;
+
+                        $multi = array();
+                        foreach ($filter['data'] as $label => $item)
+                            $multi[] = sprintf("{label:'%s', expand:true, where:[{column:'%s', relation:'%s', value:'%s'}]}", addslashes(is_string($label) ? $label:(string) $item), $key, $relation, (string) $item);
+
+                        $current .= implode(', ', $multi);
+                        $current .= "]}";
+                        break;
+                    case Centurion_Rest_Controller_CRUD::FILTER_EXPR:
+                          $current = sprintf("{label:'%s', expand:true, type:'%s', list:[", addslashes($filter['label']), $filter['type']);
+
+                          $multi = array();
+                          foreach ($filter['data'] as $label => $item) {
+                              $multi[] = sprintf("{label:'%s', expand:true, where:[{column:'%s', value:'%d'}]}", addslashes($item['label']), $key, $label);
+                          }
+
+                          $current .= implode(', ', $multi);
+                          $current .= "]}";
+                          break;
+                    case Centurion_Rest_Controller_CRUD::FILTER_CUSTOM:
+                        $current = sprintf("{label:'%s', type:'%s', expand:true, where:[{column:'%s', format:'%%###value###%%'}] }", addslashes($filter['label']), Centurion_Rest_Controller_CRUD::FILTER_TEXT, $key);
+                        break;
+                    case Centurion_Rest_Controller_CRUD::FILTER_TEXT:
+                        $current = sprintf("{label:'%s', type:'%s', expand:true, where:[{column:'%s', relation:'%s', format:'%%###value###%%'}] }", addslashes($filter['label']), Centurion_Rest_Controller_CRUD::FILTER_TEXT, $key,
+                                                                                                                                       Centurion_Db_Table_Select::OPERATOR_CONTAINS);
+                        break;
+                    case Centurion_Rest_Controller_CRUD::FILTER_TEXT_EXACT:
+                        $current = sprintf("{label:'%s', type:'%s', expand:true, where:[{column:'%s', format:'###value###'}] }", addslashes($filter['label']), Centurion_Rest_Controller_CRUD::FILTER_TEXT, $key);
+                        break;
+                    case Centurion_Rest_Controller_CRUD::FILTER_DATE:
+                        $current = sprintf("{label:'%s', expand:true, type:'%s', list:[", addslashes($filter['label']), Centurion_Rest_Controller_CRUD::FILTER_DATE);
+                        $current .= sprintf("{label:'%s', expand:true, where:[{column:'%s', relation:'%s', value:'###value###'}]},", $this->translate('From'), $key, Centurion_Db_Table_Select::OPERATOR_RANGE);
+                        $current .= sprintf("{label:'%s', expand:true, where:[{column:'%s', relation:'%s', value:'###value###'}]}", $this->translate('To'), $key, Centurion_Db_Table_Select::OPERATOR_RANGE);
+
+                        $current .= "]}";
+                        break;
+                }
+
+                $filters[] = $current;
+            }
+            ?>
+            <?php echo implode(", ", $filters); ?>
+        ],
+        <?php endif; ?>
+        <?php if (count($this->actions)): ?>
+        actions: [
+            <?php foreach ($this->actions as $key => $action): ?>
+                {label: '<?php echo $action['label'] ?>', value: '<?php echo $action['value'] ?>'},
+            <?php endforeach ?>
+        ],
+        <?php endif; ?>
+        url:'<?php echo $this->url(array_merge($this->extraParam, array('id' => 'list', 'controller' => $this->controller, 'module' => $this->module)), 'rest'); ?>', caption:"Listing", width: '100%', lang: 'fr',
+        page: 1, limit: <?php echo ($this->limit !== null)?$this->limit: 30;?>, pageRangeMax: 3,
+        <?php if ($this->sortCol): ?>
+            sortCol:'<?php echo $this->sortCol; ?>',
+        <?php endif; ?>
+        <?php if ($this->sortOrder): ?>
+            sortOrder:'<?php echo $this->sortOrder; ?>',
+        <?php endif; ?>
+        callback: function() {
+            $('.save').nicyform({type:"button", shape:"btn-tiny"});
+            $('.select-actions').nicyform({type: 'list-tiny'});
+            $('.datepicker').datepicker({dateFormat: $.datepicker.W3C});
+            $('.on-off').nicyform({type:'boolean', title:'Visible', onChange: function(elem){
+                var name = $(elem).attr('name');
+                var split = name.split('-');
+                var data = {column: split[0], id: split[1] <?php foreach($this->extraParam as $key => $value) {echo sprintf(', %s:%s', $key, $value); }  ?>};
+                $.get('<?php echo $this->url(array_merge($this->extraParam, array('controller' => $this->controller, 'module' => $this->module, 'id' => 'switch')), 'rest'); ?>', data, function(data){
+
+                });
+            }});
+            $('a.zf-actions-delete').click(function(){
+                if (confirm('<?php echo $this->translate("Are you sure? This operation can not be undone"); ?>')) {
+                    $(this).append(
+                        '<form id="restful-delete" action="' + $(this).attr('href') + '" method="post" style="display:none">'
+                        + '<input type="hidden" name="_method" value="delete">'
+                        + '</form>'
+                    );
+                    $('#restful-delete').submit();
+                }
+                return false;
+            });
+            $('a.zf-actions-put').click(function(){
+                    $(this).append(
+                        '<form id="restful-put" action="' + $(this).attr('href') + '" method="post" style="display:none">'
+                        + '<input type="hidden" name="_method" value="put">'
+                        + '</form>'
+                    );
+                    $('#restful-put').submit();
+                return false;
+            });
+        }
+    });
+});
+<?php $this->headScript()->captureEnd(); ?>
+
+
+<form action="<?php echo $this->url(array('controller' => $this->controller, 'module' => $this->module, 'id' => 'action'), 'rest'); ?>" method="post">
+    <div id="grid"></div>
+</form>

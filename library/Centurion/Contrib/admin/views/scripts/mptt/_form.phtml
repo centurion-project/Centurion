@@ -1,0 +1,34 @@
+<?php
+
+$this->gridForm()->addHeader($this->form, array(
+    'elements' =>  array('label'),
+));
+
+
+$this->gridForm()->addMain($this->form, array(
+    'label'         => 'MVC',
+    'description'   => 'MVC',
+    'elements'      => array('module',
+                             'controller',
+                             'action',
+                             'params',
+                             'route',
+                             )
+));
+$this->gridForm()->addMain($this->form, array(
+    'label'         => 'Redirect',
+    'description'   => 'Redirect',
+    'elements'      => array('uri')
+));
+$this->gridForm()->addMain($this->form, array(
+    'label'         => 'Others',
+    'description'   => 'Others',
+    'elements'      => array('class')
+));
+
+$this->gridForm()->addAside($this->form, array(
+    'label'     => 'Publish',
+    'elements'  => array('is_visible')
+));
+
+echo $this->partial('grid/_form.phtml', $this);

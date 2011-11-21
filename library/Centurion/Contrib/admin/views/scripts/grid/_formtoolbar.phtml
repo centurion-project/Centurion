@@ -1,0 +1,13 @@
+<?php
+if ($this->toolbars !== null) {
+    ?>
+    <div class="form-links ui-button-tiny-squared"> 
+    <?php
+    foreach ($this->toolbars as $button) {
+        echo $button;
+    }
+    ?>
+    </div>
+    <?php 
+}
+?>

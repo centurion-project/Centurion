@@ -1,0 +1,7 @@
+<?php 
+if (!$this->writable) :
+?>
+<div class="warning">Modules dir is not writable by apache!!!<br />This module will not work!!!</div>
+<?php 
+endif;
+echo $this->form;

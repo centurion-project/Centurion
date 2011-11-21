@@ -1,0 +1,39 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<title>{#inserthtml_dlg.title}</title>
+	<script type="text/javascript" src="../../tiny_mce_popup.js"></script>
+	<script type="text/javascript" src="js/insertcode.js"></script>
+	<style>
+        #content { width:500px; height:270px; }	
+        
+        .language-select { margin-bottom:5px; }
+	</style>
+</head>
+<body style="display: none">
+	<div align="center">
+		<div class="title">{#inserthtml_dlg.title}:<br /><br /></div>
+	</div>
+	<div class="language-select">
+        Language : 
+        <select id="language">
+          <option value="php">PHP</option>
+          <option value="js">JS</option>
+          <option value="html">HTML</option>
+          <option value="css">CSS</option>
+        </select>
+	</div>
+	<div>
+        <textarea id="content"></textarea> 
+	</div>
+    <div class="mceActionPanel">
+        <div style="float: left">
+            <input type="button" id="insert" name="insert" value="{#insert}" onclick="InsertcodeDialog.insert(document.getElementById('content').value, document.getElementById('language').value);" />
+        </div>
+
+        <div style="float: right">
+            <input type="button" id="cancel" name="cancel" value="{#cancel}" onclick="tinyMCEPopup.close();" />
+        </div>
+    </div>	
+</body>
+</html>

@@ -1,0 +1,4 @@
+<?php
+echo $this->partial($this->_selectScript(array(sprintf('/%s/%s.json.phtml', $this->controller, $this->layout),
+                                             sprintf('/grid/%s.json.phtml', $this->layout),
+                                             '/grid/grid.json.phtml')), $this); ?>

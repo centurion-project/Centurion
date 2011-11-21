@@ -1,0 +1,377 @@
+/*
+* COMPONENTS CSS
+* CenturionUI CSS-JS Framework
+* Copyright (c) 2009
+* Dual licensed under the MIT (MIT-LICENSE.txt) and GPL (GPL-LICENSE.txt) licenses.
+*/
+
+/* FORMS -------------------- */
+
+
+form.form {                     font-size:12px; }
+.form-header,
+.form-main  {                   width:660px; margin-right:28px; position:relative; }
+.form-main {                    float:left; }
+.form-aside  {                  margin-top:18px; #margin-top:29px; width:230px; float:left; }
+
+
+/* .form-main & .form-header */
+.form-item-hidden {             display: none; }
+.form-main .form-item {         margin-top:18px; #margin-top:13px; }
+.form-main .form-group 
+.form-item {                    margin-top:0; }
+.form-main .form-group {        margin:0 0 10px 0; padding:10px 25px 25px 25px; border:solid 1px #d6d6d6; 
+                                position:relative; 
+                                -moz-border-radius:5px; -khtml-border-radius: 5px; -webkit-border-radius:5px;  }
+.form-main .form-group legend { margin:0; padding:10px; font:bold 15px/20px Arial, sans-serif; color:#ff2f05; }
+.form-main .form-group label {  margin-right:10px; float:left; width:165px; font:bold 12px/14px Arial, sans-serif; }
+.form-main .form-group 
+.field-wrapper {                float:left; zoom:1; width:427px; }
+.form-main .form-group 
+.form-item-large 
+.field-wrapper {                width:602px; }
+.form-main .field-wrapper,
+.form-header .field-wrapper {   margin:0 0 15px 0; padding:3px; background:#eee none repeat scroll 0 0; 
+                                -moz-border-radius:5px; -khtml-border-radius: 5px; -webkit-border-radius:5px; }
+.form-main .form-group
+.form-item-large label {        margin:0 0 5px 0; width:auto; float:none; }
+
+.form-main .form-group
+.field-text,
+.form-main .form-group
+select,
+.form-main .form-group
+textarea {                      margin:0; padding:5px; background:url("../images/bg-input-text.png") repeat-x 0 0 #fff;
+                                font:normal 11px/normal Arial, sans-serif; border:1px solid #c3c3c3;
+                                -moz-border-radius:3px; -khtml-border-radius: 3px; -webkit-border-radius:3px;
+                                width:415px; color:#666; }
+form.form .field-text-big {     margin:0; padding:8px; background:url("../images/bg-input-text.png") repeat-x 0 0 #fff;
+                                font:bold 16px/normal Arial, sans-serif; border:1px solid #c3c3c3;
+                                -moz-border-radius:3px; -khtml-border-radius: 3px; -webkit-border-radius:3px;
+                                width:415px; color:#666; } 
+.form-main .field-rte {         width:648px }
+.form-main .form-group 
+.field-rte {                    width:auto; height:400px; }
+form.form .form-item-large 
+.field-text-big {               width:637px; }
+.form-main .form-group 
+.form-item-large .field-text, 
+.form-main .form-group
+.form-item-large select,
+.form-main .form-group
+.form-item-large textarea {	    width:590px; }
+.form-main .form-group
+.field-text:focus,
+.form-header 
+.field-text:focus,
+.form-main .form-group
+select:focus, 
+.form-main .form-group
+textarea:focus {                -moz-box-shadow:0 0 5px #ccc; -webkit-box-shadow:0 0 5px #80CBFF; box-shadow:0 0 5px #80CBFF;
+                                border-color:#999; color:#333; background:none #fff; }
+.field-wrapper 
+p.field-description {           margin:0; padding:5px; font:italic normal 11px/normal Arial,Verdana,sans-serif; color:#999; }
+
+.form-border-top {              border-top:solid 1px #eee; }
+
+
+/* warning */
+.form-main .form-group
+.form-item-warning 
+.field-wrapper,
+.form-main
+.form-item-warning 
+.field-wrapper,
+.form-header 
+.form-item-warning 
+.field-wrapper {                background-color:#f1bdbf; }
+.form-main .form-group
+.form-item-warning .field-text,
+.form-main .form-group
+.form-item-warning textarea,
+.form-main .form-group
+.form-item-warning select,
+.form-main .form-group
+.form-item-warning label {      color:#ff2f05; border-color:#777 }
+.field-wrapper 
+ul.field-errors {               padding-top:5px; }
+.field-wrapper 
+ul.field-errors li {            padding:0 5px 5px 5px; font:italic normal 11px/16px Arial, sans-serif; color:#555; }		
+
+.form-main .form-group select { width:427px; background:none #fff; }
+.form-main .form-group 
+textarea {                      height:100px; display:block; }
+
+form.form label {               display:block; }
+form.form .label-hidden {       display:none; }
+
+
+/* checkbox/radio list */
+.form-main .form-checkbox,
+.form-main .form-radio {        position:relative; zoom:1; }
+.form-main .form-checkbox 
+legend,
+.form-main .form-radio legend { margin:0; padding:0; width:165px; color:#555; position:absolute; left:0; #left:-8px;
+                                font:bold 12px/14px Arial, sans-serif;  }
+.form-main .form-checkbox 
+.field-wrapper,
+.form-main .form-radio 
+.field-wrapper {                margin:0; padding:0 0 10px 175px; background:none; }
+.form-main .form-checkbox 
+.field-wrapper label,
+.form-main .form-radio 
+.field-wrapper label {          margin:0; padding:0; float:none; width:auto; color:#555; font-weight:normal;
+                                display:inline; }
+.form-item-large .form-checkbox 
+.field-wrapper,
+.form-item-large .form-radio 
+.field-wrapper {                margin-top:20px; padding:0; }
+                                
+                                
+.form-submit {                  text-align:right; }
+.form-submit button {           margin:0 0 0 5px; }
+.form-links {                   padding:5px 0 10px 0; }
+
+
+/* aside */
+.form-aside .form-group {       margin:0 0 10px 0; padding:40px 15px 10px 15px; background:#e5ecf9; position:relative;
+                                -moz-border-radius:8px; -khtml-border-radius:8px; -webkit-border-radius:8px;}
+.form-aside .form-group legend{ display:block; position:absolute; top:15px; left:15px; #left:9px;
+                                font:normal 16px/16px Arial, sans-serif; }
+.form-aside .form-group label { margin:0; padding:0 10px 0 0; float:left; width:128px; 
+                                font:bold 12px/16px Arial, sans-serif; }
+.form-aside .form-group 
+.form-label {                   font:normal 16px/16px Arial, sans-serif; }
+.form-aside .form-group p {     margin-bottom:0; }
+.form-aside .form-group 
+.field-wrapper {                float:left; padding-bottom:10px; }
+.form-aside .form-group 
+.form-item-large label {		margin-bottom:5px; width:auto; float:none; }
+.form-aside .clear {            height:1px; line-height:1px; font-size:1px; }
+.form-aside .field-text,
+.form-aside .field-textarea,
+.form-aside .field-select {     width:188px; font-size:11px; padding:3px 5px; color:#444; font-family: Arial;
+                                border:solid 1px #dbdfe6; border-top-color:#abadb3; border-right-color:#cfd4de;
+                                -moz-border-radius:2px; -webkit-border-radius:2px; border-radius:2px; }
+.form-aside .field-select {     width:200px; height:23px; }
+.form-aside .field-textarea {   height:75px; }
+.form-aside .count-letter {     margin:-5px 0 -5px 0; }
+
+/* fieldset expanded or not */
+form.form .form-hint {          display:none; }
+form.form .fieldset-closed 
+.form-hint {                    margin:-10px 0; display:block;  }
+form.form .fieldset-closed 
+.form-item {                    display:none; }
+fieldset .expand {              padding:1px 10px 1px 20px; font-size:11px; color:#999; text-decoration:none; 
+                                position:absolute; top:6px; right:25px; background:#fff;   }
+fieldset .expand:hover {        cursor:pointer;  }
+fieldset .expand .icon {        background-image: url("../images/ui-icons_c1c1c1_256x240.png"); display:inline-block;
+                                background-position: -16px -128px; position:absolute; top:3px; left:5px;  }
+fieldset .expand .icon-less {   background-image: url("../images/ui-icons_c1c1c1_256x240.png"); 
+                                background-position: -48px -128px; }
+
+
+/* multiselect MAIN */
+.form-main .field-multiselect { height:187px; }
+.form-main .nicy-multiselect {  font:normal 11px/normal Arial,Verdana,sans-serif; color:#333; height:144px; 
+                                position:relative; }
+.form-main .nicy-multiselect 
+ul {                            -moz-user-select: none; }
+.form-main .nicy-multiselect 
+li {                            margin: 0; padding: 0; cursor: default; font-size: 11px; list-style: none;  }
+.form-main .nicy-multiselect 
+li a {                          color: #999; text-decoration: none; padding: 4px 0 4px 20px; display: block; 
+                                border: none; margin-bottom: 1px; position: relative; cursor: pointer; zoom:1; }
+.form-main .nicy-multiselect 
+li a:hover {                    background:#f2f2f2; color:#777; }
+.form-main .nicy-multiselect 
+li a:hover .icon {              background-image: url(../images/ui-icons_999999_256x240.png); }
+.form-main .nicy-multiselect 
+li.ui-draggable-dragging {      padding-left: 10px; }
+.form-main .nicy-multiselect 
+.selectedContainer {            position: relative; padding: 0; margin: 0; border: 0; position:absolute; top:0; left:0; width:50%;  }
+.form-main .nicy-multiselect 
+.selectedList {                 position: relative; padding:0; overflow: auto; overflow-x: hidden; margin: 0; 
+                                list-style: none; position: relative; width: 100%; height:114px;
+                                border:1px solid #c3c3c3; z-index:3;
+                                background:url(../images/bg-input-text.png) repeat-x scroll 0 0 #fff;
+                                -moz-border-radius:3px; -khtml-border-radius: 3px; -webkit-border-radius:3px;  }
+.form-main .nicy-multiselect 
+.availableContainer {           position: relative; padding: 0; margin: 0; border: 0; position:absolute; top:0; right:0; width:50%;}
+.form-main .nicy-multiselect 
+.availableList {                position: relative; padding:0; overflow: auto; overflow-x: hidden; background: #fff; 
+                                margin: 0; list-style: none; width: 100%; position:relative; height:114px;
+                                background:url(../images/bg-input-text.png) repeat-x scroll 0 0 #fff;
+                                border:1px solid #c3c3c3; _top:2px;
+                                -moz-border-radius:3px; -khtml-border-radius: 3px; -webkit-border-radius:3px; }
+.form-main .nicy-multiselect 
+.ui-widget-header {             border: none; font-size: 11px; margin-bottom: 1px;}
+.form-main .nicy-multiselect 
+.add-all {                      float: right; padding: 7px;}
+.form-main .nicy-multiselect 
+.remove-all {                   float: right; padding: 7px;}
+.form-main .nicy-multiselect 
+.search {                       float: left; padding: 4px;}
+.form-main .nicy-multiselect 
+.count {                        float: left; padding: 7px;}
+.form-main .nicy-multiselect 
+li .icon {                      position: absolute; left: 2px; top: 2px; width:16px; height:16px; 
+                                background-image: url(../images/ui-icons_c1c1c1_256x240.png); }
+.form-main .nicy-multiselect 
+.selectedList .icon {           background-position: -48px -128px; }
+.form-main .nicy-multiselect 
+.availableList .icon {          background-position: -16px -128px; }
+ 
+.form-main .nicy-multiselect 
+input.search {                  height: 14px; padding: 1px; opacity: 0.5; margin: 4px; width: 125px; background:#fff;
+                                color:#666; font:normal 11px/normal Arial, sans-serif; border:1px solid #c3c3c3;
+                                -moz-border-radius:3px; -khtml-border-radius: 3px; -webkit-border-radius:3px; }
+.form-main .form-item-large 
+.nicy-multiselect input.search{ width:200px; }
+
+
+/* multiselect ASIDE */
+.form-aside .nicy-multiselect { font:normal 11px/normal Arial,Verdana,sans-serif; color:#333; }
+.form-aside .nicy-multiselect 
+.actions {                      display:none; }
+.form-aside .nicy-multiselect 
+ul {                            -moz-user-select: none; width:198px; }
+.form-aside .nicy-multiselect 
+li {                            margin: 0; padding: 0; cursor: default; font-size: 11px; 
+                                list-style: none; }
+.form-aside .nicy-multiselect 
+li a {                          color: #5b5b5b; text-decoration: none; padding: 2px 0 2px 20px; display: block; 
+                                border: none; margin-bottom: 1px; position: relative; cursor: pointer; zoom:1;}
+.form-aside .nicy-multiselect 
+.availableList li a {           color:#999; padding: 4px 0 4px 20px; }
+.form-aside .nicy-multiselect 
+li .icon {                      position: absolute; left: 2px; top: 0px; width:16px; height:16px; 
+                                background-image: url(../images/ui-icons_999999_256x240.png); }  
+.form-aside .nicy-multiselect 
+.selectedList li a:hover .icon{ background-image: url(../images/ui-icons_ffffff_256x240.png);
+                                background-position: -80px -127px; }   
+.form-aside .nicy-multiselect 
+.selectedList .icon {           background-position: -48px -128px; }
+.form-aside .nicy-multiselect 
+.availableList .icon {          background-position: -16px -128px; }                 
+.form-aside .nicy-multiselect
+.selectedList li a:hover {      background:#5b5b5b; color:#fff;
+                                -moz-border-radius:10px; -khtml-border-radius: 10px; -webkit-border-radius:10px;  }
+.form-aside .nicy-multiselect
+.availableList li .icon {       background-image: url(../images/ui-icons_c1c1c1_256x240.png); }
+.form-aside .nicy-multiselect
+.availableList li a:hover 
+.icon {                         background-image: url(../images/ui-icons_999999_256x240.png); }
+.form-aside .nicy-multiselect 
+.availableList li a:hover {     background:#f2f2f2; color:#777 }
+.form-aside .nicy-multiselect
+.selectedList {                 margin-bottom:10px; }
+.form-aside .nicy-multiselect 
+.availableList {                position: relative; padding:0; overflow: auto; overflow-x: hidden;  
+                                list-style: none;  position:relative; height:114px; width:198px;
+                                background:url(../images/bg-input-text.png) repeat-x scroll 0 0 #fff;
+                                border:1px solid #c3c3c3; 
+                                -moz-border-radius:3px; -khtml-border-radius: 3px; -webkit-border-radius:3px; }
+
+
+/* letterLimit */
+.count-letter {                 margin:2px 5px 0 0; font-size:11px; font-style:italic; text-align:right; color:#999;  }
+.count-letter-hot {             color:#ff2f05; }
+
+
+/* file upload */
+.field-upload-wrapper {         position:relative; }
+.field-upload-wrapper
+.ui-button-tiny-squared {       /*display:none;*/ }
+.field-upload-wrapper 
+p.field-description {           padding:3px 0 0 0; }
+.field-upload-wrapper 
+.float-right {                  margin-right:8px; font-size:11px; position:relative; z-index:2; }
+.form-main .form-group 
+.field-preview-wrapper {        margin:0 0 5px 175px; _margin-left:86px; position:relative; top:-5px; z-index:1;
+                                background:#fff; zoom:1; }
+.field-preview-wrapper 
+.field-checkbox {               margin-right:8px; float:left; }
+.field-preview-wrapper 
+.picture {                      margin:2px 8px 0 0; float:left; }
+.field-preview-wrapper 
+.description {                  float:left; }
+.field-preview-wrapper 
+.description div {              margin-top:5px; }
+
+
+/* files upload */
+.field-upload-wrapper .swfupload { opacity:0; filter:alpha(opacity=0); position:absolute; top:3px; left:3px; z-index:2; }
+.field-upload-wrapper #btnCancel { text-decoration:underline; }
+form.form #fsUploadProgress {   }
+form.form .progressContainer {  }
+form.form .progressName {       }
+form.form .progressBarStatus {  }
+
+form.form .progressBarInProgress,
+form.form .progressBarComplete,
+form.form .progressBarError {   clear:both; }
+#fsUploadProgress 
+.ui-state-highlight {           margin:0 0 5px 175px; _margin-left:86px; position:relative; top:-5px; z-index:1;
+                                zoom:1; background:#ffc; height:58px; width:427px; float:left; }
+.form-main .form-group 
+.ui-sortable 
+.field-preview-wrapper:hover {  background:url(../images/handle.png) no-repeat 7px 27px #e5ecf9; cursor:pointer; }
+ 
+/* RTE */
+form.form .defaultSkin 
+table.mceLayout,
+form.form .defaultSkin 
+table.mceLayout tr.mceFirst 
+td, form.form .defaultSkin 
+table.mceLayout,
+form.form .defaultSkin 
+.mceIframeContainer,
+form.form .defaultSkin 
+table.mceLayout tr.mceLast td { border:none; }
+form.form .defaultSkin 
+td.mceToolbar {                 padding:0 0 1px 0; }
+form.form .defaultSkin table {  background:none; }
+form.form .defaultSkin iframe { background:url(../images/bg-input-text.png) repeat-x scroll 0 0 #fff;
+                                border:1px solid #c3c3c3; 
+                                -moz-border-radius:3px; -khtml-border-radius: 3px; -webkit-border-radius:3px; }
+form.form .defaultSkin 
+.mceStatusbar div {             margin:0; padding:5px; font:italic normal 11px/normal Arial,Verdana,sans-serif; color:#999; }
+form.form .defaultSkin a:hover,
+form.form .defaultSkin 
+a.mceButtonActive, 
+form.form .defaultSkin 
+a.mceButtonSelected,
+form.form .defaultSkin 
+table.mceSplitButtonEnabled:hover 
+a.mceAction, 
+form.form .defaultSkin 
+.mceSplitButtonHover 
+a.mceAction, 
+form.form .defaultSkin 
+.mceSplitButtonSelected 
+a.mceAction,
+form.form .defaultSkin 
+table.mceSplitButtonEnabled:hover 
+a.mceOpen, 
+form.form .defaultSkin 
+.mceSplitButtonHover a.mceOpen, 
+form.form .defaultSkin 
+.mceSplitButtonSelected 
+a.mceOpen {                     background-color:#fff; border-color:#c3c3c3; 
+                                -moz-border-radius:2px; -khtml-border-radius: 2px; -webkit-border-radius:2px;}
+.form-main
+.form-item-warning 
+.field-wrapper .defaultSkin 
+.mceButton {                    border-color:#f1bdbf; }
+
+
+/* -- FF Fix -- */
+
+@-moz-document url-prefix() {   
+    .form-aside .form-group 
+    legend {                    top:-25px; left:0; } 
+    fieldset .expand {          top:-42px; right:50px; }
+}
+

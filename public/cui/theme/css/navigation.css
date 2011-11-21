@@ -1,0 +1,146 @@
+/*
+* COMPONENTS CSS
+* CenturionUI CSS-JS Framework
+* Copyright (c) 2009
+* Dual licensed under the MIT (MIT-LICENSE.txt) and GPL (GPL-LICENSE.txt) licenses.
+*/
+
+/* ------------------------------------------------------------------------------------
+NAVIGATION */
+					
+ul.nav01 {						margin:0; padding:0; list-style:none; background:url(../images/bg-nav01.png) repeat-x #eee; 
+								border-bottom:solid 1px #c5c5c5; height:34px; width:auto; }
+ul.nav01 li {					margin:0; padding:0; display:block; float:left;
+								font:bold 13px/15px Arial, sans-serif; }				
+ul.nav01 li a {					margin:0; padding:10px; color:#ff2d03; text-decoration:none; display:block; 
+								background:url(../images/puce-nav01.png) no-repeat left;}						
+ul.nav01 li a:hover {			color:#aaa; text-decoration:underline; }		
+ul.nav01 li.selected a {		color:#444; text-decoration:none; }	
+ul.nav01 li.first a{			background-image:none; }	
+
+ul.nav02 {						margin:0; padding:0; list-style:none;  
+								border-bottom:solid 1px #444; height:34px; width:auto; }
+ul.nav02 li {					margin:0; padding:10px 10px 0px 10px; display:block; float:left;
+								font:bold 13px/15px Arial, sans-serif; 
+								background:url(../images/puce-nav01.png) no-repeat 0 12px; }				
+ul.nav02 li a {					margin:0; padding:0 0 6px 0; color:#444; text-decoration:none; display:block; }						
+ul.nav02 li a:hover {			color:#aaa; text-decoration:none; border-bottom:solid 3px #aaa; }		
+ul.nav02 li.selected a {		color:#444; text-decoration:none; border-bottom:solid 3px #444;}	
+ul.nav02 li.first {				background-image:none; }	
+
+ul.nav03 {						margin:0; padding:0; list-style:none;  
+								border-bottom:solid 1px #c5c5c5; height:34px; width:auto; }
+ul.nav03 li {					margin:0; padding:0; display:block; float:left;
+								font:bold 12px/14px Arial, sans-serif; }				
+ul.nav03 li a {					margin:0 5px; padding:4px 10px; color:#ff2d03; text-decoration:none; display:block; 
+								border:none; -moz-border-radius:12px; -khtml-border-radius: 10px; -webkit-border-radius:10px; 
+								background:url(../images/bg-li-nav03.png) repeat-x #fcfcfc;}						
+ul.nav03 li a:hover {			color:#fff; text-decoration:none; background:url(../images/bg-li-nav03-hover.png) #aaa; border-color:#d9d9d9 }		
+ul.nav03 li.selected a {		color:#fff; text-decoration:none; background:url(none) #ff2d03; border-color:#d9d9d9 }	
+
+
+ul.nav04 {						margin:0; padding:0; list-style:none; background:#fff; 
+								border-bottom:dotted 1px #b5b5b5; border-top:dotted 1px #b5b5b5; height:24px; width:auto; }
+ul.nav04 li {					margin:0; padding:0; display:block; float:left;
+								font:bold 11px/13px Arial, sans-serif; }				
+ul.nav04 li a {					margin:0; padding:6px 8px; color:#aaa; text-decoration:underline; display:block;
+								background:url(../images/puce-nav04.png) no-repeat left; }						
+ul.nav04 li a:hover {			color:#aaa; text-decoration:none; }		
+ul.nav04 li.selected a {		color:#444; text-decoration:none; }	
+ul.nav04 li.first a {			background-image:none; }
+
+ul.nav05 {						margin:0; padding:0; list-style:none; background:#fff; 
+								border-bottom:dotted 1px #b5b5b5; border-top:dotted 1px #b5b5b5; height:24px; width:auto; }
+ul.nav05 li {					margin:0; padding:0; height:24px; display:block; float:left;
+								font:bold 11px/13px Arial, sans-serif; }				
+ul.nav05 li a {					margin:0; padding:6px 8px; color:#aaa; text-decoration:underline; display:block;
+								background:url(../images/puce-nav04.png) no-repeat left; }						
+ul.nav05 li a:hover {			color:#fff; text-decoration:none; background:#aaa; position:relative; left:1px; }		
+ul.nav05 li.selected a {		color:#fff; text-decoration:none; background:#ff2d03; position:relative; left:1px; }	
+ul.nav05 li.first a {			background-image:none; }
+
+ul.nav06 {						margin:0; padding:0 5px; list-style:none; background:url(../images/bg-nav06.png) repeat-x #eee; 
+								height:24px; width:auto;
+								border:solid 1px #d0d0d0; -moz-border-radius:12px; -khtml-border-radius: 12px; -webkit-border-radius:12px; }
+ul.nav06 li {					margin:0; padding:0; display:block; float:left; font:bold 12px/14px Arial, sans-serif; }				
+ul.nav06 li a {					margin:0; padding:5px 10px; color:#444; text-decoration:none; display:block; 
+								background:url(../images/puce-nav06.png) no-repeat left;}						
+ul.nav06 li a:hover {			color:#aaa; text-decoration:underline; }		
+ul.nav06 li.selected a {		color:#ff2d03; text-decoration:none; }	
+ul.nav06 li.first a{			background-image:none; }
+
+
+ul.tab01 {						margin:0; padding:0 0 0 20px; list-style:none; background:url(../images/bg-tab01.png) repeat-x #eee; 
+								border-bottom:solid 1px #c5c5c5; height:35px; width:auto; }
+ul.tab01 li {					margin:0; padding:0; display:block; float:left;
+								font:bold 11px/13px Arial, sans-serif; }				
+ul.tab01 li a {					margin:18px 7px; padding:0; color:#444; text-decoration:none; display:block }						
+ul.tab01 li a:hover {			color:#aaa; text-decoration:underline; }		
+ul.tab01 li.ui-tabs-selected a {		margin:9px 7px 0 7px; padding:7px 14px 7px 14px; background:url(../images/bg-li-tab01.png) repeat-x #fff;
+								border:solid 1px #c5c5c5; -moz-border-radius:3px; -khtml-border-radius: 3px; -webkit-border-radius:3px;
+								border-bottom:none; color:#ff2d03; text-decoration:none; }
+#tab01 div.ui-widget-content {	margin:0; padding:15px; border:solid 1px #ccc; border-top:none; }
+
+ul.tab02 {						margin:0; padding:0; list-style:none; background:#fff; 
+								border-bottom:solid 1px #c5c5c5; height:35px; width:auto; }
+ul.tab02 li {					margin:0; padding:0; display:block; float:left;
+								font:bold 11px/13px Arial, sans-serif; }				
+ul.tab02 li a {					margin:12px 2px 0 0; padding:4px 14px 5px 14px; background:url(../images/bg-li-tab02.png) repeat-x #eaeaea;
+								border:solid 1px #c5c5c5; -moz-border-radius:3px; -khtml-border-radius: 3px; -webkit-border-radius:3px;
+								border-bottom:none; color:#444; text-decoration:none; display:block; }						
+ul.tab02 li a:hover {			color:#aaa; text-decoration:none; background:url(../images/bg-li-tab02-hover.png) repeat-x #fff}	
+ul.tab02 li.ui-tabs-selected a {		margin:9px 2px 0 0; padding:7px 14px 7px 14px; background:url(../images/bg-li-tab01.png) repeat-x #fff;
+								border:solid 1px #c5c5c5; -moz-border-radius:3px; -khtml-border-radius: 3px; -webkit-border-radius:3px;
+								border-bottom:none; color:#ff2d03; text-decoration:none; }
+#tab02 div.ui-widget-content {	margin:0; padding:15px; border:solid 1px #ccc; border-top:none; }
+								
+ul.tab03 {						margin:0; padding:0; list-style:none; background:#fff; 
+								border-bottom:solid 1px #c5c5c5; height:35px; width:auto; }
+ul.tab03 li {					margin:0; padding:0; display:block; float:left;
+								font:bold 11px/13px Arial, sans-serif; }				
+ul.tab03 li a {					margin:12px 2px 0 0; padding:0; background:url(../images/bg-li-tab02-hover.png) repeat-x #eaeaea;
+								border:solid 1px #c5c5c5; -moz-border-radius:3px; -khtml-border-radius: 3px; -webkit-border-radius:3px;
+								border-bottom:none; color:#444; text-decoration:none; display:block; }						
+ul.tab03 li a:hover {			color:#aaa; text-decoration:none; background:url(../images/bg-li-tab02-hover.png) repeat-x #fff}	
+ul.tab03 li.selected a {		margin:9px 2px 0 0; padding:0; background:url(../images/bg-li-tab01.png) repeat-x #fff;
+								border:solid 1px #c5c5c5; -moz-border-radius:3px; -khtml-border-radius: 3px; -webkit-border-radius:3px;
+								border-bottom:none; color:#ff2d03; text-decoration:none; }								
+ul.tab03 li a span {			margin:0; padding:4px 40px 5px 10px; background:url(../images/icon-li-tab03.png) no-repeat right 0;
+								display:block; }
+ul.tab03 li a:hover span {		margin:0; padding:4px 40px 5px 10px; background:url(../images/icon-li-tab03-hover.png) no-repeat right 0;
+								display:block; }	
+ul.tab03 li.selected a span {	margin:0; padding:7px 40px 7px 10px; background:url(../images/icon-li-tab03-hover.png) no-repeat right 0;
+								display:block; }									
+ul.tab03 ul {					margin:0; padding:4px 0; border:#c0c0c0 solid 1px; border-left:#e9e9e9 solid 1px;
+								position:absolute;  }
+ul.tab03 ul li { 				margin:0; padding:0; display:block; float:none; }
+ul.tab03 li.selected ul li a,
+ul.tab03 ul li a { 				margin:0; padding:4px 10px; display:block; float:none; color:#333; text-decoration:none;
+								background:url(none) #fff; font: normal 11px/13px Arial, sans-serif; border:none;
+								-moz-border-radius:none; -khtml-border-radius:none; -webkit-border-radius:none; }
+ul.tab03 li.selected ul li a:hover,								
+ul.tab03 ul li a:hover {		background:#f1f1f1; color:#fe340c; text-decoration:none; }		
+
+ul.tab04 {						margin:0; padding:0; list-style:none; background:url(../images/bg-nav01.png) repeat-x #eee; 
+								border-bottom:solid 1px #c5c5c5; height:35px; width:auto; }
+ul.tab04 li {					margin:0; padding:0; display:block; float:left;
+								font:bold 12px/14px Arial, sans-serif; }				
+ul.tab04 li a {					margin:8px 7px 0 0; padding:0; background:#fff;
+								border-right:solid 1px #c5c5c5; border-left:solid 1px #e9e9e9; 
+								color:#444; text-decoration:none; display:block; }						
+ul.tab04 li a:hover {			color:#aaa; text-decoration:none; }	
+ul.tab04 li.selected a {		color:#ff2d03; text-decoration:none; }								
+ul.tab04 li a span {			margin:0; padding:6px 40px 6px 10px; background:url(../images/icon-li-tab04.png) no-repeat right 3px;
+								display:block; }
+ul.tab04 li a:hover span {		margin:0; padding:6px 40px 6px 10px; background:url(../images/icon-li-tab04-hover.png) no-repeat right 3px;
+								display:block; }	
+ul.tab04 li.selected a span {	margin:0; padding:6px 40px 6px 10px; background:url(../images/icon-li-tab04-hover.png) no-repeat right 3px;
+								display:block; }									
+ul.tab04 ul {					margin:0; padding:4px 0; border:#c0c0c0 solid 1px; border-left:#e9e9e9 solid 1px; border-top:none;
+								position:absolute;  }
+ul.tab04 ul li { 				margin:0; padding:0; display:block; float:none; }
+ul.tab04 li.selected ul li a,
+ul.tab04 ul li a { 				margin:0; padding:4px 10px; display:block; float:none; color:#333; text-decoration:none;
+								background:url(none) #fff; font: normal 11px/13px Arial, sans-serif; border:none; }
+ul.tab04 li.selected ul li a:hover,
+ul.tab04 ul li a:hover {		background:#f1f1f1; color:#fe340c; text-decoration:none; }		

@@ -1,0 +1,10 @@
+<?php
+
+$name = $this->element->getFullyQualifiedName();
+$label = $this->element->getLabel();
+$description = $this->element->getDescription();
+$errors = $this->element->getMessages();
+
+$decorator = new Zend_Form_Decorator_ViewHelper(array());
+$decorator->setElement($this->element);
+echo $decorator->render($this->content);

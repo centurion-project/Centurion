@@ -1,0 +1,4 @@
+<?php if ($this->page->can_be_deleted):?>
+    <a href="<?php echo $this->url(array('action' => 'edit', 'controller' => $this->controllerName, 'module' => $this->moduleName, 'id' => $this->page->pk), 'default'); ?>" class="help" title="<?php echo $this->translate('Edit'); ?>"><span class="ui-icon ui-icon-pencil"><?php echo $this->translate('Edit properties'); ?></span></a>
+    <a onclick="return confirm('<?php echo $this->translate("Are you sure? This operation can not be undone"); ?>');" href="<?php echo $this->url(array('action' => 'delete', 'controller' => $this->controllerName, 'module' => $this->moduleName, 'id' => $this->page->pk), 'default'); ?>" class="help" title="<?php echo $this->translate('Delete'); ?>"><span class="ui-icon ui-icon-close"><?php echo $this->translate('Delete'); ?></span></a>
+<?php endif;?>

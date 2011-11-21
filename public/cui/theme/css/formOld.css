@@ -1,0 +1,186 @@
+/*
+* COMPONENTS CSS
+* CenturionUI CSS-JS Framework
+* Copyright (c) 2009
+* Dual licensed under the MIT (MIT-LICENSE.txt) and GPL (GPL-LICENSE.txt) licenses.
+*/
+
+/* ------------------------------------------------------------------------------------
+FORMS */
+
+form.form {						width:615px; font-size:12px; }
+form.form fieldset  {			margin:0 0 20px 0; padding:8px 20px 20px 20px; border:solid 1px #d6d6d6; position:relative;
+								-moz-border-radius:5px; -khtml-border-radius: 5px; -webkit-border-radius:5px;  }
+form.form legend {				margin:0; padding:10px; font:bold 15px/20px Arial, sans-serif; color:#ff2f05; }
+form.form 
+fieldset.border-bottom {        border-bottom:solid 1px #ddd; }
+form.form 
+fieldset.border-top {           border-top:solid 1px #ddd; }
+form.form dl {					width:573px; }
+form.form dt {					margin:0; padding:0 10px 0 0; float:left; width:165px; }
+form.form dt label {			font:bold 12px/14px Arial, sans-serif; }
+form.form dd {					margin-left:175px; padding-bottom:0; }
+form.form dd.subform {			margin-left:0; position:relative; width:613px;}
+form.form dd div.input {		margin:0 0 15px 0; padding:3px; background:#eee none repeat scroll 0 0; 
+								-moz-border-radius:5px; -khtml-border-radius: 5px; -webkit-border-radius:5px; }
+
+form.form input, 
+form.form select, 
+form.form textarea {			margin:0; padding:5px; background:url(../images/bg-input-text.png) repeat-x scroll 0 0 #fff;
+								font:normal 11px/normal Arial,Verdana,sans-serif; color:#333; border:1px solid #c3c3c3;
+								-moz-border-radius:3px; -khtml-border-radius: 3px; -webkit-border-radius:3px;
+								width:380px; font:normal 11px/normal Arial,Verdana,sans-serif; }
+form.form dd.large input, 
+form.form dd.large select, 
+form.form dd.large textarea {	width:555px; }
+form.form textarea {			height:100px; }
+form.form textarea.rte {		height:150px; }
+form.form select {				padding-left:2px; background:#fff; width:392px; }
+form.form input.radio,
+form.form input.checkbox,
+form.form dd.large 
+input.checkbox {				margin:0 2px 6px 0; padding:0; background:none; border:none; width:14px; height:14px;
+								-moz-border-radius:0; -khtml-border-radius: 0; -webkit-border-radius:0;
+								position:relative; top:1px; }
+form.form input.big {           padding:8px; font:normal 16px/20px Arial,Verdana,sans-serif; height:20px; width:374px; }
+form.form dd.large input.big {  width:549px; }
+								
+								
+form.form dd p.description { 	padding:5px; font:italic normal 11px/normal Arial,Verdana,sans-serif; color:#999; }
+
+form.form dd.warning 
+div.input {						background-color:#f1bdbf; }
+form.form dd.warning input,
+form.form dd.warning textarea,
+form.form dd.warning select,
+form.form dt.warning label{		color:#ff2f05; border-color:#777 }
+form.form dd ul.errors {		padding-top:5px; }
+form.form dd ul.errors li {		padding:0 5px 5px 5px; font:italic normal 11px/16px Arial,Verdana,sans-serif; color:#555; }								
+
+form.form dd.border-top,
+form.form dl.border-top,
+form.form dt.border-top {		padding-top:15px; border-top: solid 1px #ddd; }
+
+form.form dt.hidden {			display:none; }
+form.form dt.large {			margin-bottom:5px; width:auto; display:block; float:none; }
+form.form dd.large {			margin-left:0; }
+form.form dd.nicyless .input {	padding:0; background:none; 
+								-moz-border-radius:0; -khtml-border-radius: 0; -webkit-border-radius:0;}
+
+form.form dd.submit dl {		margin:-15px 0 0 0; width:573px; }
+form.form dd.submit dd {		margin:0 0 0 0; width:auto; }
+form.form dd.submit a.btn 
+.btn-style {						float:right; margin:0 0 0 10px; }
+form.form dd.submit a.btn:hover {	cursor:pointer }
+
+/* checkbox list */
+form.form dl.checklist {				position:relative; margin:0 0 15px 0; padding:0; width:390px; }
+form.form dd.large dl.checklist {		width:573px; }
+form.form dl.checklist dt {				margin:0; padding:0; float:right; width:370px }
+form.form dd.large dl.checklist dt {	margin:0; padding:0;  float:right; width:555px }
+form.form dl.checklist dt label {		font-weight:normal; }
+form.form dl.checklist dd {				margin:0; padding:0; }
+form.form dl.checklist dd .input {		margin:0; }
+
+/* files upload */
+form.form span.MultiFile-title {    margin:5px 0 -5px 0; display:block; }
+form.form dd.file { 			    margin-bottom:15px; }
+form.form #fsUploadProgress {       border:1px solid #c3c3c3;  
+                                    background:url(../images/bg-input-text.png) repeat-x scroll 0 0 #fff;
+								    -moz-border-radius:3px; -khtml-border-radius: 3px; -webkit-border-radius:3px; }
+form.form .swfupload {              float:right; margin:5px 0 0 0;  }
+form.form #btnCancel {              padding:4px 8px; font-family: Arial; font-size: 11px; color:#5b5b5b; float:right; 
+                                    text-decoration:underline; }
+form.form #divStatus {              padding:4px 8px; font-family: Arial; font-size: 11px; color:#333 }
+form.form .progressContainer {      padding:4px 8px 4px 8px; position:relative;  }
+form.form .progressContainer img {  float:right; position:relative; top:-15px; margin-bottom:-15px; width:50px; height:50px; background:#ccc; }
+form.form .progressName {           font-size:11px; line-height:16px; font-weight:bold; color:#555; }
+form.form .progressBarStatus {      font-size:11px; line-height:16px; color:#999; }
+
+form.form .progressBarInProgress,
+form.form .progressBarComplete,
+form.form .progressBarError {       clear:both; }
+
+
+
+
+/* dropdown */
+.select-list { 					width:300px; text-align:left; }
+.select-list div {				margin:0; padding:0; height:23px; width:100%; background:url(../images/bg-input-text.png) repeat-x; 
+								border:solid 1px #d0d0d0; -moz-border-radius:12px; -khtml-border-radius: 12px; -webkit-border-radius:11px;
+								display:block;  font-size:13px; position:relative; }
+.select-list div.hover {		background:url(../images/bg-drop-down-hover.png) repeat-x; }						
+.select-list span {				margin:0; padding:3px 10px; height:17px; background:url(../images/icon-drop-down.png) no-repeat right;
+								display:block; color:#444 }
+.select-list ul { 				margin:-25px 0 0 0; padding:30px 0 10px 0; width:100%; background:#fff; list-style:none;
+								position:absolute; font-size:13px; text-align:left;
+								border:solid 1px #d0d0d0; -moz-border-radius:12px; -khtml-border-radius: 12px; -webkit-border-radius:11px; }
+.select-list li	{				margin:0; padding:0; }	
+.select-list li a {				margin:0; padding:4px 10px; display:block; color:#333; text-decoration:none; }
+.select-list li	a:hover {		background:#f1f1f1; color:#fe340c; text-decoration:none; }
+
+.select-list-tiny { 			width:150px; text-align:left; }
+.select-list-tiny div {			margin:0; padding:0; height:17px; width:100%; background:url(../images/bg-drop-down-tiny.png) repeat-x;
+								border:solid 1px #d0d0d0; -moz-border-radius:9px; -khtml-border-radius: 9px; -webkit-border-radius:9px;
+								display:block; font:normal 10px/12px Arial, sans-serif; position:relative;}
+.select-list-tiny div.hover {	background:url(../images/bg-drop-down-hover.png) repeat-x; }						
+.select-list-tiny span {		margin:0; padding:3px 10px; height:11px; background:url(../images/icon-drop-down-tiny.png) no-repeat right;
+								display:block; color:#444; }
+.select-list-tiny ul { 			margin:-15px 0 0 0; padding:20px 0 5px 0; width:150px; background:#fff; list-style:none;
+								position:absolute; 
+								border:solid 1px #d0d0d0; -moz-border-radius:12px; -khtml-border-radius: 12px; -webkit-border-radius:11px; }
+.select-list-tiny li {			margin:0; padding:0; font:normal 10px/12px Arial, sans-serif; }	
+.select-list-tiny li a {		margin:0; padding:4px 10px; display:block; color:#333; text-decoration:none; }
+.select-list-tiny li a:hover {	background:#f1f1f1; color:#fe340c; text-decoration:none; }
+
+/* checkbox more */
+ul.items-checkbox,
+ul.items-page {					margin:0; padding:0; list-style:none; font-size:12px; }
+ul.items-page li { 				padding:5px 0 3px 22px; background:url(../images/icon-page.png) 0 3px no-repeat; height:auto; line-height:16px; }
+
+
+/* multiselect */
+select.multiselect {            height:187px; }
+.nicy-multiselect {             font:normal 11px/normal Arial,Verdana,sans-serif; color:#333; height:170px;  }
+.nicy-multiselect ul {          -moz-user-select: none; }
+.nicy-multiselect li {          margin: 0; padding: 0; cursor: default; font-size: 11px; 
+                                list-style: none; }
+.nicy-multiselect li a {        color: #999; text-decoration: none; padding: 4px 0 4px 20px; display: block; cursor: pointer;
+                                border: none; margin-bottom: 1px; position: relative; }
+.nicy-multiselect li a:hover {  background:#f2f2f2; }
+.nicy-multiselect 
+li.ui-draggable-dragging {      padding-left: 10px; }
+.nicy-multiselect 
+.selectedContainer {            position: relative; padding: 0; margin: 0; border: 0; float:left; width:50%;  }
+.nicy-multiselect 
+.selectedList {                 position: relative; padding:0; overflow: auto; overflow-x: hidden; margin: 0; 
+                                list-style: none; position: relative; width: 100%; height:140px;
+                                border:1px solid #c3c3c3; z-index:3; 
+                                background:url(../images/bg-input-text.png) repeat-x scroll 0 0 #fff;
+								-moz-border-radius:3px; -khtml-border-radius: 3px; -webkit-border-radius:3px;  }
+.nicy-multiselect 
+.availableContainer {           position: relative; padding: 0; margin: 0; border: 0; float:left; width:50%;  }
+.nicy-multiselect 
+.availableList {                position: relative; padding:0 0 0 0; overflow: auto; overflow-x: hidden; background: #fff; 
+                                margin: 0; list-style: none; width: 100%; position:relative; height:140px;
+                                background:url(../images/bg-input-text.png) repeat-x scroll 0 0 #fff;
+                                border:1px solid #c3c3c3; 
+								-moz-border-radius:3px; -khtml-border-radius: 3px; -webkit-border-radius:3px; }
+
+.nicy-multiselect 
+.ui-widget-header {             border: none; font-size: 11px; margin-bottom: 1px;}
+.nicy-multiselect .add-all {    float: right; padding: 7px;}
+.nicy-multiselect .remove-all { float: right; padding: 7px;}
+.nicy-multiselect .search {     float: left; padding: 4px;}
+.nicy-multiselect .count {      float: left; padding: 7px;}
+.nicy-multiselect li .icon{     position: absolute; left: 2px; top: 2px; width:16px; height:16px; background-image: url(../images/ui-icons_888888_256x240.png); }
+.nicy-multiselect 
+.selectedList .icon {           background-position: -48px -128px; }
+.nicy-multiselect 
+.availableList .icon {          background-position: -16px -128px; }
+ 
+.nicy-multiselect input.search{ height: 14px; padding: 1px; opacity: 0.5; margin: 4px; width: 125px;
+                                background:#fff; }
+form.form dd.large 
+.nicy-multiselect input.search{ width:200px; }
+

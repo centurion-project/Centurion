@@ -1,0 +1,15 @@
+<?php
+
+$this->gridForm()->addHeader($this->form, array(
+    'elements' => 'original'
+));
+
+$this->gridForm()->addMain($this->form, array(
+    'label'         => 'Translation',
+    'description'   => 'Translation',
+    'elements'      => array_keys($this->form->getSubForms())
+));
+
+$this->form->getElement('original')->setAttrib('style', 'height:100px;');
+
+echo $this->partial('grid/_form.phtml', $this);

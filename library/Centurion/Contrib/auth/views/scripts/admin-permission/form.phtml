@@ -1,0 +1,16 @@
+<?php
+
+$this->gridForm()->addHeader($this->form, array(
+    'elements' =>  array('name'),
+));
+
+$this->gridForm()->addMain($this->form, array(
+    'label'         => 'Group informations',
+    'description'   => 'Group informations',
+    'elements'      => array('description',
+                             'users',
+                             'groups',
+                             'permissions')
+));
+
+echo $this->partial('grid/_form.phtml', $this);

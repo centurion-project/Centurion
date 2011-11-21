@@ -1,0 +1,21 @@
+<?php
+
+$instance = $this->form->getInstance();
+
+$result = array(
+    'id'            =>  $instance->pk,
+);
+
+if ($this->publishDateColumn) {
+    $result['published_at'] = $instance->getDateObjectBy($this->publishDateColumn)->get('yyyy MM dd hh:mm');
+}
+
+if ($this->publishColumn) {
+    $result['is_published'] = $instance->{$this->publishColumn};
+}
+
+if ($this->titleColumn) {
+    $result['title'] = $instance->{$this->titleColumn};
+}
+
+echo $this->json($result);

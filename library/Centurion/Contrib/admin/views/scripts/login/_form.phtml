@@ -1,0 +1,44 @@
+<?php
+
+    $this->form->getElement('remember_me')->setAttrib('noFormItem', true);
+    $this->form->addDisplayGroup(array('remember_me'), 'checkbox');
+    $this->form->getDisplayGroup('checkbox')->setAttrib('class', 'form-checkbox form-border-top')
+                                            ->setAttrib('large', 'true')
+                                            ->setAttrib('formItem', 'true');
+
+
+//    $this->form->removeDecorator('Fieldset');
+
+    //$this->form->getElement('send')->getDecorator('Label')
+    //                               ->setOption('tagClass', 'hidden');
+
+    $this->form->login->setAttrib('large', true);
+    $this->form->password->setAttrib('large', true);
+    //
+    //$this->gridForm($this->form, array(), array('Centurion administration'=>array('login', 'password', 'checkbox')), array());
+
+    $this->gridForm()->addMain($this->form, array(
+        'label'         => 'Centurion administration',
+        'elements'      => array('login',
+                                 'password',
+                                 'checkbox')
+    ));
+        
+    //                                      ->getDecorator('HtmlTag')->setOption('class', 'checklist');
+
+
+
+    $this->form->addElement('button', '_login', array('label' => $this->translate('Send'), 'type' => 'submit'));
+    $this->form->addDisplayGroup(array('_login'), 'submit');
+    //$this->form->getDisplayGroup('submit')->setAttrib('class', 'submit large nicyless border-top');
+
+    $decoratorsArray = array(
+        'FormElements',
+        array('HtmlTag', array('tag' => 'div', 'class' => 'form-submit'))
+    );
+
+    $this->form->getDisplayGroup('submit')->setDecorators($decoratorsArray);
+    $this->form->addInDisplayGroup('submit', '_main');
+?>
+
+<?php echo $this->form ?>
