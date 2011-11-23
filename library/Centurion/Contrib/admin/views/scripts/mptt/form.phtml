@@ -1,0 +1,238 @@
+<?php
+    $this->headScript()->captureStart();
+?>
+$(function() {
+
+    var urls = {
+        "edit": "<?php echo $this->url(array('action' => 'edit', 'controller' => $this->controllerName, 'module' => $this->moduleName, 'id' => '{{id}}'), "default", true, false); ?>",
+        "move": "<?php echo $this->url(array('action' => 'move', 'controller' => $this->controllerName, 'module' => $this->moduleName, 'id' => '{{id}}'), "default", true, false); ?>",
+        "create": "<?php echo $this->url(array('action' => 'create', 'controller' => $this->controllerName, 'module' => $this->moduleName), "default", true); ?>",
+        "delete": "<?php echo $this->url(array('action' => 'delete', 'controller' => $this->controllerName, 'module' => $this->moduleName, 'id' => '{{id}}'), "default", true, false); ?>"
+    }
+
+    var page_id_re = new RegExp("page\-(\\d+)", "");
+
+    function get_id(node) {
+        return page_id_re.exec($(node).attr('id'))[1];
+    }
+
+    $(".jstree").CUI('tree', {
+        basePath: '<?php echo Zend_Controller_Front::getInstance()->getBaseUrl(); ?>', 
+        lang : {
+            new_node: "<?php echo $this->translate('New element'); ?>",
+            loading: "<?php echo $this->translate('Loading ...'); ?>"
+        },
+        callback: {
+            onmove: function (NODE, REF_NODE, TYPE, TREE_OBJ, RB) {
+                $.ajax({
+                    url: Mustache.to_html(urls.move, {'id': get_id(NODE)}),
+                    type: 'post',
+                    data: {'type': TYPE, 'referer': get_id(REF_NODE)}
+                });
+                //console.log(NODE, REF_NODE, TYPE, TREE_OBJ, RB);
+            }, // node moved
+            <?php if (isset($this->titleColumn)): ?>
+            onrename: function (NODE, TREE_OBJ, RB) {
+                $.ajax({
+                    url: Mustache.to_html(urls.edit, {'id': get_id(NODE)}),
+                    format: 'json',
+                    type: 'post',
+                    data: {
+                        '<?php echo $this->titleColumn ?>': $(NODE).children('.page:first').text()
+                    }
+                });
+            }, // node renamed
+            <?php endif ?>
+        },
+        plugins: {
+            contextmenu: {
+                items: {
+                    create: {visible: false},
+                    <?php if (false && isset($this->titleColumn)): ?>
+                    /*create: {
+                        label: <?php echo $this->translate('"Create into"'); ?>,
+                        icon: "create",
+                        visible: function (NODE, TREE_OBJ) {
+                            if (NODE.length != 1) return 0;
+                            return TREE_OBJ.check("creatable", NODE);
+                        },
+                        action: function (NODE, TREE_OBJ) {
+                            var data = {
+                                '<?php echo $this->titleColumn ?>': '<?php echo $this->translate('New element'); ?>',
+                                'format': 'json'
+                            };
+                            
+                            if (NODE) {
+                                data['<?php echo $this->parentColumn ?>'] = get_id(NODE);
+                            }
+                            
+                            $.ajax({
+                                url: Mustache.to_html(urls.create, {'id': get_id(NODE)}),
+                                format: 'json',
+                                type: 'post',
+                                data: data,
+                                success: function(result, textStatus, xhr) {
+                                    TREE_OBJ.create(false, TREE_OBJ.get_node(NODE[0]));
+                                    
+                                    result['delete_url'] = Mustache.to_html(urls['delete'], {'id': result.id});
+                                    result['edit_url'] = Mustache.to_html(urls['edit'], {'id': result.id});
+                                    
+                                    var row = '<div class="cells"><?php 
+                                        if ($this->publishColumn): 
+                                        ?><div class="online">
+                                            <select selected="0" class="on-off" name="<?php echo $this->publishColumn ?>-{{id}}" style="display: none;">
+                                                <option value="0"><?php echo $this->translate('Offline'); ?></option>
+                                                <option value="1"><?php echo $this->translate('Online'); ?></option>
+                                            </select>
+                                            <span class="switch-1">{{is_published}}</span>
+                                        </div><?php 
+                                        endif 
+                                        ?><?php 
+                                        if ($this->publishDateColumn): 
+                                        ?><div class="date">{{published_at}}</div><?php endif; 
+                                        ?><div class="actions"><a href="{{edit_url}}" class="help" title="<?php echo $this->translate('Edit'); ?>"><span class="ui-icon ui-icon-pencil"><?php echo $this->translate('Edit properties'); ?></span></a><a onclick="return confirm(\'<?php echo $this->translate('Are you sure? This operation can not be undone') ?>\');" href="{{delete_url}}" class="help" title="Delete"><span class="ui-icon ui-icon-close"><?php echo $this->translate('Delete'); ?></span></a></div><div class="clear"></div></div>';
+                                    NODE.find("a.clicked")
+                                        .addClass("page hidden")
+                                        .attr('href', result['edit_url'])
+                                        .after(Mustache.to_html(row, result));
+                                }
+                            });
+                        },
+                        separator_after: false
+                    },
+                    <?php /*?>/*rename: {
+                        label: "<?php echo $this->translate("Rename") ?>",
+                        icon: "rename",
+                        visible: function (NODE, TREE_OBJ) {
+                            if (NODE.length != 1) return false;
+                            return TREE_OBJ.check("renameable", NODE);
+                        },
+                        action: function (NODE, TREE_OBJ) {
+                            TREE_OBJ.rename(NODE);
+                        }
+                    },<?php */?>
+                    */
+                    <?php endif ?>
+             
+                    <?php if (false && isset($this->publishColumn)): ?>
+                    /*
+                    hide: {
+                        label: "<?php echo $this->translate("Unpublish") ?>",
+                        icon: "hide",
+                        visible: function (NODE, TREE_OBJ) {
+                            if (NODE.length != 1) return false;
+                            if (NODE.find("a.page").hasClass("hidden")) return false;
+                        },
+                        action: function (NODE, TREE_OBJ) {
+                            $.ajax({
+                                url: Mustache.to_html(urls.edit, {'id': get_id(NODE)}),
+                                format: 'json',
+                                type: 'post',
+                                data: {
+                                    '<?php echo $this->publishColumn ?>': 0
+                                },
+                                success: function(result, textStatus, xhr) {
+                                    NODE.find("a.page").addClass("hidden");
+                                }
+                            });
+                        }
+                    },*/
+                    /*publish: {
+                        label: "<?php echo $this->translate("Publish") ?>",
+                        icon: "publish",
+                        visible: function (NODE, TREE_OBJ) {
+                            if (NODE.length != 1) return false;
+                            if (NODE.find("a.page").not(".hidden").length) return false;
+                        },
+                        action: function (NODE, TREE_OBJ) {
+                            $.ajax({
+                                url: Mustache.to_html(urls.edit, {'id': get_id(NODE)}),
+                                format: 'json',
+                                type: 'post',
+                                data: {
+                                    '<?php echo $this->publishColumn ?>': 1
+                                },
+                                success: function(result, textStatus, xhr) {
+                                    NODE.find("a.page").removeClass("hidden");
+                                }
+                            });
+                        }
+                    },
+                     */
+                    <?php endif ?>
+                    <?php if (false) :?>
+                    edit: {
+                        label: "<?php echo $this->translate("Edit properties") ?>",
+                        icon: "edit",
+                        visible: function (NODE, TREE_OBJ) {
+                            if (NODE.length != 1) return false;
+                            return TREE_OBJ.check("renameable", NODE);
+                        },
+                        action: function (NODE, TREE_OBJ) {
+                            window.location.replace(NODE.find("a.page").attr("href"));
+                        }
+                    },
+                    remove: {
+                        label: "<?php echo $this->translate("Delete") ?>",
+                        icon: "remove",
+                        visible: function (NODE, TREE_OBJ) {
+                            var ok = true;
+                            $.each(NODE, function () {
+                                if (TREE_OBJ.check("deletable", this) == false) {
+                                    ok = false;
+                                    return false;
+                                }
+                            });
+                            
+                            return ok;
+                        },
+                        action: function (NODE, TREE_OBJ) {
+                            $.each(NODE, function () {
+                                var _this = this;
+                                $.ajax({
+                                    type: 'get',
+                                    url: Mustache.to_html(urls['delete'], {'id': get_id(_this)}),
+                                    success: function(data, textStatus, xhr) {
+                                        TREE_OBJ.remove(_this);
+                                    }
+                                })
+                            });
+                        }
+                    }
+                    <?php endif;?>
+                    create: { visible: false}
+                }
+            }
+        }
+    });
+    $(".field-switcher").CUI("switcher", {basePath: '<?php echo Zend_Controller_Front::getInstance()->getBaseUrl(); ?>', url:"<?php echo $this->url(array('action' => 'switch', 'controller' => $this->controllerName, 'module' => $this->moduleName));?>"});
+});
+<?php $this->headScript()->captureEnd(); ?>
+
+<?php $this->placeholder('headling_1')->captureStart(); ?>
+<div class="ui-button-big">
+    <a href="<?php echo $this->url(array('action' => 'create', 'controller' => $this->controllerName, 'module' => $this->moduleName), 'default', true); ?>" class="ui-button ui-button-bg-white ui-button-text-red ui-button-text-only">
+        <span class="ui-button-text"><?php echo $this->translate('Add a new %s', $this->placeholder('headling_1_add_button')); ?></span>
+    </a>   
+</div>
+<h1><?php echo $this->placeholder('headling_1_content'); ?></h1>
+<?php $this->placeholder('headling_1')->captureEnd(); ?>
+
+<div class="grid pages">
+    <div class="heading">
+        <?php echo $this->translate('Title'); ?>
+        <div class="cells">
+            <?php if (isset($this->publishColumn)): ?>
+                <div class="online"><?php echo $this->translate('Is published'); ?></div>
+            <?php endif ?>
+            <?php if (isset($this->publishDateColumn)): ?>
+                <div class="date"><?php echo $this->translate('At'); ?></div>
+            <?php endif ?>
+            <div class="actions"><?php echo $this->translate('Actions'); ?></div>
+            <div class="clear"></div>
+        </div>
+    </div>
+    <div class="jstree">
+        <?php echo $this->partial('mptt/_tree.phtml', array_merge(array('isRoot' => true), $this->getVars())); ?>
+    </div>
+</div>

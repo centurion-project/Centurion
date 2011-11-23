@@ -1,0 +1,35 @@
+<?php
+
+$json = array();
+$head = array();
+$head[] = array('label' => '', 'url' => null);
+
+foreach ($this->headCol as $key => $col) {
+    $temp = array('label' => $col['label'], 'url' => $col['link']);
+    if ($this->sort === $key) {
+        $temp['sort'] = strtolower($this->order);
+    }
+    $head[] = $temp;
+}
+
+$head[] = array('label' => '', 'url' => null);
+
+$json['header'] = $head;
+$json['rows'] = array();
+
+foreach ($this->result as $key => $result) {
+    $this->row = $result['row'];
+    unset($result['row']);
+    $tab = array_values($result);    
+    array_push($tab, $this->partial($this->_selectScript(array(sprintf('%s/_actions.phtml', $this->controller), 'grid/_actions.phtml')), $this));
+    $json['rows'][] = $tab;
+}
+
+$json['pager'] = unserialize($this->paginationControl($this->paginator,
+                                            'Sliding',
+                                            'grid/pagination.json.phtml', array('filter' => $this->filter)));
+
+$json['filter'] = $this->url(array());
+$json['debug'] = $this->debug;
+
+echo $this->json($json);

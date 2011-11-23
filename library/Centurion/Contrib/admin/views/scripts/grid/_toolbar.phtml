@@ -1,0 +1,37 @@
+<div class="toolbar toolbar-<?php echo $this->toolBarName;?>">
+    <?php echo $this->paginationControl($this->paginator,
+                                'Sliding',
+                                'grid/pagination.phtml', array('filter' => $this->filter));?>
+    <?php if ($this->showCheckbox):?>
+        <?php if ($this->placeholder('toolbar_back')) : ?>
+            <?php echo $this->placeholder('toolbar_back'); ?>
+        <?php endif; ?>
+
+        <div class="select ui-button-tiny-squared">
+            Select: <a href="#" class="select-all">All</a>, <a href="#" class="select-none">None</a> &nbsp;&nbsp;
+
+            <input type="hidden" value="<?php echo $this->ticket()->getKey($this->url(array('action' => 'bash'))); ?>" name="ticket" />
+
+
+            <span class="buttonset">
+
+                <?php
+                $buttonId = 0;
+                foreach ($this->toolbarActions as $value => $label) :
+                $buttonId++;?>
+                    <input type="radio" name="event" value="<?php echo $value?>" id="input-<?php echo $this->toolBarName . ' ' . $buttonId;?>" /><label for="input-<?php echo $this->toolBarName . ' ' . $buttonId;?>"><?php echo $label?></label>
+                <?php endforeach;?>
+
+            </span>
+        </div>
+        <?php if ($this->sortable):?>
+            <div class="ui-button-tiny-squared">
+                <input type="radio" name="event" value="order" id="order-radio" style="display: none" />
+                <a href="<?php echo $this->url();?>" class="ui-button ui-button-text-icon ui-button-black trigger-order">
+                    <span class="ui-icon ui-icon-arrow-2-n-s"></span>
+                    <span class="ui-button-text"><?php echo $this->translate('Order list')?></span>
+                </a>
+            </div>
+        <?php endif;?>
+    <?php endif;?>
+</div>

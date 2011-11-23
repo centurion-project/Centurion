@@ -1,0 +1,17 @@
+<?php 
+$fields = array();
+
+if ($this->form->info_language_id) {
+    $fields = array('info_language_id', 'info_original_id');
+} else if ($this->form->language_id) {
+    $fields = array('language_id');
+}
+
+if (count($fields)) {
+    $this->gridForm()->addAside($this->form, array(
+        'label'         => 'Language',
+        'elements'      => $fields 
+    ));
+}
+
+echo $this->partial($this->formViewScript, $this);

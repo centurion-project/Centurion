@@ -1,0 +1,61 @@
+<?php
+    $this->headScript()->appendFile('cui/plugins/utils/jquery.form.js');
+    $this->headScript()->captureStart();
+?>
+jQuery(document).ready(function() {
+    jQuery(':submit').remove();
+    jQuery(":checkbox").click(function(){
+        var form = jQuery(this).parents('form:first');
+        form.parent().append('<img src="/cui/theme/images/ajax-loader.gif" class="loader" />');
+        form.ajaxSubmit(function(){
+            form.parent().children('img.loader').remove();
+        });
+    });
+});
+<?php $this->headScript()->captureEnd(); ?>
+
+<?php $this->placeholder('headling_1')->captureStart(); ?>
+<h1><?php echo $this->translate('Manage permissions') ?></h1>
+<?php $this->placeholder('headling_1')->captureEnd() ?>
+
+<?php function table($result, $permissions, $groups, $form, $depth = 0) { ?>
+<?php $cpt = 0; ?>
+    <?php if (isset($result['name'])): ?>
+        <tr class="head">
+            <td class="first" colspan="<?php echo count($groups) + 1 ?>" style="padding-left: <?php echo ($depth + 1) * 6; ?>px">
+                <strong><?php echo $result['name'] ?></strong>
+            </td>
+        </tr>
+    <?php endif ?>
+    <?php foreach ($result['tab'] as $tabKey => $tabValue): ?>
+    <tr <?php if (fmod($cpt, 2) == 0): ?> class="even" <?php endif; $cpt++; ?>>
+        <td style="padding-left: <?php echo ($depth + 4) * 6; ?>px" class="first"><?php echo $permissions[$tabKey]; ?></td>
+        <?php foreach ($tabValue as $values): ?>
+            <td>
+                <?php
+                    $form->getElement('permission_id')->setValue($values['permission_id']);
+                    $form->getElement('group_id')->setValue($values['group_id']);
+                    $form->getElement('switch')->setChecked($values['value']);
+
+                    echo $form;
+                ?>
+            </td>
+        <?php endforeach; ?>
+    </tr>
+    <?php endforeach; ?>
+    <?php foreach($result['sub'] as $key => $value): ?>
+        <?php table($value, $permissions, $groups, $form, $depth + 1) ?>
+    <?php endforeach; ?>
+<?php } ?>
+
+<table class="datas datas-permissions">
+    <thead>
+        <tr>
+            <th class="first" style="width:400px"><?php echo $this->translate('Permissions'); ?></th>
+            <?php foreach ($this->groups as $group): ?>
+            <th style="width:75px"><?php echo $group ?></th>
+            <?php endforeach; ?>
+        </tr>
+        <?php table($this->result, $this->permissions, $this->groups, $this->form); ?>
+    </thead>
+</table>

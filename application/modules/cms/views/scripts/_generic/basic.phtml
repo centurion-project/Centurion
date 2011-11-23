@@ -1,0 +1,19 @@
+<?php 
+Centurion_Cache_TagManager::addTag($this->flatpageRow);
+?>
+
+<?php 
+if ($this->flatpageRow->description)
+        $this->headMeta()->appendName('description', $this->flatpageRow->description);
+
+if ($this->flatpageRow->keywords)
+    $this->headMeta()->appendName('keywords', $this->flatpageRow->keywords);
+    
+Centurion_Cache_TagManager::addTag($this->flatpageRow);
+$this->headTitle()->prepend(strip_tags($this->flatpageRow->title) . ' - ');
+?>
+<h2 class="heading-3"><?php echo $this->flatpageRow->title; ?></h2>
+
+<p class="description rte">
+    <?php echo $this->flatpageRow->body; ?>
+</p>

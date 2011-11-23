@@ -1,0 +1,25 @@
+<?php 
+//TODO: fix the http_build_query because it's sad
+?>
+<div class="pager">
+    <?php if ($this->previous):?>
+        <a class="first" href="<?php echo $this->url(array('page' => 0)) . '?' . http_build_query($this->filter->getValues(), '', '&amp;');?>"><?php echo $this->translate('First')?></a>
+        <a class="previous" href="<?php echo $this->url(array('page' => $this->previous)) . '?' . http_build_query($this->filter->getValues(), '', '&amp;');?>"><?php echo $this->translate('Previous'); ?></a>  
+    <?php else:?>
+        <a class="first" href="#"></a>
+        <a class="previous" href="#"></a>  
+    <?php
+    endif;
+    $currentTotalItemCount = ($this->current - 1) * $this->itemCountPerPage;
+    ?>
+    <span class="infos"><?php echo $this->translate('<strong>%d-%d</strong> of <strong>%d</strong>', $currentTotalItemCount + 1,
+                                                $currentTotalItemCount + $this->currentItemCount,
+                                                $this->totalItemCount);?></span>
+    <?php if ($this->next):?>
+        <a class="next" href="<?php echo $this->url(array('page' => $this->next)) . '?' . http_build_query($this->filter->getValues(), '', '&amp;');?>"><?php echo $this->translate('Next')?></a>
+        <a class="last" href="<?php echo $this->url(array('page' => $this->pageCount)). '?' . http_build_query($this->filter->getValues(), '', '&amp;');?>"><?php echo $this->translate('Last'); ?></a>  
+    <?php else:?>
+        <a class="next" href="#"></a>
+        <a class="last" href="#"></a>  
+    <?php endif;?>
+</div>

@@ -1,0 +1,101 @@
+<?php
+    $baseUrl = $this->baseUrl();
+    $this->headMeta()->appendHttpEquiv('Content-Type', 'text/html; charset=UTF-8')
+                     ->appendHttpEquiv('Content-Language', 'fr-FR');
+    $this->headLink()->headLink(array('rel' => 'favicon' , 'href' => $baseUrl.'/images/favicon.ico'), 'PREPEND');
+    $this->headScript()->prependFile($baseUrl.'/layouts/backoffice/js/all.js');
+    $this->headScript()->prependFile($baseUrl.'/cui/jquery.CUI.js');
+    $this->headScript()->prependFile($baseUrl.'/cui/libs/jquery.js');
+
+    $this->headLink()->appendStylesheet($baseUrl.'/layouts/backoffice/styles.css');
+?>
+<?php echo $this->doctype('HTML5') ?>
+<html>
+<head>
+    <base href="<?php echo $this->serverUrl($baseUrl); ?>/" />
+    <!--[if IE]>
+    <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <?php echo $this->headTitle() ?>
+    <?php echo $this->headLink() ?>
+    <?php echo $this->headMeta() ?>
+    <?php echo $this->headStyle() ?>
+    <?php echo $this->headScript() ?>
+
+    <META http-equiv="Cache-Control" content="no-cache">
+    <META http-equiv="Pragma" content="no-cache">
+    <META http-equiv="Cache" content="no store">
+    <META http-equiv="Expires" content="0">
+</head>
+
+<body id="<?php echo $this->placeholder('body_id'); ?>" class="toggle-sidebars">
+    <header class="h">
+        <h1>
+            <a href="<?php echo $this->url(array(), 'admin', true); ?>">
+                Centurion - Back Office
+            </a>
+        </h1>
+        <?php if ($this->user()->hasIdentity()): ?>
+        <nav>
+            <?php
+                  $navigation = $this->navigation()->getContainer();
+                  $navigation = $navigation->findOneByLabel('Backoffice');
+                  $menu = $this->navigation()->menu()->setUseTranslator(false);
+                  if ($navigation !== null) :
+                      echo $this->navigation()->menu()
+                                              ->setUlClass('main')
+                                              ->renderMenu($navigation, array('maxDepth' =>  1));
+                    endif;
+                                          ?>
+
+            <span class="user">
+                <span class="icon"></span>
+                <?php echo $this->user()->getIdentity() ?>, <a href="<?php echo $this->url(array('controller' => 'login', 'action' => 'logout', 'module' => 'admin'), 'default'); ?>"><?php echo $this->translate('Log out@backoffice'); ?></a> &nbsp;|&nbsp; <a href="/"><?php echo $this->translate('View website@backoffice'); ?></a>
+            </span>
+        </nav>
+        <?php endif; ?>
+        <?php /*?>
+        <form class="search">
+            <div>
+                <input type="text" class="q" name="q" placeholder="Search" value="Search" />
+                <input type="image" class="icon valid" name="valid" value="Valid" src="/layouts/backoffice/images/px.png" />
+            </div>
+        </form>
+        <?php */ ?>
+    </header>
+
+    <section class="<?php echo $this->placeholder('section-class');?>">
+        <?php if ($this->user()->hasIdentity() && $navigation !== null): ?>
+        <nav>
+            <?php
+                $current = $menu->findActive($navigation, 0, 0);
+            ?>
+            <?php if ($current): ?>
+                <?php echo $menu->renderMenu($current['page'], array('ulClass' => 'contents')) ?>
+            <?php endif; ?>
+        </nav>
+        <?php endif; ?>
+
+        <header class="sh">
+            <?php if ($this->placeholder('breadcrumb')) : ?>
+                <div id="breadcrumb">
+                <?php echo $this->placeholder('breadcrumb'); ?>
+                </div>
+            <?php endif; ?>
+            <?php if ($this->placeholder('headling_1')): ?>
+                <?php echo $this->placeholder('headling_1') ?>
+            <?php endif ?>
+        </header>
+
+        <aside>
+            <?php echo $this->placeholder('aside') ?>
+        </aside>
+
+        <section>
+           <?php echo $this->layout()->content ?>
+           <div class="clear">&nbsp;</div>
+        </section>
+    </section>
+    <?php echo $this->bottomScript() ?>
+</body>
+</html>

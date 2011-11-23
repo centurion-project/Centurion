@@ -1,0 +1,36 @@
+<?php 
+    $baseUrl = $this->baseUrl();
+    $this->headLink()->appendStylesheet($baseUrl.'/layouts/backoffice/styles.css');
+    $this->headScript()->appendFile($baseUrl.'/layouts/backoffice/js/all.js')
+                       ->prependFile($baseUrl.'/cui/libs/jquery-ui.js')
+                       ->prependFile($baseUrl.'/cui/libs/jquery.js');
+?>
+<!DOCTYPE html>
+<html>
+<head>
+    <!--[if IE]>
+    <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <?php echo $this->headTitle() ?>
+    <base href="<?php echo $baseUrl; ?>/" />
+    <?php echo $this->headLink() ?>
+    <?php echo $this->headMeta() ?>
+    <?php echo $this->headStyle() ?>
+    <?php echo $this->headScript() ?>
+
+    <META http-equiv="Cache-Control" content="no-cache">
+    <META http-equiv="Pragma" content="no-cache">
+    <META http-equiv="Cache" content="no store">
+    <META http-equiv="Expires" content="0">
+</head>
+
+	<body <?php if($this->placeholder('body_id')!= '') echo 'id="'.$this->placeholder('body_id').'"'; ?> <?php if($this->placeholder('body_class') != '') echo 'class="'.$this->placeholder('body_class').'"'; ?>>
+	<section class="login-box">
+	    <?php echo $this->layout()->content ?>
+	</section>
+	<footer>
+	    <a href="http://centurion-project.org" title="zend cms"><span class="icon icon-arrow"></span>Centurion website</a> 
+	    &copy; 2011 Centurion project
+	</footer>
+	</body>
+</html>

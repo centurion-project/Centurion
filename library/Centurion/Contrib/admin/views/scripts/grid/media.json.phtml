@@ -1,0 +1,32 @@
+<?php
+
+$json = array();
+$head = array();
+
+$json['header'] = $head;
+$json['rows'] = array();
+
+foreach ($this->result as $key => $result) {
+    $this->row = $result['row'];
+
+    if (isset($this->coverName))
+        $cover = $this->row->{'get'.$this->coverName.'OrPx'}();
+    else
+        $cover = $this->row;
+
+    $tab = array();
+    $tab[] = '<div style="background: url('.$cover->getStaticUrl(array('cropcenterresize' => array('width' => 174, 'height' => 94))).'); width: 174px; height: 94px;" class="picture"></div>';
+    $tab[] = '<input type="checkbox" value="' . $this->row->id . '" name="rowId[]"><a href="' .  $this->url(array('id' => $this->row->id, 'action' => 'get')) . '" class="edit">' . $this->row->title . '</a>';
+    $tab[] = $this->partial($this->_selectScript(array(sprintf('%s/_actions.phtml', $this->controller),
+                                     'grid/_actions.phtml')), $this);
+    $json['rows'][] = $tab;
+}
+
+$json['pager'] = unserialize($this->paginationControl($this->paginator,
+                                            'Sliding',
+                                            'grid/pagination.json.phtml', array('filter' => $this->filter)));
+
+$json['filter'] = $this->url(array());
+$json['debug'] = $this->debug;
+
+echo $this->json($json);

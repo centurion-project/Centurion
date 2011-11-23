@@ -1,0 +1,55 @@
+<?php
+
+$this->gridForm()->addHeader($this->form, array(
+    'elements' =>  array('title'),
+));
+
+$this->gridForm()->addMain($this->form, array(
+    'elements'      => 'body',
+    'noFieldset'    => true
+));
+$this->gridForm()->addMain($this->form, array(
+    'label'         => 'Image',
+    'description'   => 'Image',
+    'elements'      => array('cover')
+));
+
+$this->gridForm()->addMain($this->form, array(
+    'label'         => 'SEO',
+    'description'   => 'SEO',
+    'elements'      => array('url',
+                             'description',
+                             'keywords',
+                             'route')
+));
+
+$this->gridForm()->addAside($this->form, array(
+    'label'     => 'Publish',
+    'elements'  => array('is_published',
+                         'published_at')
+));
+$this->gridForm()->addAside($this->form, array(
+    'label'     => 'Infos',
+    'elements'  => array('created_at',
+                         'updated_at')
+));
+
+if($this->form->getElement('flatpage_template_id') != null  ) {
+    $this->gridForm()->addAside($this->form, array(
+        'label'     => 'Flatpage',
+        'elements'  => array('flatpage_template_id',
+                             'flatpage_position_id',
+                             'mptt_parent_id')
+    ));
+}
+
+
+if($this->form->getElement('created_at') != null && $this->form->getElement('updated_at') != null) {
+    $this->gridForm()->addAside($this->form, array(
+        'label'     => 'Infos',
+        'elements'  => array('created_at',
+                             'updated_at')
+    ));
+}
+
+echo $this->partial('grid/_form.phtml', $this);

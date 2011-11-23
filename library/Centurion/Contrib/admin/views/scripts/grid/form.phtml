@@ -1,0 +1,10 @@
+<?php
+
+$this->gridForm()->addMain($this->form, array(
+    'label'         => 'Form',
+    'elements'      => array_keys($this->form->getElements())
+    //'elements'      => array('body')
+    
+));
+
+echo $this->partial('grid/_form.phtml', $this);

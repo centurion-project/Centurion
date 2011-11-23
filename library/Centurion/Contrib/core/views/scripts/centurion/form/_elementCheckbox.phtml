@@ -1,0 +1,57 @@
+<?php
+$name = $this->element->getFullyQualifiedName();
+$label = $this->element->getLabel();
+$description = $this->element->getDescription();
+$errors = $this->element->getMessages();
+?>
+
+<?php
+if (!isset($this->element->noFormItem)):
+?>
+<div class="form-item<?php if(isset($this->element->large)) echo ' form-item-large'; if(count($errors)>0) echo ' form-item-warning'?>">
+<?php
+endif;
+?>
+
+    <div class="field-wrapper">
+    <label for="<?php echo $name?>">
+<?php
+$decorator = new Zend_Form_Decorator_ViewHelper(array());
+$decorator->setElement($this->element);
+
+echo $decorator->render($this->content);
+?>
+<?php if (null !== $label):
+    $attribs = array();
+
+//    if (isset($this->element->noLabel))
+//        $attribs['class'] = 'label-hidden';
+    /*
+    ?>
+        <label for="<?php echo $name?>"><?php echo $label;?></label>
+    <?php*/
+    echo $label;
+    endif;?>
+
+
+    </label>
+    <?php if (count($errors) > 0):?>
+    <ul class="field-errors">
+        <?php foreach($errors as $error):?>
+        <li><?php echo $error?></li>
+        <?php endforeach;?>
+    </ul>
+    <?php endif;?>
+    <?php if (null !== $description):?>
+        <p class="field-description"><?php echo $description?></p>
+    <?php endif;?>
+    </div>
+<?php
+if (!isset($this->element->noFormItem) && !isset($this->element->noClear)):
+?>
+    <div class="clear">&nbsp;</div>
+</div>
+<?php
+endif;
+?>
+

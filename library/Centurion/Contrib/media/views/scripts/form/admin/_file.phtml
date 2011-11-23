@@ -1,0 +1,66 @@
+<?php
+$name = $this->element->getFullyQualifiedName();
+$label = $this->element->getFilename()->getLabel();
+$label = ($label ? $label : $name);
+$description = $this->element->getFilename()->getDescription();
+$errors = $this->element->getFilename()->getMessages();
+$sizeLimit = $this->element->getFilename()->getValidator('Size')->getMax(true);
+?>
+<div class="form-item<?php if (isset($this->element->getFilename()->large)) echo ' form-item-large'; if (count($errors)>0) echo ' form-item-warning'?>">
+    <?php
+    if (null !== $label):
+    $attribs = array();
+    if (isset($this->element->getFilename()->large))
+        $attribs['class'] = 'label-hidden';
+    echo $this->formLabel(sprintf('filename_%s', $name), ucfirst($label), $attribs);
+    /*
+    ?>
+        <label for="<?php echo $name?>"><?php echo $label;?></label>
+    <?php*/
+    endif;?>
+
+    <div class="field-wrapper field-upload-wrapper">
+        <div class="float-right">
+            <p class="field-description"><?php echo htmlentities($this->element->description, null, 'UTF-8');?><?php /*?>.jpg, .gif, .png, 600px-width max.<?php */?></p>
+        </div>
+        <?php
+        $file = $this->element->getFilename();
+        $file->setAttrib('class' , 'field-file');
+        $decorator = new Zend_Form_Decorator_File(array());
+        $decorator->setElement($file);
+        echo $decorator->render($this->content);
+        ?>
+
+        <div class="ui-button-tiny-squared">
+            <a href="#" class="ui-button ui-button-text-icon ui-button-bg-white-gradient">
+                <span class="ui-icon ui-icon-arrowthickstop-1-n ui-icon-red"></span>
+                <span class="ui-button-text">Browse</span>
+            </a>
+        </div>
+
+        <?php if (count($errors) > 0):?>
+        <ul class="field-errors">
+            <?php foreach($errors as $error): ?>
+            <li><?php echo $error ?></li>
+            <?php endforeach;?>
+        </ul>
+        <?php endif;?>
+
+    </div>
+    <?php
+    if ($this->element->hasInstance()):
+        $instance = $this->element->getInstance();
+    ?>
+    <div class="field-wrapper field-preview-wrapper">
+        <?php echo $this->element->{sprintf('filename_delete_%s', $name)}->clearDecorators()->addDecorator('viewHelper'); ?>
+        <?php /*?><input type="checkbox" checked="checked" value="1" class="field-checkbox" name="filename_delete_logo"><?php */?>
+        <img src="<?php echo $instance->getStaticUrl(array('resize' => array('maxWidth' => 75, 'maxHeight' => 75))); ?>" class="picture" />
+        <?php echo $this->formHidden('MAX_FILE_SIZE', $sizeLimit);?>
+        <div class="description"><?php echo htmlentities($instance->filename, null, 'UTF-8'); ?></div>
+        <div class="clear"></div>
+    </div>
+    <?php endif; ?>
+
+    <div class="clear"></div>
+</div>
+

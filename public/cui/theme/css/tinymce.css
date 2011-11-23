@@ -1,0 +1,30 @@
+/*
+* STRUCTURE CSS
+* Centurion UI - CSS-JS Framework
+* Copyright (c) 2009
+* Dual licensed under the MIT (MIT-LICENSE.txt) and GPL (GPL-LICENSE.txt) licenses.
+*/
+
+
+/* ------------------------------------------------------------------------------------
+BASICS */
+
+#mce_0_parent,
+#mce_0_parent table.mceLayout,
+#mce_0_parent table.mceLayout tr.mceFirst,
+#mce_0_parent table.mceLayout tr.mceFirst td,
+#mce_0_parent table.mceLayout .mceToolbar  {	background:none transparent; border:none; padding:0; margin:0;  }
+
+#mce_0_parent {									}
+#mce_0_parent .mceIframeContainer {				border:solid 1px #c3c3c3;
+												-moz-border-radius:3px; -khtml-border-radius: 3px; -webkit-border-radius:3px; }
+
+#mce_0_parent .mceButton {						margin:0; border: solid 1px #efefef; 
+												-moz-border-radius:3px; -khtml-border-radius: 3px; -webkit-border-radius:3px; }
+#mce_0_parent .mceButton:hover,
+#mce_0_parent .mceButtonActive {				border-color:#c3c3c3; background:#fff;  }
+
+html body#tinymce {								padding:5px; margin:0; color:#333; 
+												background:url(../images/bg-input-text.png) repeat-x scroll 0 0 #fff;
+												/*font:normal 12px/17px Arial, sans-serif;*/ }
+												

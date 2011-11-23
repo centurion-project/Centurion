@@ -1,0 +1,45 @@
+<div class="toolbar toolbar-top">
+    <div class="pager">
+        <?php if ($this->page > 0):?>
+            <a class="first" href="<?php echo $this->url(array('page' => null));?>"><?php echo $this->translate('First')?></a>
+            <a class="previous" href="<?php echo $this->url(array('page' => $this->page - 1));?>"><?php echo $this->translate('Previous'); ?></a>  
+        <?php else:?>
+            <a class="first" href="#"></a>
+            <a class="previous" href="#"></a>  
+        <?php
+        endif;
+        
+        $currentTotalItemCount = ($this->page) * $this->itemCountPerPage;
+        ?>
+        <span class="infos"><?php echo $this->translate('<strong>%d-%d</strong> of <strong>%d</strong>', $currentTotalItemCount + 1,
+                                                    $currentTotalItemCount + $this->itemCountPerPage,
+                                                    $this->totalItemCount);?></span>
+        <?php if ($this->totalItemCount > $currentTotalItemCount):?>
+            <a class="next" href="<?php echo $this->url(array('page' => $this->page + 1));?>"><?php echo $this->translate('Next')?></a>
+            <a class="last" href="<?php echo $this->url(array('page' => ($this->totalItemCount / $this->itemCountPerPage)));?>"><?php echo $this->translate('Last'); ?></a>  
+        <?php else:?>
+            <a class="next" href="#"></a>
+            <a class="last" href="#"></a>  
+        <?php endif;?>
+    </div>
+    &nbsp;
+</div>
+<div class="clear">&nbsp;</div>
+<?php
+$this->placeholder('aside')->captureStart();
+?>
+<div class="box grid-filter">
+<h2 class="hint">Logs files</h2>
+
+<?php
+foreach ($this->files as $key => $file) :
+    echo '<a href="'. $this->url(array('file' => urlencode($key))) .'">' . $key . '</a><br />';
+endforeach;
+$this->placeholder('aside')->captureEnd();
+?>
+</div>
+<pre style="overflow: auto;">
+<?php
+echo $this->errorLog;
+?>
+</pre>

@@ -1,0 +1,75 @@
+<?php
+
+if (!($this->element instanceof Zend_Form_Element_Select)&& $this->element instanceof Zend_Form_Element_Multi || $this->element instanceof Zend_Form_Element_Checkbox) {
+    echo $this->partial('centurion/form/_element-multi.phtml', $this);
+    return;
+}
+
+if ($this->element instanceof Centurion_Form_Element_Info) {
+    $decorator = new Zend_Form_Decorator_ViewHelper(array());
+    $decorator->setElement($this->element);
+    echo '<p><strong>' . $this->element->getLabel() . '</strong>:';
+    echo $decorator->render($this->content) . '</p>';
+    return;
+}
+
+$name = $this->element->getFullyQualifiedName();
+$label = $this->element->getLabel();
+$description = $this->element->getDescription();
+$errors = $this->element->getMessages();
+
+?>
+<div class="form-item<?php if ($this->element instanceof Zend_Form_Element_Hidden || $this->element instanceof Zend_Form_Element_Hash) echo ' form-item-hidden';
+if (isset($this->element->large)) echo ' form-item-large';
+if (count($errors)>0) echo ' form-item-warning';
+if ($this->element->isRequired()) echo ' form-item-required';
+if ($this->element->divClass !==null) echo ' ' . $this->element->divClass;
+?>
+">
+    <?php if (null !== $label && !($this->element instanceof Zend_Form_Element_Submit)) :
+        $attribs = array();
+
+        if (isset($this->element->noLabel))
+            $attribs['class'] = 'label-hidden';
+
+        if ($this->element->isRequired() && '' != trim($label)) {
+            $attribs['escape'] = false;
+            $label .= '&nbsp;<span class="required">*</span>';
+        }
+
+        // If an element have an attrib 'escape', add the same configuration for his label
+        if (null !== $this->element->getAttrib('escape')) {
+            $attribs['escape'] = $this->element->getAttrib('escape');
+        }
+
+        echo $this->formLabel($name, $label, $attribs);
+        /*
+        ?>
+        <label for="<?php echo $name?>"><?php echo $label;?></label>*/?>
+    <?php endif;?>
+    <div class="field-wrapper">
+        <?php
+
+        if (isset($this->element->large))
+            $this->element->setAttrib('large', null);
+
+        $decorator = new Zend_Form_Decorator_ViewHelper(array());
+        $decorator->setElement($this->element);
+
+        echo $decorator->render($this->content);
+        ?>
+        <?php if (count($errors) > 0):?>
+            <ul class="field-errors">
+                <?php foreach($errors as $error):?>
+                <li><?php echo $this->escape($error)?></li>
+                <?php endforeach;?>
+            </ul>
+        <?php endif;?>
+        <?php if (null !== $description):?>
+            <p class="field-description"><?php echo $description?></p>
+        <?php endif;?>
+    </div>
+    <?php if (!isset($this->element->noClear)) :?>
+        <div class="clear"></div>
+    <?php endif;?>
+</div>

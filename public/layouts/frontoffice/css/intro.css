@@ -1,0 +1,105 @@
+/*Status*/
+body#status {               background:url("../../backoffice/images/login/bg.jpg") top center no-repeat #d2e2eb; text-align:center; }
+body#status .wrap {         margin:50px auto 50px; width:760px; text-align:left; }
+body#status header {        padding:20px; position:relative; }
+body#status header .demo {  position:absolute; right:0; bottom:25px;  }
+body#status h1 {            margin:0; font:italic 44px/44px Georgia, serif; color:#4a4a4a; text-shadow: 1px 1px 1px #FFFFFF; }
+body#status section {       margin-bottom:20px; padding:0; background:none #FFFFFF;
+                            -webkit-border-radius: 4px; -moz-border-radius: 4px; border-radius: 4px; }
+body#status .left {         padding:20px; float:left; width:440px; position:relative; background:none; }
+body#status .right {        padding:20px; float:left; width:220px; position:relative; background:none; }
+body#status .middle {       padding:20px 36px; border-top:solid 1px #ddd; border-bottom:solid 1px #ddd; background:#f4f4f4;}
+body#status .middle p {     margin-bottom:10px; }
+body#status .bottom {       padding:20px; background:#fff;
+                            -webkit-border-bottom-right-radius: 4px; -webkit-border-bottom-left-radius: 4px;
+                            -moz-border-radius-bottomright: 4px; -moz-border-radius-bottomleft: 4px;
+                            border-bottom-right-radius: 4px; border-bottom-left-radius: 4px; }
+body#status h2 {            color:#4a4a4a;}
+body#status .ui-icon {      float:left; margin:1px 5px 0 0;  }
+body#status .checklist li { float:left; margin:0 20px 2px 0; width:200px; color:#888; }
+body#status .checklist li.red { color:#ff2f05; }
+body#status .checklist li.orange { color:#FF7F00; }
+body#status .checklist li.yellow { color:#aaaa00; }
+body#status footer {        margin:0 auto; padding:15px 0 0; width:760px; border-top:dotted 1px #939ea4; color:#666;
+                            text-align:left; }
+body#status footer a {      float:right; padding-right:18px; position:relative; text-decoration:none; }
+body#status footer a:hover {color:#09f; }
+body#status footer .icon-arrow { background-position:-80px -32px; position:absolute; right:0; top:2px; }
+.module-list {              margin-left:16px; list-style:disc none outside; }
+.module-list li {           margin:0 0 20px; }
+.module-list li h3 {        font:bold 14px/18px Arial;  }
+.module-list li p {         margin:0;  }
+body#status section a {     color:#09f;   }
+.doc-list-1 {               margin-right:20px; float:left; width:220px; }
+.doc-list-1 li {            margin-left:16px; list-style:disc none outside; }
+body#status p {             font-size:12px; color:#888 }
+
+
+/*FirstPage*/
+body#install-complete {     background:url("../../backoffice/images/login/bg.jpg") top center no-repeat #d2e2eb; text-align:center; }
+body#install-complete 
+.wrap {                     margin:50px auto 50px; width:760px; text-align:left; }
+
+body#install-complete 
+header.h {                  border-bottom:none;display:none}
+body#install-complete 
+.header {                   padding:20px; position:relative;height:16px;margin-bottom:25px;}
+body#install-complete 
+.header h1 a {              margin:0; padding:0; position:absolute; left:20px; top:0; height:16px; width:134px;
+                            text-indent:-9999px;  line-height:1px;background:url('../images/centurion/centurion-logo.png');width:172px;height:44px;}
+body#install-complete 
+.header .slogan {           position:absolute; bottom:5px; left:230px; font:normal 10px/12px Arial, sans-serif; 
+                            color:#444; display:block; text-align:left; }
+body#install-complete h1 {  margin:0; font:italic 44px/44px Georgia, serif; color:#4a4a4a; text-shadow: 1px 1px 1px #FFFFFF; }
+body#install-complete 
+section {                   margin-bottom:20px; padding:0; background:transparent none;
+                            -webkit-border-radius: 4px; -moz-border-radius: 4px; border-radius: 4px;}
+body#install-complete 
+.middle {                   padding:20px 36px; border-bottom:solid 1px #ddd; background:#f4f4f4; text-align:center;-webkit-border-top-left-radius: 5px;
+                            -webkit-border-top-right-radius: 5px;-moz-border-radius-topleft: 5px;-moz-border-radius-topright: 5px;border-top-left-radius: 5px;border-top-right-radius: 5px;}
+body#install-complete 
+.middle p {                 margin-bottom:10px; }
+body#install-complete 
+.bottom {                   padding:20px; background:#fff;
+                            -webkit-border-bottom-right-radius: 4px; -webkit-border-bottom-left-radius: 4px;
+                            -moz-border-radius-bottomright: 4px; -moz-border-radius-bottomleft: 4px;
+                            border-bottom-right-radius: 4px; border-bottom-left-radius: 4px; }
+body#install-complete h2 {  color:#4a4a4a;}
+
+body#install-complete 
+footer {                    margin:0 auto; padding:15px 0 0; width:760px; border-top:dotted 1px #939ea4; color:#666;text-align:left; }
+body#install-complete 
+footer a {                  float:right; padding-right:18px; position:relative; text-decoration:none; }
+body#install-complete 
+footer a:hover {            color:#09f; }
+body#install-complete 
+footer .icon-arrow {        background-position:-80px -32px; position:absolute; right:0; top:2px; }
+
+body#install-complete section a {     color:#09f;   }
+.doc-list-1 {               margin-right:20px; float:left; width:220px; }
+.doc-list-1 li {            margin-left:16px; list-style:disc none outside; }
+body#install-complete p {   font-size:12px; color:#888 }
+
+body#install-complete 
+.shadow-bottom {            background:url('../images/centurion/shadow-bottom.png'); width:760px;height:15px;}
+body#install-complete 
+.shadow-top {               background:url('../images/centurion/shadow-top.png'); width:760px;height:20px;}
+body#install-complete 
+.heading-1 {                font: normal 30px/41px Helvetica, Arial, sans-serif; text-shadow:1px 1px 1px #fff;margin-bottom:20px;}
+
+/*Btns*/
+body#install-complete 
+.btn-inner {                display:inline-block;padding:10px;background:#e5e4e4; -webkit-border-radius: 5px;-moz-border-radius: 5px;border-radius: 5px;
+                            border:1px solid #e5e4e4;-webkit-box-shadow: 0px 1px 0px 0px rgba(255, 255, 255, 0.65);
+                            -moz-box-shadow: 0px 1px 0px 0px rgba(255, 255, 255, 0.65);box-shadow: 0px 1px 0px 0px rgba(255, 255, 255, 0.65);}
+body#install-complete .btn {display:inline-block;padding:15px 45px;-webkit-border-radius: 5px;-moz-border-radius: 5px;border-radius: 5px;
+                            border:1px solid #0f9efe;background: #3db0fc;text-decoration:none;
+                            background: -moz-linear-gradient(top,  #3db0fc 61%, #0a9dff 100%);background: -webkit-gradient(linear, left top, left bottom, color-stop(61%,#3db0fc), color-stop(100%,#0a9dff));
+                            background: -webkit-linear-gradient(top,  #3db0fc 61%,#0a9dff 100%);background: -o-linear-gradient(top,  #3db0fc 61%,#0a9dff 100%);
+                            background: -ms-linear-gradient(top,  #3db0fc 61%,#0a9dff 100%);background: linear-gradient(top,  #3db0fc 61%,#0a9dff 100%);filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#3db0fc', endColorstr='#0a9dff',GradientType=0 );
+                            -webkit-box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.1);-moz-box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.1);box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.1);}
+body#install-complete 
+.btn:hover {                background: #3db0fc;}
+
+body#install-complete 
+.btn-text {                 font: bold 16px/20px Helvetica, Arial, sans-serif; color:#FFF; text-shadow: 0px 1px 0px #000000;filter: dropshadow(color=#000000, offx=0, offy=1);}

@@ -1,0 +1,46 @@
+<?php
+
+if (null !== $this->element->getAttrib('formItem')):
+?>
+<div class="form-item<?php if(null !== $this->element->getAttrib('large')) echo ' form-item-large';?>">
+<?php endif;
+
+if (null !== $this->element->getAttrib('large'))
+    $this->element->removeAttrib('large');
+
+$description = $this->element->getDescription();
+if (null !== $description):
+    if (false !== $this->element->getDecorator('Description')) {
+//        $decorator = $this->element->getDecorator('Description');
+//        $decorator->setElement($this->element);
+//        $this->content = $this->element->getDecorator('Description')->render($this->content);
+//        $this->element->removeDecorator('Description');
+    } else {
+        $this->content = '<p class="form-hint">' . $description . '</p>' . $this->content;
+    }
+    //$this->content = '<legend>'$description'</legend>' . $this->content;
+endif;
+
+if ($this->element->getAttrib('required')) {
+    $this->element->setLegend($this->element->getLegend() . '&nbsp;<span class="required">*</span>');
+    $this->element->setOptions(array('escape' => false));
+    $this->element->removeAttrib('required');
+}
+
+$hint = $this->element->getAttrib('hint');
+
+if (null !== $hint):
+    $this->content = '<p class="form-hint">'.$hint.'</p>' . $this->content;
+endif;
+
+//foreach ($this->element as $el):
+//    $this->content .= (string) $el;
+//endforeach;
+$this->content .= "\n";
+
+echo $this->fieldset($this->element->getFullyQualifiedName(), $this->content, $this->element->getAttribs());
+
+if (null !== $this->element->getAttrib('formItem')):?>
+</div>
+<?php $this->element->removeAttrib('formItem'); ?>
+<?php endif;?>

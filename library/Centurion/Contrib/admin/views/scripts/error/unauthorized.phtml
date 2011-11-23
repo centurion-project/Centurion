@@ -1,0 +1,15 @@
+<h1><?php echo $this->translate("Unauthorized action"); ?></h1>
+<p><?php echo $this->translate("As a %s user, you don't have the permission to accomplish this action.", $this->user()->getIdentity()->username); ?></p>
+<div style="margin-top: 20px;">
+    <p>
+        <?php if ($this->user()->hasIdentity()): ?>
+            <a href="javascript:history.go(-1)" title="<?php echo $this->translate('Go back') ?>">
+                <?php echo $this->translate('Go back') ?>
+            </a>
+        <?php else: ?>
+            <a href="<?php echo $this->url(array('controller' => 'login', 'action' => 'index', 'module' => 'admin')) ?>" title="<?php echo $this->translate('Login') ?>">
+                <?php echo $this->translate('Login') ?>
+            </a>
+        <?php endif; ?>
+    </p>
+</div>

@@ -1,0 +1,52 @@
+<?php echo $this->doctype('HTML5'); ?>
+<?php 
+$this->headScript()->prependFile('/layouts/backoffice/js/all.js');
+$this->headScript()->prependFile('/cui/jquery.CUI.js');
+$this->headScript()->prependFile('/cui/libs/jquery.js');
+
+$this->headLink()->appendStylesheet('/layouts/frontoffice/styles.css');
+?>
+<html>
+    <head>
+        <!--[if IE]>
+        <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+        <![endif]-->
+        <?php echo $this->headTitle() ?>
+        <?php echo $this->headLink() ?>
+        <?php echo $this->headMeta() ?>
+        <?php echo $this->headStyle() ?>
+        <?php echo $this->headScript() ?>
+    </head>
+    <body<?php if($this->placeholder('body_id')!= '') :
+        echo ' id="'.$this->placeholder('body_id') . '"'; 
+     endif;
+     if($this->placeholder('body_class') != '') echo ' class="'.$this->placeholder('body_class').'"'; ?>>
+        <header class="h">
+            <h1>
+                <a href="<?php echo $this->url(array(), 'admin', true); ?>">
+                    Centurion - Front Office
+                </a>
+            </h1>
+            <nav>
+                <?php
+                      $navigation = $this->navigation()->getContainer();
+                      $navigation = $navigation->findOneByLabel('Frontoffice');
+                      $menu = $this->navigation()->menu()->setUseTranslator(false);
+                      if ($navigation !== null) :
+                          echo $this->navigation()->menu()
+                                                  ->setUlClass('main')
+                                                  ->renderMenu($navigation, array('maxDepth' =>  3));
+                        endif;
+                ?>
+            </nav>
+        </header>
+        <section>
+            <aside>
+                <?php echo $this->placeholder('aside') ?>
+            </aside>
+            <section>
+                <?php echo $this->layout()->content ?>
+            </section>
+        </section>
+    </body>
+</html>

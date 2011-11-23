@@ -1,0 +1,57 @@
+<?php
+    $this->placeholder('body_id')->set('login');
+    
+    $this->form->getElement('remember_me')->setAttrib('noFormItem', true);
+    $this->form->addDisplayGroup(array('remember_me'), 'checkbox');
+    $this->form->getDisplayGroup('checkbox')->setAttrib('class', 'form-checkbox')
+                                            ->setAttrib('large', 'true')
+                                            ->setAttrib('formItem', 'true');
+
+
+    //$this->form->removeDecorator('Fieldset');
+
+    //$this->form->getElement('send')->getDecorator('Label')
+    //                               ->setOption('tagClass', 'hidden');
+
+    $this->form->login->setAttrib('large', true);
+    $this->form->password->setAttrib('large', true);
+    //
+    //$this->gridForm($this->form, array(), array('Centurion administration'=>array('login', 'password', 'checkbox')), array());
+
+    $this->gridForm()->addMain($this->form, array(
+        'label'         => 'Log in to your Centurion account',
+        'elements'      => array('login',
+                                 'password',
+                                 'checkbox')
+    ));
+        
+    //                                      ->getDecorator('HtmlTag')->setOption('class', 'checklist');
+
+
+
+    $this->form->addElement('button', '_login', array('label' => $this->translate('Log in'), 'type' => 'submit', 'class' => '"ui-button ui-button-text-only'));
+    $this->form->addDisplayGroup(array('_login'), 'submit');
+    //$this->form->getDisplayGroup('submit')->setAttrib('class', 'submit large nicyless border-top');
+
+    $decoratorsArray = array(
+        'FormElements',
+        array('HtmlTag', array('tag' => 'div', 'class' => 'form-submit'))
+    );
+
+    $this->form->getDisplayGroup('submit')->setDecorators($decoratorsArray);
+    $this->form->addInDisplayGroup('submit', '_main');
+?>
+
+    <div class="inner">
+        <header class="left">
+            <a href="#">Centurion - Back Office</a>
+            <span>We are serious about web platform</span>
+        </header>
+        <div class="right">
+            
+            <?php echo $this->form ?>
+            
+        </div>
+        <div class="clear"></div>
+    </div>
+<div class="clear"></div>

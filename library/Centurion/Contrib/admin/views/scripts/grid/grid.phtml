@@ -1,0 +1,45 @@
+<table cellspacing="0" cellpadding="0" class="grid datas">
+    <tbody class="grid-sortable">
+        <tr>
+            <?php if ($this->showCheckbox):?>
+                <th width="10" class="head first"></th>
+            <?php endif;?>
+            <?php foreach ($this->headCol as $key => $col):
+            $sort = '';
+            if ($this->sort == $key):
+                $sort = ' sorting-'.strtolower($this->order);
+            endif;
+            ?>
+            <th class="head<?php echo $sort?>">
+            <?php if (null !== $col['link']) :?><a href="<?php echo $col['link']?>"><span class="ui-icon"></span><?php endif;?>
+            <?php echo $col['label']?>
+            <?php if (null !== $col['link']) :?></a><?php endif;?>
+            </th>
+            <?php endforeach;?>
+            <th class="head" width="60px"></th>
+        </tr>
+        <tr class="row row-template">
+            <td valign="top" class="first col"></td>
+            <?php foreach ($this->headCol as $key => $col):?>
+            <td valign="top" class="col"></td>
+            <?php endforeach;?>
+            <td valign="top" class="col"></td>
+        </tr>
+        <?php
+        $i = 0;
+        foreach ($this->result as $id => $row):
+        $this->row = $row['row'];
+        unset($row['row']);
+        ?>
+        <tr class="row <?php echo ($i++%2 == 1)?'even':'odd';?>">
+            <?php foreach($row as $key => $val):?>
+             <td valign="top" class="<?php if ($key === 0) echo 'first '?>col"><?php echo $val;?></td>
+            <?php endforeach;?>
+            <td valign="top" class="col">
+                <?php echo $this->partial($this->_selectScript(array(sprintf('%s/_actions.phtml', $this->controller),
+                                         'grid/_actions.phtml')), $this);  ?>
+            </td>
+        </tr>
+        <?php endforeach;?>
+    </tbody>
+</table>

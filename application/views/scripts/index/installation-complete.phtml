@@ -1,0 +1,76 @@
+<?php
+$this->headTitle('It Works');
+$this->placeholder('body_id')->set('install-complete');
+$this->headLink()->appendStylesheet('/layouts/frontoffice/css/intro.css');
+?>
+
+
+<div class="wrap">
+
+    <div class="header">
+        <h1>
+            <a href="/">
+                Centurion - Front Office
+            </a>
+        </h1>
+        <span class="slogan">We are serious<br> about web platforms</span>
+    </div>
+        <div class="clear"></div>
+        <div class="shadow-top"></div>
+        <div class="middle">
+            <h1 class="heading-1">Congratulations guy, all cables are connected !</h1>
+            <span class="btn-inner">
+                <a class="btn" href="/admin">
+                    <span class="btn-text">Enter the machine</span>
+                </a>
+            </span>
+        </div>
+
+        <div class="bottom">
+            <h2>To Know More : </h2>
+            <ul class="doc-list">
+                <li class="doc-list-1">
+                    <ul>
+                        <li class="doc-list-2">
+                            <a href="http://wiki.centurion-project.org/Develop_with_Centurion/The_model_layer">The model layer</a>
+                            <p>Centurion_Db expose an API over the Zend Framework database API. it keeps the main philosophy but add features to make Db usage/querying easier.</p>
+                        </li>
+
+                        <li class="doc-list-2">
+                            <a href="http://wiki.centurion-project.org/Develop_with_Centurion/The_controller_layer">The Controller layer</a>
+                            <p>Centurion provides, in addition to normal feature from Zend Framework, some method to do conditional redirect/forwarding</p>
+                        </li>
+                    </ul>
+                </li>
+                <li class="doc-list-1">
+                    <ul>
+                        <li class="doc-list-2">
+                            <a href="http://wiki.centurion-project.org/Develop_with_Centurion/Forms">Forms</a>
+                            <p>Centurion_Form inherits from Zend_Form, the main feature it override is the rendering process</p>
+                        </li>
+
+                        <li class="doc-list-2">
+                            <a href="http://wiki.centurion-project.org/Develop_with_Centurion/Main_apis">Auth</a>
+                            <p>Centurion provides by default an authentication API that helps you manage users. in fact this is a built-in module that you can find in library/Centurion/Contrib/auth folder.</p>
+                        </li>
+                    </ul>
+                </li>
+
+                <li class="doc-list-1">
+                    <ul>
+                        <li class="doc-list-2">
+                            <a href="http://wiki.centurion-project.org/Develop_with_Centurion/Translation_trait">Translation trait</a>
+                            <p>A little "How To" to implement the translation module in your module</p>
+                        </li>
+                        <li class="doc-list-2">
+                            <a href="http://wiki.centurion-project.org/Develop_with_Centurion/The_view_layer">The View layer</a>
+                            <p>As in a normal Zend Framework application, the view files are .pthml files they are placed into the a view folder inside the scripts sub-folder.</p>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+
+            <div class="clear"></div>
+        </div>
+        <div class="shadow-bottom"></div>
+</div>

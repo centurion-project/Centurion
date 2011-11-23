@@ -1,0 +1,25 @@
+<a href="javascript:history.back()"><?php echo $this->translate('back'); ?></a>
+<hr />
+    DEBUG INFOS :
+    <br />
+    <strong>
+        Exception <em><?php echo get_class($this->exception) ?></em>
+        <u><?php echo $this->exception->getMessage() ?></u> sent in <?php echo $this->exception->getFile() ?> at line <?php echo $this->exception->getLine() ?>
+    </strong>
+    <br />
+    <br />
+    <?php if (null !== $this->profiler):?>
+        LAST QUERY:
+        <br />
+        <strong>
+            <ul>
+                <?php foreach ($this->profiler as $query):?>
+                <li><?php echo $query->getQuery(); ?>
+                </li>
+                <?php endforeach;?>
+            </ul>
+        </strong>
+    <?php endif;?>
+    <br /><br />
+<p><?php echo $this->trace ?></p>
+<hr />

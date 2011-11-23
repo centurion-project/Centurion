@@ -1,0 +1,97 @@
+<?php
+$this->headScript()->captureStart();
+?>
+$(function() {
+    $(".buttonset").CUI('buttonset', {basePath: '<?php echo Zend_Controller_Front::getInstance()->getBaseUrl(); ?>'});
+
+    $(".grid").CUI('grid', {
+        basePath: '<?php echo Zend_Controller_Front::getInstance()->getBaseUrl(); ?>', 
+        callback: function() {
+            $(".field-switcher").CUI('switcher', { basePath: '<?php echo Zend_Controller_Front::getInstance()->getBaseUrl(); ?>', url:"<?php echo $this->url(array('action' => 'switch'));?>"});
+        }
+    });
+    $("input.datepicker").CUI('datepicker', {basePath: '<?php echo Zend_Controller_Front::getInstance()->getBaseUrl(); ?>', dateFormat: '<?php echo $this->dateFormat; ?>'});
+    
+    $(".field-datepicker").CUI('datepicker', {
+        basePath: '<?php echo Zend_Controller_Front::getInstance()->getBaseUrl(); ?>', 
+        changeMonth: true,
+        changeYear: true,
+        dateFormat: '<?php echo $this->dateFormat; ?>'
+    });
+    
+    $(".field-datetimepicker").CUI('datetimepicker', {
+        basePath: '<?php echo Zend_Controller_Front::getInstance()->getBaseUrl(); ?>', 
+        duration: '',
+        showTime: true,
+        showHour: true,
+        showMinute: true,
+        constrainInput: false,
+        stepMinutes: 1,
+        stepHours: 1,
+        altTimeField: '',
+        time24h: false,
+        dateFormat: '<?php echo $this->dateFormat; ?>'
+     });
+});
+
+<?php
+$this->headScript()->captureEnd();
+?>
+
+<?php $this->placeholder('headling_1')->captureStart();?>
+
+<?php if (isset($this->error) || isset($this->infos)) : ?>
+    <div class="ui-state-message"> 
+        <?php if (isset($this->error)): ?>
+            <p class="ui-state-error">
+                <?php echo $this->error;?>
+            </p>
+        <?php endif;?>
+        <?php if (isset($this->infos)): ?>
+            <p class="ui-state-highlight">
+                <?php echo $this->infos;?>
+            </p>
+        <?php endif;?>
+    </div>
+<?php endif;?>
+
+<?php if (!isset($this->noAddButton)):?>
+    <div class="ui-button-big">
+        <a href="<?php echo $this->url(array_merge(array('action' => 'new')));?>" class="ui-button ui-button-bg-white ui-button-text-red ui-button-text-only">
+            <span class="ui-button-text"><?php echo $this->translate('Add a new %s', $this->placeholder('headling_1_add_button'))?></span>
+        </a>
+    </div>
+<?php endif;?>
+<h1><?php echo $this->placeholder('headling_1_content'); ?></h1>
+<?php $this->placeholder('headling_1')->captureEnd();?>
+
+<?php
+if (count($this->filter) > 1) {
+    $this->placeholder('aside')->captureStart();
+    echo $this->filter;
+    $this->placeholder('aside')->captureEnd();
+}
+?>
+
+<form action="<?php echo $this->url(array('action' => 'bash'))?>" method="post" id="grid-action-form">
+<?php
+$this->toolBarName = 'top';
+echo $this->partial('/grid/_toolbar.phtml', $this);
+
+echo $this->placeholder('toolbar');
+?>
+
+<?php echo $this->partial($this->_selectScript(array(sprintf('/%s/%s.phtml', $this->controller, $this->layout),
+                                             sprintf('/grid/%s.phtml', $this->layout),
+                                             '/grid/grid.phtml')), $this); ?>
+
+<?php
+$this->toolBarName = 'bottom';
+echo $this->partial('/grid/_toolbar.phtml', $this);?>
+</form>
+
+<span class="grid-loading">Loading</span>
+
+<span class="grid-debug" style="margin-top: 50px">&nbsp;</span>
+
+<div class="clear"></div>

@@ -1,0 +1,33 @@
+<div class="grid medias grid-sortable">
+    <div class="row row-template">
+        <div class="col col-picture"></div>
+        <div class="col col-title"></div>
+        <div class="col col-actions"></div>
+    </div>
+
+    <?php foreach ($this->result as $id => $row):
+    if (isset($this->coverName))
+        $cover = $row['row']->{'get'.$this->coverName.'OrPx'}();
+    else
+        $cover =$row['row'];
+    ?>
+        <div class="row">
+            <div class="col col-picture">
+                <div style="background: url(<?php echo $cover->getStaticUrl(array('cropcenterresize' => array('width' => 174, 'height' => 94)))?>); width: 174px; height: 94px;" class="picture">
+                </div>
+            </div>
+            <div class="col col-title">
+                <input type="checkbox" value="<?php echo $id;?>" name="rowId[]">
+                <a href="<?php echo $this->url(array('id' => $row['row']->id, 'action' => 'get'));?>" class="edit"><?php echo $row['title']?></a>
+            </div>
+            <div class="col col-actions">
+            <?php
+                $this->row = $row['row'];
+                echo $this->partial($this->_selectScript(array(sprintf('%s/_actions.phtml', $this->controller),
+                                         'grid/_actions.phtml')), $this); ?>
+            </div>
+        </div>
+    <?php endforeach; ?>
+    <div class="clear"></div>
+</div>
+

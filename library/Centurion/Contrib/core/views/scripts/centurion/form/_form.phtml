@@ -1,0 +1,13 @@
+<?php
+
+if (isset($this->class)) {
+    $class = $this->class;
+    $class .= ($class === null)?$this->element->getAttrib('class'):' '.$this->element->getAttrib('class');
+    $this->element->setAttrib('class', $class);
+}
+
+echo $this->form($this->element->getFullyQualifiedName(), $this->element->getAttribs(), $this->content);
+
+//foreach($this->element as $el):
+//    echo $el;
+//endforeach;

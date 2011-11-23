@@ -1,0 +1,134 @@
+<script type="text/javascript"> 
+ 
+$(function() {
+    $(".form .form-main .form-group").form('fieldset');
+    $(".field-multiselect").form('multiselect');
+    $(".field-switcher").form('switcher');
+    $(".field-datepicker").datepicker({
+        changeMonth: true,
+        changeYear: true
+    });
+    $('.field-rte').focus(function() {
+        $(this).tinymce({
+            // Location of TinyMCE script
+            script_url : 'cui/core/plugins/form/tinymce/tiny_mce.js',
+            
+            // General options
+            theme : "advanced",
+            plugins : "advlink,inlinepopups,media,xhtmlxtras",
+            width : '100%',
+            
+            // Theme options
+            theme_advanced_buttons1 : "undo,redo,separator,bold,italic,underline,forecolor,formatselect,styleselect,"
+                                    + "separator,bullist,numlist,link,unlink,image,sparator,code",
+            theme_advanced_buttons2 : "",
+            theme_advanced_buttons3 : "",   
+            theme_advanced_toolbar_location : "top",
+            theme_advanced_toolbar_align : "left",
+            
+            // Example content CSS (should be your site CSS)
+            content_css : "cui/themes/default/css/tinymce.css",
+            
+            // Drop lists for link/image/media/template dialogs
+            template_external_list_url : "lists/template_list.js",
+            external_link_list_url : "lists/link_list.js",
+            external_image_list_url : "lists/image_list.js",
+            media_external_list_url : "lists/media_list.js",
+            
+            // Replace values for the template plug-in
+            template_replace_values : {
+                username : "Some User",
+                staffid : "991234"
+            }
+        });
+    });
+ 
+    var swfu;/*
+    var settings = {
+        flash_url : "cui/core/plugins/form/swfupload/swfupload.swf",
+        upload_url: "/",
+        file_post_name : "filename_",
+        post_params: {"uploadTicket" : "b3072fe5f08efaccde37681a7a542f48"},
+        file_size_limit : "100MB",
+        file_types : "*.jpg;*.png;*.gif;*.jpeg",
+        file_types_description : "Images files",
+        file_upload_limit : 100,
+        file_queue_limit : 0,
+        custom_settings : {
+            progressTarget : "fsUploadProgress",
+            cancelButtonId : "btnCancel",
+            inputName : "file",
+            alreadyLoadedImage : []
+        },
+        debug: true,
+        // Button settings
+        // button_image_url: "http://demo.swfupload.org/v220/simpledemo/images/TestImageNoText_65x29.png",
+        button_width: "65",
+        button_height: "19",
+        button_placeholder_id: "spanButtonPlaceHolder",
+        button_text: '<span class="btn-upload">Upload Files</span>',
+        button_text_style: ".btn-upload { font-family: Arial; font-size: 11px; color:#5b5b5b; text-decoration:underline; }",
+        button_text_left_padding: 0,
+        button_text_top_padding: 0,
+        button_window_mode: "transparent",
+        // The event handler functions are defined in handlers.js
+        init_swfupload_handler : initSwfupload,
+        file_queued_handler : fileQueued,
+        file_queue_error_handler : fileQueueError,
+        file_dialog_complete_handler : fileDialogComplete,
+        upload_start_handler : uploadStart,
+        upload_progress_handler : uploadProgress,
+        upload_error_handler : uploadError,
+        upload_success_handler : uploadSuccess,
+        upload_complete_handler : uploadComplete,
+        queue_complete_handler : queueComplete  // Queue plugin event
+    };
+    */
+    //swfu = new SWFUpload(settings); 
+ 
+});
+</script> 
+<?php
+
+    
+    //$this->form->removeDisplayGroup('submit');
+    
+    echo $this->form->render(null, true);
+/*
+    $this->form->addElements(array(
+        '_save'         =>  array('submit', array('label' => $this->form->getTranslator()->_('Save'))),
+        '_addanother'   =>  array('submit', array('label' => $this->form->getTranslator()->_('Save and add another'))),
+        '_continue'     =>  array('submit', array('label' => $this->form->getTranslator()->_('Save and continue'))),
+    ));
+    
+    $this->form->addDisplayGroup(array('_save', '_addanother', '_continue'), 'submit');
+    
+    foreach ($this->form->getElements() as $key => $element) {
+        if ($element->hasErrors()) {
+            $element->addDecorators($this->form->defaultErrorElementDecorators);
+        }
+        
+        if ($element instanceof Zend_Form_Element_Radio) {
+            $element->setAttrib('class', 'radio nicyless');
+        } elseif ($element instanceof Zend_Form_Element_Checkbox) {
+            $element->setAttrib('class', 'checkbox');
+        }
+    }
+    
+    $this->form->getElement('_save')->setAttrib('class', 'save')
+                                    ->getDecorator('Label')
+                                    ->setOption('tagClass', 'hidden');
+    
+    $this->form->getElement('_continue')->setAttrib('class', 'continue')
+                                        ->getDecorator('Label')
+                                        ->setOption('tagClass', 'hidden');
+    
+    $this->form->getElement('_addanother')->setAttrib('class', 'addanother')
+                                          ->getDecorator('Label')
+                                          ->setOption('tagClass', 'hidden');
+    
+    $this->form->getDisplayGroup('submit')->setAttrib('class', 'submit large nicyless border-top');
+    
+    echo $this->form->render(null, true);
+    */
+?>

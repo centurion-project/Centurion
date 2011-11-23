@@ -1,0 +1,27 @@
+<?php
+
+$this->gridForm()->addHeader($this->form, array(
+    'elements' =>  array('username'),
+));
+
+$this->gridForm()->addMain($this->form, array(
+    'label'         => 'User informations',
+    'description'   => 'User informations',
+    'elements'      => array('email',
+                             'email_again',
+                             'password',
+                             'password_again',
+                             'user_parent_id',
+                             'groups',
+                             'permissions')
+));
+
+$this->gridForm()->addAside($this->form, array(
+    'label'     => 'Privileges',
+    'elements'  => array('can_be_deleted',
+                         'is_active',
+                         'is_super_admin',
+                         'is_staff')
+));
+
+echo $this->partial('grid/_form.phtml', $this);

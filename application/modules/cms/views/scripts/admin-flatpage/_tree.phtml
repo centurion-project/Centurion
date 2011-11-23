@@ -1,0 +1,33 @@
+<?php //if ($this->tree->count()): ?>
+<ul class="<?php echo isset($this->isRoot) && $this->isRoot === true ? 'tree' : 'open'; ?>">
+    <?php foreach ($this->tree as $key => $page): ?>
+        <li id="page-<?php echo $page->pk ?>">
+            <a href="<?php echo $this->url(array('action' => 'edit', 'controller' => $this->controllerName, 'module' => $this->moduleName, 'id' => $page->pk), 'default', true); ?>" class="page <?php if (isset($this->publishColumn) && !$page->{$this->publishColumn}): ?>hidden<?php endif ?>"><ins>&nbsp;</ins><?php echo $page->title ?></a>
+            <div class="cells">
+                <?php if (isset($this->publishColumn)): ?>
+                    <div class="online">
+                        <select selected="<?php echo (int) $page->{$this->publishColumn} ?>" class="field-switcher" name="<?php echo $this->publishColumn ?>-<?php echo $page->pk ?>">
+                            <option value="0"<?php if ($page->{$this->publishColumn} == '0') echo ' selected="selected"'?>><?php echo $this->translate('Offline'); ?></option>
+                            <option value="1"<?php if ($page->{$this->publishColumn} == '1') echo ' selected="selected"'?>><?php echo $this->translate('Online'); ?></option>
+                        </select>
+                    </div>
+                <?php endif ?>
+                <?php if (isset($this->publishDateColumn)): ?>
+                    <div class="date"><?php echo $page->getDateObjectBy($this->publishDateColumn)->get('yyyy MM dd hh:mm') ?></div>
+                <?php endif ?>
+                <div class="actions">
+                    <a href="<?php echo $this->url(array('action' => 'edit', 'controller' => $this->controllerName, 'module' => $this->moduleName, 'id' => $page->pk), 'default', true); ?>" class="help" title="<?php echo $this->translate('Edit'); ?>"><span class="ui-icon ui-icon-pencil"><?php echo $this->translate('Edit properties'); ?></span></a>
+                    <a onclick="return confirm('<?php echo $this->translate("Are you sure? This operation can not be undone"); ?>');" href="<?php echo $this->url(array('action' => 'delete', 'controller' => $this->controllerName, 'module' => $this->moduleName, 'id' => $page->pk), 'default', true); ?>" class="help" title="<?php echo $this->translate('Delete'); ?>"><span class="ui-icon ui-icon-close"><?php echo $this->translate('Delete'); ?></span></a>
+                </div>
+                <div class="clear"></div>
+            </div>
+
+            <?php if ($children = $page->getChildren()): ?>
+            <?php if ($children->count()): ?>
+            <?php echo $this->partial('admin-flatpage/_tree.phtml', array_merge($this->getVars(), array('tree' => $children, 'isRoot' => false))); ?>
+            <?php endif ?>
+            <?php endif ?>
+        </li>
+    <?php endforeach ?>
+</ul>
+<?php //endif ?>

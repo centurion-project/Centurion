@@ -1,0 +1,22 @@
+<?php
+
+$result = array();
+
+if ($this->previous) {
+    $result['first'] = array('label' => $this->translate('First'), 'url' => $this->url(array('page' => 0)) . '?' . http_build_query($this->filter->getValues(), '', '&amp;'));
+    $result['prev'] = array('label' => $this->translate('Previous'), 'url' => $this->url(array('page' => $this->previous)) . '?' . http_build_query($this->filter->getValues(), '', '&amp;'));
+}
+
+$currentTotalItemCount = ($this->current - 1) * $this->itemCountPerPage;
+
+$result['infos'] = array('label' => $this->translate('<strong>%d-%d</strong> of <strong>%d</strong>', $currentTotalItemCount + 1,
+                                                $currentTotalItemCount + $this->currentItemCount,
+                                                $this->totalItemCount));
+                                                
+if ($this->next) {
+    $result['next'] = array('label' => $this->translate('Next'), 'url' => $this->url(array('page' => $this->next)) . '?' . http_build_query($this->filter->getValues(), '', '&amp;'));
+    $result['last'] = array('label' => $this->translate('Last'), 'url' => $this->url(array('page' => $this->pageCount)) . '?' . http_build_query($this->filter->getValues(), '', '&amp;'));
+}
+
+
+echo serialize($result);

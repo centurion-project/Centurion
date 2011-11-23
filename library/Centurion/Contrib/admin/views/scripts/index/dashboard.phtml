@@ -1,0 +1,18 @@
+<?php 
+$this->headScript()->appendFile('/layouts/backoffice/js/highcharts/excanvas.js');
+$this->headScript()->appendFile('/layouts/backoffice/js/highcharts/highcharts.js'); 
+
+$this->placeholder('body_id')->set('tpl-dashboard');
+$this->placeholder('headling_1')->set(sprintf('<h1>%s</h1>', $this->translate('Hey %s, what\'s up?', Centurion_Auth::getCurrent()->first_name)));
+
+?>
+<div class="col-right">
+    <?php echo $this->placeholder('latest'); ?>
+</div>
+<div class="col-left">
+    <?php echo $this->placeholder('glance'); ?>
+</div>
+
+<div class="clear"><br/><br/></div>
+
+<div class="clear">&nbsp;</div>

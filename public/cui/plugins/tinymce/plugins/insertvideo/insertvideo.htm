@@ -1,0 +1,27 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<title>{#inserthtml_dlg.title}</title>
+	<script type="text/javascript" src="../../tiny_mce_popup.js"></script>
+	<script type="text/javascript" src="js/inserthtml.js"></script>
+	<style>
+        #content { width:320px; height:80px; }	
+	</style>
+</head>
+<body style="display: none">
+	<div align="center">
+		<div class="title">{#inserthtml_dlg.title}:<br /><br /></div>
+        <textarea id="content"></textarea>
+	</div>
+	
+    <div class="mceActionPanel">
+        <div style="float: left">
+            <input type="button" id="insert" name="insert" value="{#insert}" onclick="InserthtmlDialog.insert(document.getElementById('content').value);" />
+        </div>
+
+        <div style="float: right">
+            <input type="button" id="cancel" name="cancel" value="{#cancel}" onclick="tinyMCEPopup.close();" />
+        </div>
+    </div>	
+</body>
+</html>

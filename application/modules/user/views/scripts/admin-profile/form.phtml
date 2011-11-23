@@ -1,0 +1,8 @@
+<?php
+$this->gridForm($this->form,
+                              array(),
+                              array($this->translate('User') => array('user'),
+                                    $this->translate('Profile') => array('nickname', 'about', 'website', 'avatar', 'facebook_pageid')),
+                              array());
+
+echo $this->partial('grid/_form.phtml', $this);

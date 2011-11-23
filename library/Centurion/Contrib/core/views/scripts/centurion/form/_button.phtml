@@ -1,0 +1,51 @@
+<?php
+$content = $this->element->getAttrib('content');
+
+$class1 = null;
+$class2 = null;
+
+if (!($class1 = $this->element->getAttrib('class1')) && !($class2 = $this->element->getAttrib('class2'))) {
+    if ($this->element->getName() == '_delete') {
+        $class1 = 'ui-button-icon-primary ui-icon ui-icon-red ui-icon-nicy-cross';
+        $class2 = 'ui-button-text ui-button-text-red';
+    } else if ($this->element->getName() == '_save') {
+        $class1 = 'ui-button-icon-primary ui-icon ui-icon-nicy-arrow-right';
+        $class2 = 'ui-button-text';
+    } else if ($this->element->getName() == '_addanother') {
+        $class1 = 'ui-button-icon-primary ui-icon ui-icon-nicy-arrow-top';
+        $class2 = 'ui-button-text';
+    } else if ($this->element->getName() == '_continue') {
+        $class1 = 'ui-button-icon-primary ui-icon ui-icon-nicy-plus';
+        $class2 = 'ui-button-text';
+    } else if ($this->element->getName() == '_cancel') {
+        $class1 = 'ui-button-icon-primary ui-icon'; // ui-icon-nicy-plus';
+        $class2 = 'ui-button-text';
+    } else if ($this->element->getName() == '_login') {
+        $class1 = 'ui-icon'; // ui-icon-nicy-plus';
+        $class2 = 'ui-button-text ui-button-text-blue';
+    } else {
+        $class1 = 'ui-button-icon-primary ui-icon';
+        $class2 = 'ui-button-text';
+    }
+}
+
+$this->element->setAttrib('aria-disabled', 'false');
+$this->element->setAttrib('role', 'button');
+
+if ($this->element->getName() != '_saveBig') {
+    $this->element->setAttrib('class', $this->element->getAttrib('class') . ' ui-button ui-button-nicy ui-button-text-icon');
+} else {
+    $this->element->setAttrib('class', $this->element->getAttrib('class') . ' ui-button ui-button-nicy');
+}
+
+if ($class1 !== null) {
+    $content .= '<span class="' . $class1 . '">&nbsp;</span>';
+}
+if ($class2 !== null)
+    $content .= '<span class="' . $class2 . '">' . $this->element->getLabel() . '</span>';
+
+$this->element->setAttrib('escape' , false);
+
+$this->element->setAttrib('content', $content);
+
+echo $this->formButton($this->element->getFullyQualifiedName(), $this->element->getValue(), $this->element->getAttribs());

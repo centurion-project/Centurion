@@ -1,0 +1,10 @@
+<a href="<?php echo $this->url(array('id' => $this->row->pk, 'controller' => $this->controller, 'module' => $this->module, 'action' => 'get'), null, true); ?>" class="edit">
+    <?php if (null !== $this->first['cover']): ?>
+        <img src="<?php echo $this->row->{'getPictureOrPxBy'.$this->first['cover']}()->getStaticUrl(array('cropcenterresize' => array('width' => 33, 'height' => 33))) ?>" style="float:left; margin-right:10px; background:#eee; border:solid 1px #ccc" width="33" height="33" />
+    <?php endif ?>
+    <?php echo $this->smartTextCrop($this->row->{$this->first['title']}, 70); ?>
+</a>
+<?php if (isset($this->first['subtitle'])): ?>
+    <br />
+    <?php echo $this->row->{$this->first['subtitle']} ?>
+<?php endif ?>
