@@ -263,7 +263,6 @@ class Check {
             $tablesToCheck[] = 'centurion_site';
 
             $tablesToCheck[] = 'cms_flatpage';
-            $tablesToCheck[] = 'cms_flatpage_position';
             $tablesToCheck[] = 'cms_flatpage_template';
             
             $tablesToCheck[] = 'media_duplicate';
