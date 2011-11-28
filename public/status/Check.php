@@ -325,10 +325,49 @@ class Check {
     
     protected function _checkPermission()
     {
-        //TODO:
+        $dirs = array(
+            '/data/',
+            '/data/indexes/',
+            '/data/locales/',
+            '/data/logs/',
+            '/data/sessions/',
+            '/data/temp/',
+            '/data/uploads/',
+            '/data/cache/',
+            '/data/cache/class',
+            '/data/cache/core',
+            '/data/cache/output',
+            '/data/cache/page',
+            '/data/cache/tags',
+            '/public/files',
+            '/public/cached',
+            '/public/status',
+            '/public/index.php',
+        );
+        
+        $notWritable = array();
+        $prefixDir = realpath(dirname(__FILE__) . '/../..');
+    
+        foreach ($dirs as $dir) {
+            $fullPath = $prefixDir . $dir;
+            
+            if (!is_writable($fullPath)) {
+                $notWritable[] = $dir;
+            }
+        }
+        
+        if (count($notWritable) > 0) {
+            $this->_checklist[] = array(
+                'code' => -1,
+                'canBeBetter' => true,
+                'isNotSecure' => true,
+                'text' => 'Some of your file system are not writable',
+                'alt' => 'Full list: <br /> - ' . implode('<br />- ', $notWritable),
+            );
+        }
     }
 
-    public function _checkDocumentRoot()
+    protected function _checkDocumentRoot()
     {
         $pos = strrpos($_SERVER['DOCUMENT_ROOT'], '/public');
         
