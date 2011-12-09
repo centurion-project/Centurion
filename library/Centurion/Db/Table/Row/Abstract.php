@@ -170,6 +170,9 @@ abstract class Centurion_Db_Table_Row_Abstract extends Zend_Db_Table_Row_Abstrac
             if ($row == null)
                 return null;
 
+            throw new Exception();
+            var_dump($columnName);
+            die();
             return $row->{substr($columnName, $pos + 2)};
         }
 

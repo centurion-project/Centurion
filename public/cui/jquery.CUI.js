@@ -699,7 +699,7 @@
                     var defaultOptions = {
 
                         // Button settings
-                        button_image_url: [options.basePath, "layout/backoffice/images/px.png"].join(''),
+                        button_image_url: [options.basePath, "layouts/backoffice/images/px.png"].join(''),
                         button_width: "75",
                         button_height: "22",
                         button_placeholder_id: "spanButtonPlaceHolder",
@@ -736,7 +736,7 @@
                         theme_advanced_resize_horizontal : false,
                         plugins : "safari,pagebreak,style,layer,table,save,advhr,advimage,advlink,emotions,iespell,"
                                 + "insertdatetime,preview,media,searchreplace,print,contextmenu,paste,directionality,"
-                                + "fullscreen,noneditable,visualchars,nonbreaking,xhtmlxtras,template,imagemanager",
+                                + "fullscreen,noneditable,visualchars,nonbreaking,xhtmlxtras,template",
                         theme_advanced_buttons1 : "undo,redo,separator,bold,italic,underline,forecolor,formatselect,"
                                                 + "styleselect,separator,bullist,numlist,link,unlink,image,hr,"
                                                 + "separator,fullscreen,code",

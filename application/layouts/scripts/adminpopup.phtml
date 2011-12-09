@@ -1,0 +1,86 @@
+<?php
+    $baseUrl = $this->baseUrl();
+    $this->headMeta()->appendHttpEquiv('Content-Type', 'text/html; charset=UTF-8')
+                     ->appendHttpEquiv('Content-Language', 'fr-FR');
+    $this->headLink()->headLink(array('rel' => 'favicon' , 'href' => '/images/favicon.ico'), 'PREPEND');
+    $this->headScript()->prependFile('/layouts/backoffice/js/all.js');
+    $this->headScript()->prependFile('/cui/jquery.CUI.js');
+    $this->headScript()->prependFile('/cui/libs/jquery.js');
+    $this->headScript()->prependFile('/cui/plugins/tinymce/tiny_mce_popup.js');
+
+    $this->headLink()->appendStylesheet('/layouts/backoffice/styles.css');
+?>
+<?php echo $this->doctype('HTML5') ?>
+<html>
+<head>
+    <!--[if IE]>
+    <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <?php echo $this->headTitle() ?>
+    <?php echo $this->headLink() ?>
+    <?php echo $this->headMeta() ?>
+    <?php echo $this->headStyle() ?>
+    <?php echo $this->headScript() ?>
+
+    <META http-equiv="Cache-Control" content="no-cache">
+    <META http-equiv="Pragma" content="no-cache">
+    <META http-equiv="Cache" content="no store">
+    <META http-equiv="Expires" content="0">
+    <style>
+        body header.sh,
+        body section            {margin-left:0}
+        body > section          {background:none}
+    </style>
+
+    <script>
+        var win = tinyMCEPopup.getWindowArg("window");
+        var input = tinyMCEPopup.getWindowArg("input");
+        var res = tinyMCEPopup.getWindowArg("resizable");
+        var inline = tinyMCEPopup.getWindowArg("inline");
+
+        function mySubmit(url, alt, title) {
+            //call this function only after page has loaded
+            //otherwise tinyMCEPopup.close will close the
+            //"Insert/Edit Image" or "Insert/Edit Link" window instead
+
+            var win = tinyMCEPopup.getWindowArg("window");
+
+            // insert information now
+            win.document.getElementById(tinyMCEPopup.getWindowArg("input")).value = url;
+
+            if (win.document.getElementById('alt'))
+                win.document.getElementById('alt').value = alt;
+            else if (win.document.getElementById('title'))
+                win.document.getElementById('title').value = alt;
+
+            // for image browsers: update image dimensions
+            if (win.getImageData) {
+                win.getImageData();
+            }
+
+            // close popup window
+            tinyMCEPopup.close();
+        }
+    </script>
+</head>
+
+<body id="<?php echo $this->placeholder('body_id'); ?>" onload="tinyMCEPopup.executeOnLoad('init();')">
+    <section class="<?php echo $this->placeholder('section-class');?>">
+        <header class="sh">
+            <?php if ($this->placeholder('headling_1')): ?>
+                <?php echo $this->placeholder('headling_1') ?>
+            <?php endif ?>
+        </header>
+
+        <aside>
+            <?php echo $this->placeholder('aside') ?>
+        </aside>
+
+        <section>
+           <?php echo $this->layout()->content ?>
+           <div class="clear">&nbsp;</div>
+        </section>
+    </section>
+    <?php echo $this->bottomScript() ?>
+</body>
+</html>

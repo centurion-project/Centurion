@@ -373,6 +373,18 @@ class Centurion_Controller_CRUD extends Centurion_Controller_AGL
         $this->render($script, true, true);
     }
 
+    public function preDispatch()
+    {
+        //TODO: use a contextswitch
+        if ($this->getRequest()->getParam('popup')) {
+            $this->_helper->layout()->setLayout('adminpopup');
+            $this->view->popup = true;
+            $this->_extraParam['popup'] = true;
+        }
+
+        parent::preDispatch();
+    }
+
     public function newAction()
     {
         $form = $this->_getForm();

@@ -12,31 +12,26 @@
  *
  * @category    Centurion
  * @package     Centurion_Contrib
- * @subpackage  Media
+ * @subpackage  MediaCenter
  * @copyright   Copyright (c) 2008-2011 Octave & Octave (http://www.octaveoctave.com)
  * @license     http://centurion-project.org/license/new-bsd     New BSD License
- * @version     $Id$
+ * @version    $Id$
  */
 
 /**
  * @category    Centurion
  * @package     Centurion_Contrib
- * @subpackage  Media
+ * @subpackage  MediaCenter
  * @copyright   Copyright (c) 2008-2011 Octave & Octave (http://www.octaveoctave.com)
  * @license     http://centurion-project.org/license/new-bsd     New BSD License
  * @author      Florent Messa <florent.messa@gmail.com>
+ * @author      Mathias Desloges <m.desloges@gmail.com>
+ * @author      Laurent Chenay <lc@octaveoctave.com>
  */
-class Media_Form_Model_File extends Centurion_Form_Model_Abstract
+class Media_Model_DbTable_Row_Tag extends Centurion_Db_Table_Row_Abstract
 {
-    protected $_exclude = array(
-        'created_at', 'use_count', 'height', 'width', 'filesize', 'mime', 'local_filename', 'id', 'sha1', 'user_id',
-        'belong_model', 'belong_pk', 'proxy_pk', 'proxy_model', 'description', 'name', 'filename', 'tags'
-    );
-
-    public function __construct($options = array())
+    public function __toString()
     {
-        $this->setModel(Centurion_Db::getSingleton('media/file'))->setEnctype(self::ENCTYPE_MULTIPART);
-
-        parent::__construct($options);
+        return $this->name;
     }
 }

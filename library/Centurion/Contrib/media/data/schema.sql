@@ -111,6 +111,28 @@ CREATE TABLE IF NOT EXISTS `media_video` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
+
+-- 
+-- Table structure for table `media_tag`
+--
+
+DROP TABLE IF EXISTS `media_tag`;
+CREATE TABLE IF NOT EXISTS `media_tag` (
+  `id`      int(11) unsigned not null AUTO_INCREMENT,
+  `name`    varchar(255) not null,
+  primary key (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 ;
+
+-- 
+-- Table structure for table `media_tag_item`
+--
+
+DROP TABLE IF EXISTS `media_tag_file`;
+CREATE TABLE IF NOT EXISTS `media_tag_file` (
+  `file_id`      varchar(100) not null,
+  `tag_id`      int(11) unsigned not null,
+  primary key (`file_id`, `tag_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 ;
 -- Constraints for dumped tables
 --
 
