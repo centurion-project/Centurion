@@ -201,7 +201,7 @@ abstract class Centurion_Image_Adapter_Abstract
                            );
 
         $this->_source = $this->_thumb;
-
+        $this->_hasBeenModified = true;
         $this->_reloadSize();
 
         return $this;
