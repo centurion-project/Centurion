@@ -1137,7 +1137,7 @@ abstract class Centurion_Db_Table_Row_Abstract extends Zend_Db_Table_Row_Abstrac
         foreach ($this->getTable()->info('referenceMap') as $key => $val) {
             $tags = $this->getReverseCacheTagForRelated($key);
             if ($tags !== null)
-            	Centurion_Signal::factory('clean_cache')->send($this, array(Zend_Cache::CLEANING_MODE_MATCHING_ANY_TAG, $tags));
+            	Centurion_Signal::factory('clean_cache')->send($this, array(Zend_Cache::CLEANING_MODE_MATCHING_ANY_TAG, array($tags)));
         }
     }
     
