@@ -37,10 +37,8 @@ class Translation_Model_DbTable_Language extends Centurion_Db_Table_Abstract
         'translation'        =>  array(
             'refTableClass'     =>  'Translation_Model_DbTable_Uid', 
             'intersectionTable' =>  'Translation_Model_DbTable_Translation',
-            'columns'   =>  array(
-                'local'         =>  'uid_id',
-                'foreign'       =>  'language_id'
-            )
+            'reflocal'         =>  'uid',
+            'refforeign'       =>  'language'
         )
     );
     

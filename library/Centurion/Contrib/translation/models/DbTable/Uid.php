@@ -42,18 +42,14 @@ class Translation_Model_DbTable_Uid extends Centurion_Db_Table_Abstract
         'languages'        =>  array(
             'refTableClass'     =>  'Translation_Model_DbTable_Language', 
             'intersectionTable' =>  'Translation_Model_DbTable_Translation',
-            'columns'   =>  array(
-                'local'         =>  'uid_id',
-                'foreign'       =>  'language_id'
-            )
+            'reflocal'         =>  'uid',
+            'refforeign'       =>  'language'
         ),
         'tags'        =>  array(
             'refTableClass'     =>  'Translation_Model_DbTable_Tag', 
             'intersectionTable' =>  'Translation_Model_DbTable_TagUid',
-            'columns'   =>  array(
-                'local'         =>  'uid_id',
-                'foreign'       =>  'tag_id'
-            )
+            'reflocal'         =>  'uid',
+            'refforeign'       =>  'tag'
         ),
     );
 }
