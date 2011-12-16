@@ -54,30 +54,43 @@ class Check {
 
     protected function _checkApache()
     {
-        if (version_compare(PHP_VERSION, '5.3.0') >= 0) {
-            $this->_apacheVersion = strstr($_SERVER['SERVER_SOFTWARE'], ' ', true);
-        } else {
-            $this->_apacheVersion = substr($_SERVER['SERVER_SOFTWARE'], 0, strpos($_SERVER['SERVER_SOFTWARE'], ' '));
-        }
 
-        $this->_apacheVersion = substr(strstr($this->_apacheVersion, '/'), 1);
+        $this->_apacheVersion = $_SERVER['SERVER_SOFTWARE'];
 
-        if (version_compare($this->_apacheVersion, '2.') >= 0) {
+        if ($this->_apacheVersion == 'Apache') {
             $this->_checklist[] = array(
                 'code' => 1,
-                'canBeBetter' => false,
-                'isNotSecure' => false,
-                'text' => 'Apache version is <strong>'  . $this->_apacheVersion . '</strong>',
-                'alt' => '',
-            );
-        } else {
-            $this->_checklist[] = array(
-                'code' => 0,
                 'canBeBetter' => true,
                 'isNotSecure' => false,
-                'text' => 'Apache version is <strong>'  . $this->_apacheVersion . '</strong>',
-                'alt' => '',
+                'text' => 'Apache version is <strong>unknown</strong>!',
+                'alt' => 'Apache version is <strong>unknown</strong>. Please verify manually that your are above 2.0',
             );
+        } else {
+            if (false !== ($pose = strpos($this->_apacheVersion, ' '))) {
+                $this->_apacheVersion = substr($this->_apacheVersion, 0, $pose);
+            }
+
+            if (false !== ($pose = strpos($this->_apacheVersion, '/'))) {
+                $this->_apacheVersion = substr($this->_apacheVersion, $pose + 1);
+            }
+
+            if (version_compare($this->_apacheVersion, '2.') >= 0) {
+                $this->_checklist[] = array(
+                    'code' => 1,
+                    'canBeBetter' => false,
+                    'isNotSecure' => false,
+                    'text' => 'Apache version is <strong>'  . $this->_apacheVersion . '</strong>',
+                    'alt' => '',
+                );
+            } else {
+                $this->_checklist[] = array(
+                    'code' => 0,
+                    'canBeBetter' => true,
+                    'isNotSecure' => false,
+                    'text' => 'Apache version is <strong>'  . $this->_apacheVersion . '</strong>',
+                    'alt' => '',
+                );
+            }
         }
     }
 
