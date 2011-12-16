@@ -625,7 +625,11 @@ abstract class Centurion_Form_Model_Abstract extends Centurion_Form
             $form->saveInstance($values[$form->getName()]);
             $instance = $form->getInstance();
 
-            $values[$referenceMap['columns']] = $instance->{$referenceMap['refColumns']};
+            $refColumns = (array) $referenceMap['refColumns'];
+
+            foreach ((array) $referenceMap['columns'] as $key => $column) {
+                $values[$column] = $instance->{$refColumns[$key]};
+            }
         }
 
         return $values;
@@ -758,26 +762,42 @@ abstract class Centurion_Form_Model_Abstract extends Centurion_Form
             $intersectionTable = Centurion_Db::getSingletonByClassName($manyDependentTable['intersectionTable']);
             $restrincts = array();
             $i = 0;
+
+            $refLocalArray =  $intersectionTable->getReferenceMap($manyDependentTable['reflocal']);
+            $refForeignArray =  $intersectionTable->getReferenceMap($manyDependentTable['refforeign']);
+            $reColumnsfLocalArray = (array) $refLocalArray['refColumns'];
+
+            $intersectionTable = Centurion_Db::getSingletonByClassName($manyDependentTable['intersectionTable']);
+            $getOrCreateArgsArray = array();
+            $restrincts = array();
+            $i = 0;
             foreach ($objectsRelated as $objectRelated) {
                 if (!empty($objectRelated)) {
-                    list($intersectionRow, $created) = $intersectionTable->getOrCreate(array(
-                        $manyDependentTable['columns']['local']    =>  $this->_instance->id,
-                        $manyDependentTable['columns']['foreign']  =>  $objectRelated
-                    ));
+                    foreach ((array) $refLocalArray['columns'] as $key => $columnName) {
+                        $getOrCreateArgsArray[$columnName] = $this->_instance->{$reColumnsfLocalArray[$key]};
+                    }
+
+
+                    $getOrCreateArgsArray[$refForeignArray['columns']] = $objectRelated;
+
+                    list($intersectionRow, $created) = $intersectionTable->getOrCreate($getOrCreateArgsArray);
 
                     if (isset($intersectionRow->order)) {
                         $intersectionRow->order = $i++;
                         $intersectionRow->save();
                     }
-
-                    $restrincts[] = $this->getModel()->getAdapter()->quoteInto(sprintf('%s != ?', $manyDependentTable['columns']['foreign']),
+                    
+                    $restrincts[] = $this->getModel()->getAdapter()->quoteInto(sprintf('%s != ?', $refForeignArray['columns']),
                                                                            $objectRelated);
                 }
-             }
+            }
 
-            $where = $this->getModel()->getAdapter()->quoteInto(sprintf('%s = ?',
-                                                                    $manyDependentTable['columns']['local']),
-                                                                    $this->_instance->id);
+            foreach ((array) $refLocalArray['columns'] as $key => $columnName) {
+                $where = $this->getModel()->getAdapter()->quoteInto(sprintf('%s = ?',
+                                                                        $columnName),
+                                                                        $this->_instance->{$reColumnsfLocalArray[$key]});
+            }
+
             if (count($restrincts))
                 $where .= sprintf(' AND (%s)', implode(' AND ', $restrincts));
 
@@ -923,6 +943,9 @@ abstract class Centurion_Form_Model_Abstract extends Centurion_Form
         return $elements;
     }
 
+    /**
+     *@TODO: add cache here
+     */
     protected function _buildOptions($table, $key, $nullable = false)
     {        
         if (isset($this->_select[$key])) {
