@@ -21,7 +21,7 @@ create table auth_user
    username             varchar(255) not null,
    first_name           varchar(30) default null,
    last_name            varchar(30) default null,
-   email                varchar(75) default null,
+   email                varchar(255) default null,
    password             varchar(128) not null,
    salt                 varchar(128) default null,
    algorithm            varchar(128) not null,
