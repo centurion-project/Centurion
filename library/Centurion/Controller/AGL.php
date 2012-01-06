@@ -171,10 +171,14 @@ class Centurion_Controller_AGL extends Centurion_Controller_Action
     
     protected $_showCheckbox = false;
 
+    protected $_dateFormat = null;
+
     public function __construct(Zend_Controller_Request_Abstract $request, Zend_Controller_Response_Abstract $response, array $invokeArgs = array())
     {
         $isoFormat = Zend_Locale_Data::getContent(null, 'date', array('gregorian', 'short'));
-        $this->_dateFormat = Centurion_Locale_Format::convertIsoToDatepickerFormat($isoFormat);
+        if (null == $this->_dateFormat) {
+            $this->_dateFormat = Centurion_Locale_Format::convertIsoToDatepickerFormat($isoFormat);
+        }
 
         parent::__construct($request, $response, $invokeArgs);
         

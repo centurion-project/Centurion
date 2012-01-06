@@ -41,8 +41,6 @@ class Centurion_Controller_CRUD extends Centurion_Controller_AGL
 
     protected $_rowActions;
 
-    protected $_dateFormat = null;
-
     protected $_cacheTagName = array();
 
     protected $_toolbarActions = array();
