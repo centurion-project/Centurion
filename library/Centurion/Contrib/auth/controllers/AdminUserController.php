@@ -2,12 +2,16 @@
 
 class Auth_AdminUserController extends Centurion_Controller_CRUD
 {
+    public function preDispatch()
+       {
+           $this->_helper->authCheck();
+           $this->_helper->aclCheck();
+           $this->_helper->layout->setLayout('admin');
+           parent::preDispatch();
+       }
+
     public function init()
     {
-        $this->_helper->authCheck();
-        $this->_helper->aclCheck();
-        $this->_helper->layout->setLayout('admin');
-
         $this->_formClassName = 'Auth_Form_Model_User';
 
         $this->_displays = array(
