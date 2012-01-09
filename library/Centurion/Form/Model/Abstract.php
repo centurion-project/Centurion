@@ -846,14 +846,10 @@ abstract class Centurion_Form_Model_Abstract extends Centurion_Form
                         )
                     );
                 } else {
-                    $config = array(
+                    $relatedTable = Centurion_Db::getSingletonByClassName($reference);                    $options = $this->_buildOptions($relatedTable, $columnName, (true === $columnDetails['NULLABLE']));                    $config = array(
                         'select',
                         array(
-                            'multioptions' => $this->_buildOptions(
-                                Centurion_Db::getSingletonByClassName($reference),
-                                $columnName,
-                                true === $columnDetails['NULLABLE']
-                            )
+                            'multioptions' => $options
                         )
                     );
                 }
@@ -924,8 +920,8 @@ abstract class Centurion_Form_Model_Abstract extends Centurion_Form
     }
 
     protected function _buildOptions($table, $key, $nullable = false)
-    {        
-        if (isset($this->_select[$key])) {
+    {
+        if (method_exists($table, 'buildOptions')) {            return $table->buildOptions($nullable);        }        if (isset($this->_select[$key])) {
             if ($this->_select[$key] instanceof Centurion_Db_Table_Select) {
                 $rowset = $table->fetchAll($this->_select[$key]);
             } else if (is_array($this->_select[$key])) {
