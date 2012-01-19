@@ -11,7 +11,7 @@ class Centurion_Locale_Format extends Zend_Locale_Format
             'o'  => 'D',
             'mm' => 'MM',
             'm'  => 'M',
-            'MM' => 'MMMMM',
+            'MM' => 'MMMM',
             'M'  => 'MMM',
             'yy' => 'yyyy',
             'y'  => 'yy',
@@ -57,7 +57,7 @@ class Centurion_Locale_Format extends Zend_Locale_Format
         $convert = array_flip(self::$formatIsoToDatepicker);
         arsort($convert);
 
-        $value = str_replace(array_keys($convert), array_values($convert), $format);
+        $value = strtr($format, $convert);
 
         return $value;
     }
@@ -72,7 +72,7 @@ class Centurion_Locale_Format extends Zend_Locale_Format
         $convert = self::$formatIsoToDatepicker;
         arsort($convert);
 
-        $value = str_replace(array_keys($convert), array_values($convert), $format);
+        $value = strtr($format, $convert);
 
         return $value;
     }
