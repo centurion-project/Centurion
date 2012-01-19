@@ -916,7 +916,7 @@ abstract class Centurion_Db_Table_Abstract extends Zend_Db_Table_Abstract implem
     {
         $select = $this->getCountsSelect($groupby, $filter, $order, $limit);
 
-        return $select->fetchAll();
+        return $select->count();
     }
 
     /**
