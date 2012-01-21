@@ -2,6 +2,10 @@
 
 class Centurion_Locale_Format extends Zend_Locale_Format
 {
+    /**
+     * @see http://docs.jquery.com/UI/Datepicker/$.datepicker.formatDate 
+     * @var array[string]string
+     */
     static $formatIsoToDatepicker = array(
             'dd' => 'dd',
             'd'  => 'd',
@@ -47,7 +51,9 @@ class Centurion_Locale_Format extends Zend_Locale_Format
         return join($values);
     }
 
-    // Format déjà localisé
+    /**
+     * Format déjà localisé
+     */ 
     public static function convertIsoToDatepickerFormat($format)
     {
         if ($format === null) {
