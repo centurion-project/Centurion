@@ -37,18 +37,8 @@ class Centurion_Locale_Format extends Zend_Locale_Format
 
         $convert = array_flip($convert);
         asort($convert);
-
-
-        $value = str_replace(array_keys($convert), array_values($convert), $format);
-
-        $values = str_split($format);
-        foreach ($values as $key => $value) {
-            if (isset($convert[$value]) === true) {
-                $values[$key] = $convert[$value];
-            }
-        }
-
-        return join($values);
+        
+        return strtr($format, $convert);
     }
 
     /**
