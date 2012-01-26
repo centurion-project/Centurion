@@ -93,7 +93,7 @@ class Translation_Traits_Model_DbTable extends Core_Traits_Version_Model_DbTable
                 'onUpdate' => Zend_Db_Table_Abstract::CASCADE,
             );
 
-        Centurion_Signal::factory('on_select_joinInner')->connect(array($this, 'onJoinInner'));
+        Centurion_Signal::factory('on_select_joinInner')->connect(array($this, 'onJoinInner'), $this->_model);
     }
 
     public function getLocalizedColsPrefix()
