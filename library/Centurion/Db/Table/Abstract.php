@@ -1041,6 +1041,16 @@ abstract class Centurion_Db_Table_Abstract extends Zend_Db_Table_Abstract implem
     }
 
     /**
+     * Proxy function to test _genRefRuleName
+     * @see Centurion_Db_Table_TableTest
+     * @param string $base
+     * @return string
+     */
+    public function testGenRefRuleName($base)
+    {
+        return $this->_genRefRuleName($base);
+    }
+    /**
      * generate a new name for a reference rule (guarantee name uniqness)
      * @param string $base desired name for the rule if it is already taken a suffix will be added
      */
@@ -1049,9 +1059,19 @@ abstract class Centurion_Db_Table_Abstract extends Zend_Db_Table_Abstract implem
         if ('' == trim($base))
             $base = uniqid();
 
-        $refMapRule = $base; $i = 1;
-        $existingRefRules = array_keys(array_merge($this->getReferenceMap(), $this->getDependentTables(), $this->getManyDependentTables()));
-        while (in_array($refMapRule, $existingRefRules)) {
+        $refMapRule = $base;
+        $i = 1;
+        
+        $existingRefRules = array();
+        $mergeAllRefs = array_merge($this->getReferenceMap(), $this->getDependentTables(), $this->getManyDependentTables());
+        
+    	foreach ($mergeAllRefs as $key => $val) {
+             if (!is_int($key)) {
+                 $existingRefRules[$key] = true;
+             }
+        }
+        
+        while (isset($existingRefRules[$refMapRule])) {
             $refMapRule = sprintf('%s_%u', $base, $i);
             $i++;
         }
