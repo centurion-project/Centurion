@@ -2,7 +2,7 @@
 
 require_once dirname(__FILE__) . '/../../../TestHelper.php';
 
-class Centurion_Cache_Cache extends PHPUnit_Framework_TestCase
+class Centurion_Cache_CacheTest extends PHPUnit_Framework_TestCase
 {
     /**
      * 
