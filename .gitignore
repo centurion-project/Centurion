@@ -10,6 +10,7 @@
 /data/cache/output/*
 /data/cache/page/*
 /data/cache/tags/*
+/data/cache/config/*
 /data/sessions/*
 
 
@@ -18,6 +19,7 @@
 !/data/cache/output/.gitkeep
 !/data/cache/page/.gitkeep
 !/data/cache/tags/.gitkeep
+!/data/cache/config/.gitkeep
 
 /data/uploads/*
 /data/logs/*

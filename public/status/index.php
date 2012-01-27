@@ -10,6 +10,9 @@ if (isset($_GET['removeMe'])) {
     die();
 }
 
+defined('APPLICATION_PATH')
+    || define('APPLICATION_PATH', realpath(dirname(__FILE__) . '/../../application'));
+
 $checklist = array();
 
 include_once __DIR__ . '/Check.php';
