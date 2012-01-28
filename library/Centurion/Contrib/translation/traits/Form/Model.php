@@ -72,7 +72,7 @@ class Translation_Traits_Form_Model extends Centurion_Traits_Form_Model_Abstract
 
         $this->addElement($this->_generateInfoField(Translation_Traits_Model_DbTable::LANGUAGE_FIELD,
                                                     $this->getView()->translate('Language'),
-                                                    (string) Translation_Traits_Common::getDefaultLanguage()->locale));
+                                                    (string) Translation_Traits_Common::getDefaultLanguage()->name));
 
         
         if ($this->getModel()->isOriginalForcedToDefaultLanguage()) {
@@ -121,7 +121,7 @@ class Translation_Traits_Form_Model extends Centurion_Traits_Form_Model_Abstract
 
             $value = Centurion_Db::getSingleton('translation/language')->get(array('id' => $values[Translation_Traits_Model_DbTable::LANGUAGE_FIELD]));
             $f = $this->_getInfoField(Translation_Traits_Model_DbTable::LANGUAGE_FIELD);
-            $f->setValue((string) $value);
+            $f->setValue((string) $value->name);
 
             $fields = array_merge($spec[Translation_Traits_Model_DbTable::DUPLICATED_FIELDS], $spec[Translation_Traits_Model_DbTable::SET_NULL_FIELDS]);
 
