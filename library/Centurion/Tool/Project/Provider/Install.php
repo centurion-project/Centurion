@@ -340,6 +340,7 @@ class Centurion_Tool_Project_Provider_Install extends Centurion_Tool_Project_Pro
             '/data/temp/',
             '/data/uploads/',
             '/data/cache/',
+            '/data/cache/config',
             '/data/cache/class',
             '/data/cache/core',
             '/data/cache/output',
