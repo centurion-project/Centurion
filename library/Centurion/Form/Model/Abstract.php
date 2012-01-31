@@ -145,6 +145,7 @@ abstract class Centurion_Form_Model_Abstract extends Centurion_Form
 
     protected $_values = null;
 
+    protected $_dateFormat = null;
     /**
      * Constructor
      *
@@ -317,6 +318,17 @@ abstract class Centurion_Form_Model_Abstract extends Centurion_Form
             $this->setSubInstance()
                  ->_populateManyDependentTables($instance)
                  ->_onPopulateWithInstance();
+
+            foreach ($this->getElements() as $key => $val) {
+                $class = $val->getAttrib('class');
+                if (false !== strpos($class, 'field-datetimepicker')) {
+                    $posted_at = new Zend_Date($val->getValue(), 'YYYY-MM-dd HH:mm:ss');
+                    $val->setValue($posted_at->get($this->getDateFormat()));
+                } else if (false !== strpos($class, 'field-datepicker')) {
+                    $posted_at = new Zend_Date($val->getValue(), 'YYYY-MM-dd HH:mm:ss');
+                    $val->setValue($posted_at->get($this->getDateFormat()));
+                }
+            }
         }
 
         return $this;
@@ -678,6 +690,15 @@ abstract class Centurion_Form_Model_Abstract extends Centurion_Form
         return $subForms;
     }
 
+    
+    /**
+     * 
+     * @param unknown_type $values
+     */
+    public function processValues($values)
+    {
+        return $this->_processValues($values);
+    }
     /**
      * Process values attached to the form.
      *
@@ -696,6 +717,18 @@ abstract class Centurion_Form_Model_Abstract extends Centurion_Form
                     unset($values[$key]);
                 } else {
                     $values[$key] = $ret;
+                }
+            }
+
+            $element = $this->getElement($key);
+            if (null !== $element) {
+                $class = $element->getAttrib('class');
+                if (false !== strpos($class, 'field-datetimepicker')) {
+                    $posted_at = new Zend_Date($value, $this->getDateFormat());
+                    $values[$key] = $posted_at->get('yyyy-MM-dd HH:mm:ss');
+                } else if (false !== strpos($class, 'field-datepicker')) {
+                    $posted_at = new Zend_Date($value, $this->getDateFormat());
+                    $values[$key] = $posted_at->get('yyyy-MM-dd HH:mm:ss');
                 }
             }
         }
@@ -1000,5 +1033,15 @@ abstract class Centurion_Form_Model_Abstract extends Centurion_Form
 
     protected function _preSave()
     {
+    }
+
+    public function setDateFormat($dateFormat)
+    {
+        $this->_dateFormat = $dateFormat;
+    }
+
+    public function getDateFormat()
+    {
+        return $this->_dateFormat;
     }
 }
