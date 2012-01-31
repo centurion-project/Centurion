@@ -173,6 +173,7 @@ class Centurion_Controller_AGL extends Centurion_Controller_Action
 
     protected $_dateFormat = null;
     protected $_dateFormatIso = null;
+    protected $_timeFormatIso = null;
 
     public function __construct(Zend_Controller_Request_Abstract $request, Zend_Controller_Response_Abstract $response, array $invokeArgs = array())
     {
@@ -182,6 +183,8 @@ class Centurion_Controller_AGL extends Centurion_Controller_Action
         } else {
             $this->_dateFormatIso = Centurion_Locale_Format::convertDatepickerToIsoFormat($this->_dateFormat);
         }
+        
+        $this->_timeFormatIso = Zend_Locale_Data::getContent(null, 'time', array('gregorian', 'short'));
 
         parent::__construct($request, $response, $invokeArgs);
         

@@ -145,7 +145,18 @@ abstract class Centurion_Form_Model_Abstract extends Centurion_Form
 
     protected $_values = null;
 
+    /**
+     * The time format used by datepicker 
+     * @var string
+     */
     protected $_dateFormat = null;
+    
+    /**
+     * The time format used by datetimepicker
+     * @var string
+     */
+    protected $_timeFormat = null;
+    
     /**
      * Constructor
      *
@@ -323,7 +334,7 @@ abstract class Centurion_Form_Model_Abstract extends Centurion_Form
                 $class = $val->getAttrib('class');
                 if (false !== strpos($class, 'field-datetimepicker')) {
                     $posted_at = new Zend_Date($val->getValue(), 'YYYY-MM-dd HH:mm:ss');
-                    $val->setValue($posted_at->get($this->getDateFormat()));
+                    $val->setValue($posted_at->get($this->getDateFormat(true)));
                 } else if (false !== strpos($class, 'field-datepicker')) {
                     $posted_at = new Zend_Date($val->getValue(), 'YYYY-MM-dd HH:mm:ss');
                     $val->setValue($posted_at->get($this->getDateFormat()));
@@ -430,7 +441,7 @@ abstract class Centurion_Form_Model_Abstract extends Centurion_Form
             $this->_isNew = true;
             $this->_instance = $this->getModel()->createRow();
         } else {
-        	$this->_instance->setReadOnly(false);
+            $this->_instance->setReadOnly(false);
         }
 
 
@@ -724,7 +735,7 @@ abstract class Centurion_Form_Model_Abstract extends Centurion_Form
             if (null !== $element) {
                 $class = $element->getAttrib('class');
                 if (false !== strpos($class, 'field-datetimepicker')) {
-                    $posted_at = new Zend_Date($value, $this->getDateFormat());
+                    $posted_at = new Zend_Date($value, $this->getDateFormat(true));
                     $values[$key] = $posted_at->get('yyyy-MM-dd HH:mm:ss');
                 } else if (false !== strpos($class, 'field-datepicker')) {
                     $posted_at = new Zend_Date($value, $this->getDateFormat());
@@ -1035,13 +1046,20 @@ abstract class Centurion_Form_Model_Abstract extends Centurion_Form
     {
     }
 
-    public function setDateFormat($dateFormat)
+    public function setDateFormat($dateFormat, $timeFormat = null)
     {
         $this->_dateFormat = $dateFormat;
+        $this->_timeFormat = $timeFormat;
     }
 
-    public function getDateFormat()
+    public function getDateFormat($withTimeFormat = false)
     {
-        return $this->_dateFormat;
+        $return = $this->_dateFormat;
+        
+        if ($withTimeFormat && $this->_timeFormat !== null) {
+            $return .= ' ' . $this->_timeFormat; 
+        }
+        
+        return $return; 
     }
 }
