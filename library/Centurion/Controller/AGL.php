@@ -142,7 +142,7 @@ class Centurion_Controller_AGL extends Centurion_Controller_Action
      *  'key' => array(
      *          'label' => 'label already translated',
      *          'sort'  => 'col'|array('object', 'callback function to sort'), (if unset, the key will be used as col)
-     *          'sotrable' => 'true|false', (if unset true will be used as value)
+     *          'sortable' => 'true|false', (if unset true will be used as value)
      *          'type'  => self::COLS_ROW_COL,
      *          'column'=> 'my_column',
      *          'filters' => array(
