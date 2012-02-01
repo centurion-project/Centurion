@@ -39,7 +39,8 @@ class Centurion_Controller_Action_Helper_GetObjectOr404 extends Zend_Controller_
     {
         if (is_string($objectTable)) {
             $objectTable = Centurion_Db::getSingleton($objectTable);
-        } elseif (!$objectTable instanceof Centurion_Db_Table_Abstract) {
+         } elseif (!($objectTable instanceof Centurion_Db_Table_Abstract)
+                    && !($objectTable instanceof Centurion_Db_Cache)) { //To Support getCache() from Centurion Model
             throw new Centurion_Exception('Unknown type of first argument');
         }
         
