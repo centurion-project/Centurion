@@ -34,5 +34,19 @@ class Translation_Controller_Action_Helper_ManageLanguageParam extends Zend_Cont
         if (Centurion_Config_Manager::get('translation.global_param')) {
             $this->getFrontController()->getRouter()->setGlobalParam('language', $requestedLocale);
         }
+
+        //Restore the cache in the adapter (now that the language is found, we can retrieve it ;) )
+        if (Zend_Registry::isRegistered('Zend_Translate')){
+            $translate = Zend_Registry::get('Zend_Translate');
+
+            if ($translate instanceof Translation_Model_Translate_Adapter_Array) {
+                $translate->restoreCache();
+            } else if ($translate instanceof Zend_Translate) {
+                $adapter = $translate->getAdapter();
+                if ($adapter instanceof Translation_Model_Translate_Adapter_Array) {
+                    $adapter->restoreCache();
+                }
+            }
+        }
     }
 }

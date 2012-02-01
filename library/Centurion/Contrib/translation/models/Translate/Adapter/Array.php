@@ -18,10 +18,6 @@ class Translation_Model_Translate_Adapter_Array extends Zend_Translate_Adapter_A
         $this->_languageTable = Centurion_Db::getSingleton('translation/language');
         $this->_tagUidTable = Centurion_Db::getSingleton('translation/tagUid');
         parent::__construct($options);
-        
-        if ($cached = self::getCache()->load('Translation_Model_Translate_Adapter_Array_Cache')) {
-            list($this->_checkedWord, $this->_checkedTag, $this->_checkedWordTag) = $cached;
-        }
     }
     
     public function __destruct()
@@ -37,6 +33,25 @@ class Translation_Model_Translate_Adapter_Array extends Zend_Translate_Adapter_A
         	$tags[] = Centurion_Cache_TagManager::getTagOf($this->_languageTable);
         
         self::getCache()->save($cached, 'Translation_Model_Translate_Adapter_Array_Cache', $tags);
+    }
+
+    /**
+     * Restore checkedWord, checkedTag, checkedWordTag from the cache, 
+     * AFTER the language was found by Translation_Controller_Action_Helper_ManageLanguageParam
+     * (originally located in __construct)
+     */
+    public function restoreCache(){
+        if ($cached = self::getCache()->load('Translation_Model_Translate_Adapter_Array_Cache')) {
+            $_checkedWord = array();
+            $_checkedTag = array();
+            $_checkedWordTag = array();                        
+            list($_checkedWord, $_checkedTag, $_checkedWordTag) = $cached;
+            
+      	    //Merge to not lost rows already fetched
+            $this->_checkedWord = array_merge($this->_checkedWord, $_checkedWord);
+            $this->_checkedTag = array_merge($this->_checkedTag, $_checkedTag);
+            $this->_checkedWordTag = array_merge($this->_checkedWordTag, $_checkedWordTag);
+        }
     }
     
     public function getUidId($uid)
