@@ -86,12 +86,7 @@ class Centurion_Controller_Action_Helper_Csv extends Zend_Controller_Action_Help
 
         fseek($handler, 0);
 
-	/*
-	* Set the flag $replace of setHeader at true because sometimes, there are already defined in the application, 
-	* And we do not necessarily clear all predefined headers, 
-	* but some browser (like Chrome/Chromium) not support several time the same type of header in the same server anwser
-	*/
-        $this->getResponse()->setHeader('Content-disposition', sprintf('attachment; filename=%s', $options['filename']), true)
+	$this->getResponse()->setHeader('Content-disposition', sprintf('attachment; filename=%s', $options['filename']), true)
                             ->setHeader('Content-Type', sprintf('application/force-download; charset=%s', $options['encoding']), true)
                             ->setHeader('Content-Transfer-Encoding', 'application/octet-stream\n', true)
                             ->setHeader('Content-Length', $size, true)
