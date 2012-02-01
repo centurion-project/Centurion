@@ -86,13 +86,18 @@ class Centurion_Controller_Action_Helper_Csv extends Zend_Controller_Action_Help
 
         fseek($handler, 0);
 
-        $this->getResponse()->setHeader('Content-disposition', sprintf('attachment; filename=%s', $options['filename']))
-                            ->setHeader('Content-Type', sprintf('application/force-download; charset=%s', $options['encoding']))
-                            ->setHeader('Content-Transfer-Encoding', 'application/octet-stream\n')
-                            ->setHeader('Content-Length', $size)
-                            ->setHeader('Pragma', 'no-cache')
-                            ->setHeader('Cache-Control', 'must-revalidate, post-check=0, pre-check=0, public')
-                            ->setHeader('Expires', '0')
+	/*
+	* Set the flag $replace of setHeader at true because sometimes, there are already defined in the application, 
+	* And we do not necessarily clear all predefined headers, 
+	* but some browser (like Chrome/Chromium) not support several time the same type of header in the same server anwser
+	*/
+        $this->getResponse()->setHeader('Content-disposition', sprintf('attachment; filename=%s', $options['filename']), true)
+                            ->setHeader('Content-Type', sprintf('application/force-download; charset=%s', $options['encoding']), true)
+                            ->setHeader('Content-Transfer-Encoding', 'application/octet-stream\n', true)
+                            ->setHeader('Content-Length', $size, true)
+                            ->setHeader('Pragma', 'no-cache', true)
+                            ->setHeader('Cache-Control', 'must-revalidate, post-check=0, pre-check=0, public', true)
+                            ->setHeader('Expires', '0', true)
                             ->sendHeaders();
         fpassthru($handler);
         fclose($handler);
