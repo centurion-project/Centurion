@@ -106,11 +106,12 @@ class Translation_Model_Translate_Adapter_Array extends Zend_Translate_Adapter_A
             $uidId = $this->getUidId($messageId);
             
             $tags = explode(',', $tags);
+            $_tagUidTable = $this->_tagUidTable->getCache();
             foreach ($tags as $tag) {
                 $tag = trim($tag);
                 $tagId = $this->getTagId($tag);
                 
-                $this->_tagUidTable->getOrCreate(array('uid_id' => $uidId, 'tag_id' => $tagId));
+                $_tagUidTable->getOrCreate(array('uid_id' => $uidId, 'tag_id' => $tagId));
             }
         } else {
             $uidId = $this->getUidId($messageId);
