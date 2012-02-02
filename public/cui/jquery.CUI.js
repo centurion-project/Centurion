@@ -699,7 +699,7 @@
                     var defaultOptions = {
 
                         // Button settings
-                        button_image_url: [options.basePath, "layout/backoffice/images/px.png"].join(''),
+                        button_image_url: [options.basePath, "layouts/backoffice/images/px.png"].join(''),
                         button_width: "75",
                         button_height: "22",
                         button_placeholder_id: "spanButtonPlaceHolder",

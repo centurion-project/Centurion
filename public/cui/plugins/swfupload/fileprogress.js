@@ -18,7 +18,7 @@ function FileProgress(file, targetID) {
 	<div class="field-wrapper field-preview-wrapper"> 
 	<span class="">
     	<input type="checkbox" checked="checked" value="1" class="field-checkbox" name="filename_delete_logo">       
-    	<img src="layout/backoffice/images/px.png" class="picture" width="50" height="50" />
+    	<img src="layouts/backoffice/images/px.png" class="picture" width="50" height="50" />
     </span> 
     <div class="description">2010-06-11 16.38.24 (1).jpg</div> 
     <div class="clear"></div> 
