@@ -293,7 +293,7 @@ class Centurion_Controller_AGL extends Centurion_Controller_Action
                 if (is_array($options) && isset($options['sort']) && is_array($options['sort'])) {
                     // call function to sort COLS_CALLBACK
                     call_user_func($options['sort'], $select, $this->_order);
-                } else if ($options['sort'] instanceof Zend_Db_Expr) {
+                } else if (is_array($options) && isset($options['sort']) && $options['sort'] instanceof Zend_Db_Expr) {
                      $select->order(new Zend_Db_Expr($options['sort'] . ' ' . $this->_order));
                 } else {
                     if (is_string($options) || !isset($options['column'])) {
