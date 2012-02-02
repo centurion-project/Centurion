@@ -88,6 +88,8 @@ class Auth_Form_Login extends Centurion_Form
             array('hidden', 'next', array()),
         ));
 
+        $this->addElement('hash', '_XSRF', array('salt' => 'login'));
+        
         $this->setMethod(self::METHOD_POST)
              ->setName($formName)
              ->setAttrib('id', $formName);
