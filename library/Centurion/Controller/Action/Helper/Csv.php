@@ -26,7 +26,7 @@
  * @license     http://centurion-project.org/license/new-bsd     New BSD License
  * @author      Florent Messa <florent.messa@gmail.com>
  */
-class Centurion_Controller_Action_Helper_Csv extends Zend_Controller_Action_Helper_Abstract
+class Centurion_Controller_Action_Helper_Csv extends Centurion_Controller_Action_Helper_Extract
 {
     const DEFAULT_FILENAME = 'export.csv';
     const DEFAULT_DELIMITER = ';';
@@ -42,6 +42,7 @@ class Centurion_Controller_Action_Helper_Csv extends Zend_Controller_Action_Help
         'delimiter'      =>  self::DEFAULT_DELIMITER,
         'encoding'       =>  self::DEFAULT_ENCODING
     );
+
 
     /**
      * Convert a rowset to a CSV view.
@@ -96,19 +97,5 @@ class Centurion_Controller_Action_Helper_Csv extends Zend_Controller_Action_Help
                             ->sendHeaders();
         fpassthru($handler);
         fclose($handler);
-    }
-
-    protected function _convertEncoding($string, $encoding)
-    {
-        return mb_convert_encoding($string, $encoding, 'UTF-8');
-    }
-
-    protected function _convertFields(array $fields, $encoding)
-    {
-        foreach ($fields as $key => &$value) {
-            $value = $this->_convertEncoding($value, $encoding);
-        }
-
-        return $fields;
     }
 }
