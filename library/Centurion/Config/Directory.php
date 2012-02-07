@@ -62,7 +62,11 @@ class Centurion_Config_Directory
                     continue;
                 $tabFile[] = $file->getPathName();
             }
-            
+
+            if (0 == count($tabFile)) {
+                return array();
+            }
+
             sort($tabFile);
 
             $backendOptions = array('cache_dir' => APPLICATION_PATH . '/../data/cache/config/' );
