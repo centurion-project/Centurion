@@ -25,7 +25,7 @@ class HtmlController extends Centurion_Controller_Action
             $method = $methodClass->name;
 
             if ('_' !== $method[0] && 'indexAction' !== $method && 'Action' === substr($method, -6)) {
-                $htmlMethod[] = $method;
+                $htmlMethod[] = substr($method, 0, -6);
             }
         }
 
