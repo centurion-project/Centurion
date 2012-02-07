@@ -205,7 +205,7 @@ class Centurion_Controller_CRUD extends Centurion_Controller_AGL
                 throw new Centurion_Controller_Action_Exception("Empty or invalid property _formClassName");
 
             $this->_form = new $this->_formClassName(array('method' => Centurion_Form::METHOD_POST));
-
+            $this->_form->setDateFormat($this->_dateFormatIso, $this->_timeFormatIso);
             $this->_form->cleanForm();
             $action = $this->_helper->url->url(array_merge($this->_extraParam,
                                                            array('controller' => $this->_request->getControllerName(),
