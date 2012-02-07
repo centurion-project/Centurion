@@ -400,6 +400,16 @@ class Centurion_Controller_CRUD extends Centurion_Controller_AGL
     {
         $action = $this->_getParam('event', 'index');
 
+        if (!method_exists($this, $action . 'Action')) {
+            $this->_forward('index');
+        }
+
+        $permission = sprintf('%s_%s_%s', $this->getRequest()->getModuleName(),
+            $this->getRequest()->getControllerName(),
+            strtolower($action));
+
+        $this->_helper->aclCheck($permission);
+
 //        if (!$this->_helper->getHelper('ticket')->isValid()) {
 //            return $this->_forward('index', null, null, array('errors' => array($this->view->translate('Invalid ticket'))));
 //        }
@@ -407,17 +417,7 @@ class Centurion_Controller_CRUD extends Centurion_Controller_AGL
         $ids = (array) $this->_getParam('rowId');
         $rowset = $this->_getModel()->find($ids);
 
-        $permission = sprintf('%s_%s_%s', $this->getRequest()->getModuleName(),
-                                              $this->getRequest()->getControllerName(),
-                                              strtolower($action));
-
-        $this->_helper->aclCheck($permission);
-
-        if (method_exists($this, $action . 'Action')) {
-            $this->{$action . 'Action'}($rowset);
-        } else {
-            $this->_forward('index');
-        }
+        $this->{$action . 'Action'}($rowset);
     }
 
     protected function _cleanCache()
