@@ -404,12 +404,8 @@ class Centurion_Controller_CRUD extends Centurion_Controller_AGL
 //            return $this->_forward('index', null, null, array('errors' => array($this->view->translate('Invalid ticket'))));
 //        }
         
-        $rowset = array();
         $ids = (array) $this->_getParam('rowId');
-        
-        foreach ($ids as $id) {
-            $rowset[] = $this->_getModel()->findOneById($id);
-        }
+        $rowset = $this->_getModel()->find($ids);
 
         $permission = sprintf('%s_%s_%s', $this->getRequest()->getModuleName(),
                                               $this->getRequest()->getControllerName(),
