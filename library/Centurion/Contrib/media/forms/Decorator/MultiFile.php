@@ -80,6 +80,7 @@ EOS
         $content = <<<EOS
         <div class="form-item">
             <label for="$name">$label</label>
+            <input type="hidden" name="${inputName}[]" id="${inputName}-empty" value=""/>
             <div class="field-wrapper field-upload-wrapper">
                 <div class="float-right">
                     <span id="divStatus">0 files uploaded</span> &nbsp;
