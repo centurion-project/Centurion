@@ -207,6 +207,19 @@ abstract class Centurion_Db_Table_Rowset_Abstract extends Zend_Db_Table_Rowset
         return $this->_data;
     }
 
+    
+    /**
+     * Delete all rows in rowset.
+     * 
+     * @return void 
+     */
+    public function delete()
+    {
+    	foreach ($this as $row) {
+    		$row->delete();
+    	}
+    }
+
     /**
      * @return array
      * @todo documentation
