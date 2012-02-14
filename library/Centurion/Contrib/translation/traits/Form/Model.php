@@ -107,7 +107,7 @@ class Translation_Traits_Form_Model extends Centurion_Traits_Form_Model_Abstract
             } catch (Centurion_Db_Table_Row_Exception $e) {
                 return;
             }
-            $spec = $this->_form->getModel()->getTranlationSpec();
+            $spec = $this->_form->getModel()->getTranslationSpec();
             if (!$this->hasInstance()) {
                 foreach ($spec[Translation_Traits_Model_DbTable::TRANSLATED_FIELDS] as $field) {
                     $element = $this->getElement($field);
