@@ -74,7 +74,7 @@ class Cms_Model_DbTable_Flatpage extends Centurion_Db_Table_Abstract implements 
         'flatpages' => 'Cms_Model_DbTable_Flatpage'
     );
 
-    /*public function getTranlationSpec()
+    /*public function getTranslationSpec()
     {
         return array(
             Translation_Traits_Model_DbTable::TRANSLATED_FIELDS => array(
