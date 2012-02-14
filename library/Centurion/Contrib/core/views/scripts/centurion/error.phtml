@@ -11,6 +11,7 @@
     <?php if (null !== $this->profiler):?>
         LAST QUERY:
         <br />
+        <?php if(!empty($this->profiler)): ?>
         <strong>
             <ul>
                 <?php foreach ($this->profiler as $query):?>
@@ -19,6 +20,7 @@
                 <?php endforeach;?>
             </ul>
         </strong>
+        <?php endif; ?>
     <?php endif;?>
     <br /><br />
 <p><?php echo $this->trace ?></p>
