@@ -1039,6 +1039,17 @@ abstract class Centurion_Form_Model_Abstract extends Centurion_Form
     protected function _postGenerate()
     {
         Centurion_Signal::factory('post_generate')->send($this);
+
+        //Add a validator on dates elements to prevent user mistakes
+        foreach ($this->getElements() as $key => $val) {
+            $class = $val->getAttrib('class');
+            if (false !== strpos($class, 'field-datetimepicker')) {
+                $val->addValidator('Date', false, array('format' => $this->getDateFormat(true)));
+
+            } else if (false !== strpos($class, 'field-datepicker')) {
+                $val->addValidator('Date', false, array('format' => $this->getDateFormat()));
+            }
+        }
     }
 
     /**
