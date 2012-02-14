@@ -50,25 +50,32 @@ class Centurion_Controller_Action_Helper_Csv extends Centurion_Controller_Action
      * @param Centurion_Db_Table_Rowset_Abstract|array $rowset
      * @param array $columns Header of the file
      * @param string $options Override default options
+     * @param boolean $noSend : To return the file name rather than sending it to the client
      */
-    public function direct($rowset, array $columns, $options = array(), $header = null)
+    public function direct($rowset, array $columns, $options = array(), $header = null, $sendToBrowser = true)
     {
         if (!$rowset instanceof Centurion_Db_Table_Rowset_Abstract && !is_array($rowset)) {
             throw new Centurion_Exception('First parameter must be a Centurion valid rowset or an array');
         }
 
         $options = array_merge(self::$options, $options);
-        $handler = tmpfile();
+        $handler = null;
+        $tmpName = null;
+
+        //To create a temp file
+        $tmpName = tempnam(sys_get_temp_dir(), 'csv-export_' . md5(rand()) . '.csv');
+        $handler = fopen($tmpName, 'w');
+
         if (null !== $header) {
             fputcsv($handler, $this->_convertFields($header, $options['encoding']), $options['delimiter']);
         }
 
         $keys = array_keys($columns);
         fputcsv($handler, $this->_convertFields(array_values($columns), $options['encoding']), $options['delimiter']);
-        foreach ($rowset as $key => $row) {
+        foreach ($rowset as $row) {
             $fields = array();
             if ($row instanceof Centurion_Db_Table_Row_Abstract) {
-                foreach ($keys as $key => $value) {
+                foreach ($keys as $value) {
                     $fields[] = $row->{$value};
                 }
             } else {
@@ -80,6 +87,11 @@ class Centurion_Controller_Action_Helper_Csv extends Centurion_Controller_Action
             fputcsv($handler, $fields, $options['delimiter']);
         }
 
+        if (!$sendToBrowser){
+            fclose($handler);
+            return $tmpName;
+        }
+
         $this->getActionController()->getHelper('layout')->disableLayout();
         $this->getActionController()->getHelper('viewRenderer')->setNoRender(true);
 
@@ -87,7 +99,7 @@ class Centurion_Controller_Action_Helper_Csv extends Centurion_Controller_Action
 
         fseek($handler, 0);
 
-	$this->getResponse()->setHeader('Content-disposition', sprintf('attachment; filename=%s', $options['filename']), true)
+        $this->getResponse()->setHeader('Content-disposition', sprintf('attachment; filename=%s', $options['filename']), true)
                             ->setHeader('Content-Type', sprintf('application/force-download; charset=%s', $options['encoding']), true)
                             ->setHeader('Content-Transfer-Encoding', 'application/octet-stream\n', true)
                             ->setHeader('Content-Length', $size, true)
