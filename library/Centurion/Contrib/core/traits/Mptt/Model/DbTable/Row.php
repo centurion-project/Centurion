@@ -456,9 +456,12 @@ class Core_Traits_Mptt_Model_DbTable_Row extends Centurion_Traits_Model_DbTable_
         $this->_row->refresh();
 
         if ($this->_row->getTable()->isRecursiveDelete()) {
-            foreach ($this->getChildren() as $node) {
-                if ($node->id !== $this->id)
-                    $node->delete();
+            $children = $this->getChildren();
+            if(!empty($children)){
+	            foreach ($children as $node) {
+	                if ($node->id !== $this->id)
+	                    $node->delete();
+	            }
             }
         }
 
