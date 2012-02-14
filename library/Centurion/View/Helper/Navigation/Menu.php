@@ -167,7 +167,7 @@ class Centurion_View_Helper_Navigation_Menu extends Zend_View_Helper_Navigation_
             }
 
             // render li tag and page
-            $liClass = $page->isActive() ? ' class="active"' : '';
+            $liClass = $page->isActive(true) ? ' class="active"' : '';
             $html .= $myIndent . '    <li' . $liClass . '>' . self::EOL
                    . $myIndent . '        ' . $this->htmlify($page) . self::EOL;
 
