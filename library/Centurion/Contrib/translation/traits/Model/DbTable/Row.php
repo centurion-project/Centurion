@@ -38,7 +38,7 @@ class Translation_Traits_Model_DbTable_Row extends Centurion_Traits_Model_DbTabl
 
     public function _getRawData($col)
     {
-        $spec = $this->getTable()->getTranlationSpec();
+        $spec = $this->getTable()->getTranslationSpec();
         if ($this->_data[Translation_Traits_Model_DbTable::ORIGINAL_FIELD]
             && in_array($col, $spec[Translation_Traits_Model_DbTable::SET_NULL_FIELDS])) {
 
@@ -68,7 +68,7 @@ class Translation_Traits_Model_DbTable_Row extends Centurion_Traits_Model_DbTabl
     public function preSave()
     {
         $behavior = Centurion_Signal::BEHAVIOR_CONTINUE;
-        $spec = $this->getTable()->getTranlationSpec();
+        $spec = $this->getTable()->getTranslationSpec();
 
         if ($this->{Translation_Traits_Model_DbTable::ORIGINAL_FIELD}) {
 

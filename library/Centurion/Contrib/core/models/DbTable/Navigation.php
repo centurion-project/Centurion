@@ -179,7 +179,7 @@ class Core_Model_DbTable_Navigation extends Centurion_Db_Table_Abstract implemen
         return $navigations;
     }
 
-    public function getTranlationSpec()
+    public function getTranslationSpec()
     {
         return array(
             Translation_Traits_Model_DbTable::TRANSLATED_FIELDS => array(
