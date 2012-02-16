@@ -112,7 +112,34 @@ class Admin_Form_Filter extends Centurion_Form
                         $checkboxType = 'select';
                 case Centurion_Controller_CRUD::FILTER_TYPE_CHECKBOX:
                     $element = $this->createElement($checkboxType, $key, array('label' => $label));
-                    //TODO: for the array_flip, maybe we should change the definition of data in CRUD_Controller
+
+                    if (!isset($filterData['data'])) {
+                        //Auto Populate from many-to-many-relation
+                        $manyDependentTables = $this->_table->info('manyDependentTables');
+                        if (isset($manyDependentTables[$key])) {
+                            $refRowSet = Centurion_Db::getSingletonByClassName($manyDependentTables[$key]['refTableClass'])->fetchAll();
+                            $filterData['data'] = array();
+                            foreach ($refRowSet as $refRow) {
+                                $filterData['data'][$refRow->pk] = $refRow->__toString();
+                            }
+                            asort($filterData['data']);
+                            //Add before a joker to disable this filter
+                            $filterData['data'] = array('' => $this->_translate('All')) + $filterData['data'];
+                        }
+                    }
+                    else{
+                        //To allow rowset in the option "data" and not force developper to pass an array
+                        if($filterData['data'] instanceof Centurion_Db_Table_Rowset_Abstract){
+                            $_tmpData = array();
+                            foreach($filterData['data'] as $row)
+                                $_tmpData[$row->pk] = (string) $row;
+
+                            asort($_tmpData);
+                            //Add before a joker to disable this filter
+                            $filterData['data'] = array('' => $this->_translate('All')) + $_tmpData;
+                        }
+                    }
+
                     $element->addMultiOptions($filterData['data']);
                     $element->setSeparator('');
                     if ($checkboxType === 'multiCheckbox')
