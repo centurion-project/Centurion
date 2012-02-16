@@ -3,7 +3,7 @@
  * @class Centurion_Controller_Router_Route_Callback
  * Route class intherits of Centurion_Controller_Router_Route
  * to allows developper to define a method to call when the route is matched
- * to execute some opetations during route matching (like change the locale)
+ * to execute some opetations during route matching (like to change the locale)
  *
  * The callback can accept 4 parameters :
  *  - the result of the match
@@ -14,6 +14,8 @@
  * @package Multisite
  * @author Richard Déloge, rd@octaveoctave.com
  * @copyright Octave & Octave
+ *
+ * @todo : add an option to call the method before, after the match, or replace the match.
  */
 class Centurion_Controller_Router_Route_Callback extends Centurion_Controller_Router_Route{
     /**
@@ -66,6 +68,8 @@ class Centurion_Controller_Router_Route_Callback extends Centurion_Controller_Ro
      * @param bool $partial
      * @return array|false
      * @throws Exception
+     *
+     * @todo : add an option to call the method before, after the match, or replace the match.
      */
     public function match($path, $partial = false){
         //Test the route
@@ -74,11 +78,13 @@ class Centurion_Controller_Router_Route_Callback extends Centurion_Controller_Ro
         if(!empty($this->_callback) && $res){
             //Check if the callback is valid
             if(!isset($this->_callback['class']) || !isset($this->_callback['method'])){
-                throw new Exception('Error, no method setted');
+                //Not throw an exception because the Error controller needs that route matching is finished
+                error_log('Error in Centurion_Controller_Router_Route_Callback, no method setted');
             }
 
             if(!is_callable(array($this->_callback['class'], $this->_callback['method']))){
-                throw new Exception('Error, the method is not callable');
+                //Not throw an exception because the Error controller needs that route matching is finished
+                error_log('Error in Centurion_Controller_Router_Route_Callback, the method is not callable');
             }
 
             //Call the callback and pass it the result and route params
