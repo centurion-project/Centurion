@@ -100,6 +100,10 @@ class Centurion_Controller_Router_Route_Callback extends Centurion_Controller_Ro
                     $this->_parts
                 )
             );
+            
+            if(empty($this->_callback['no_clean_callback'])){
+            	$this->_callback = array();
+            }
         }
 
         return $res;
