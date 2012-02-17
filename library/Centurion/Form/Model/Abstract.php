@@ -974,8 +974,12 @@ abstract class Centurion_Form_Model_Abstract extends Centurion_Form
         if (method_exists($table, 'buildOptions')) {            return $table->buildOptions($nullable);        }        if (isset($this->_select[$key])) {
             if ($this->_select[$key] instanceof Centurion_Db_Table_Select) {
                 $rowset = $table->fetchAll($this->_select[$key]);
-            } else if (is_array($this->_select[$key])) {
+            } else if (is_array($this->_select[$key]) && is_callable($this->_select[$key])) {
                 $rowset = call_user_func_array($this->_select[$key], array($table->fetchAll($table->select(true))));
+            } else if (is_array($this->_select[$key])) {
+                $rowset = $table->select(true)
+                    ->filter($this->_select[$key])
+                    ->fetchAll();
             }
         } else {
             Centurion_Db_Table_Abstract::setFiltersStatus(true);
