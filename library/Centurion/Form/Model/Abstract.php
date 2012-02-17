@@ -1061,10 +1061,12 @@ abstract class Centurion_Form_Model_Abstract extends Centurion_Form
      */
     protected function _postSave($isNew = false)
     {
+        Centurion_Traits_Common::checkTraitOverload($this, '_postSave', array($isNew), false);
     }
 
     protected function _preSave()
     {
+        Centurion_Traits_Common::checkTraitOverload($this, '_preSave', array(), false);
     }
 
     public function setDateFormat($dateFormat, $timeFormat = null)
