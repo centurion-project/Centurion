@@ -770,20 +770,12 @@ class Centurion_Db_Table_Select extends Zend_Db_Table_Select
 
         $primaries = $this->_table->info(Centurion_Db_Table_Abstract::PRIMARY);
 
-        $pkFilter = array();
-
-        foreach ($primaries as $primary) {
-            $pkFilter[$primary] = array();
-        }
-
         foreach ($rowset as $row) {
+            $conditions = array();
             foreach ($primaries as $primary) {
-                $pkFilter[$primary][] = $row->{$primary};
+                $conditions[] = $this->getAdapter()->quote($primary) . ' = ' . $this->getAdapter()->quote($row->{$primary});
             }
-        }
-
-        foreach ($pkFilter as $pk => $filter) {
-            $this->filter(array('!' . $pk . '__in' => $filter));
+            $this->where('!(' . implode(' and ', $conditions). ')');
         }
 
         return $this;
