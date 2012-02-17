@@ -74,9 +74,10 @@ class Admin_View_Helper_GridForm extends Zend_View_Helper_Abstract
             $form->addInDisplayGroup($data['elements'] , $class, array('class' => 'form-'.substr($class, 1)));
             
             foreach ($data['elements'] as $key => $element) {
-                $element = $form->getElement($element);
-                $element->setLabel(null);
-                $element->removeDecorator('label');
+                if (null !== ($element = $form->getElement($element))) {
+                    $element->setLabel(null);
+                    $element->removeDecorator('label');
+                }
             }
 
             return true;
