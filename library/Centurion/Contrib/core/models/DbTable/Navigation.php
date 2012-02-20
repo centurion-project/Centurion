@@ -169,9 +169,14 @@ class Core_Model_DbTable_Navigation extends Centurion_Db_Table_Abstract implemen
                     $navigationData['controller'] = $pages[0]['controller'];
                     $navigationData['params'] = $pages[0]['params'];
                 }
+            } else {
+                //No href, so it will be display with span tag
+                $navigationData['uri'] = '';
             }
-            if (null !== $pages)
+
+            if (null !== $pages) {
                 $navigationData['pages'] = $pages;
+            }
 
             array_push($navigations, $navigationData);
         }
