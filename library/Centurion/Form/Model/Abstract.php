@@ -914,7 +914,7 @@ abstract class Centurion_Form_Model_Abstract extends Centurion_Form
                     $config[1]['validators'] = array(array(
                         'validator' =>  $this->_columnValidators[$datatype],
                     ));
-                    if ($this->_columnValidators[$datatype] == 'stringLength') {
+                    if ($this->_columnValidators[$datatype] == 'StringLength') {
                         $config[1]['validators'][0]['options'] = array(0, $columnDetails['LENGTH']);
                     }
                 }
