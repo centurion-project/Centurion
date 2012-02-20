@@ -112,7 +112,19 @@ class Admin_Form_Filter extends Centurion_Form
                         $checkboxType = 'select';
                 case Centurion_Controller_CRUD::FILTER_TYPE_CHECKBOX:
                     $element = $this->createElement($checkboxType, $key, array('label' => $label));
-                    //TODO: for the array_flip, maybe we should change the definition of data in CRUD_Controller
+
+                    if (!isset($filterData['data'])) {
+                        $manyDependentTables = $this->_table->info('manyDependentTables');
+                        if (isset($manyDependentTables[$key])) {
+                            $refRowSet = Centurion_Db::getSingletonByClassName($manyDependentTables[$key]['refTableClass'])->fetchAll();
+                            $filterData['data'] = array();
+                            foreach ($refRowSet as $refRow) {
+                                $filterData['data'][$refRow->id] = $refRow->__toString();
+                            }
+                            asort($filterData['data']);
+                        }
+                    }
+
                     $element->addMultiOptions($filterData['data']);
                     $element->setSeparator('');
                     if ($checkboxType === 'multiCheckbox')
