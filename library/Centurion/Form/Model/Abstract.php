@@ -333,13 +333,13 @@ abstract class Centurion_Form_Model_Abstract extends Centurion_Form
             foreach ($this->getElements() as $key => $val) {
                 $class = $val->getAttrib('class');
                 $value = $val->getValue();
-                if ('' !== trim($value)) {
+                if (is_string($value) && '' !== trim($value)) {
                     if (false !== strpos($class, 'field-datetimepicker')) {
                         //In the case the field is empty, else Zend_Date is current time
-                        $posted_at = new Zend_Date($val->getValue(), 'YYYY-MM-dd HH:mm:ss');
+                        $posted_at = new Zend_Date($value, 'YYYY-MM-dd HH:mm:ss');
                         $val->setValue($posted_at->get($this->getDateFormat(true)));
                     } else if (false !== strpos($class, 'field-datepicker')) {
-                        $posted_at = new Zend_Date($val->getValue(), 'YYYY-MM-dd HH:mm:ss');
+                        $posted_at = new Zend_Date($value, 'YYYY-MM-dd HH:mm:ss');
                         $val->setValue($posted_at->get($this->getDateFormat()));
                     }
                 }
