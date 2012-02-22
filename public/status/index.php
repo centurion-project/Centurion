@@ -1,5 +1,7 @@
 <?php
 
+defined('__DIR__') || define('__DIR__', dirname(__FILE__));
+
 if (isset($_GET['removeMe'])) {
     unlink('../index.php');
     rename('../index.php_next', '../index.php');
@@ -11,7 +13,7 @@ if (isset($_GET['removeMe'])) {
 }
 
 defined('APPLICATION_PATH')
-    || define('APPLICATION_PATH', realpath(dirname(__FILE__) . '/../../application'));
+    || define('APPLICATION_PATH', realpath(__DIR__ . '/../../application'));
 
 $checklist = array();
 
