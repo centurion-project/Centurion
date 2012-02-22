@@ -197,25 +197,145 @@ class Centurion_Db_Table_Select extends Zend_Db_Table_Select
         }
 
         $result = $rowCount->query(Zend_Db::FETCH_ASSOC)->fetch();
-        return count($result) > 0 ? $result[$rowCountColumn] : 0;
+        return count($result) > 0 ? (int)$result[$rowCountColumn] : 0;
     }
 
+    /**
+     * Proxy function to test isAlreadyJoined
+     * @param unknown_type $tableName
+     * @param unknown_type $joinCond
+     * @return boolean
+     */
+    public function isAlreadyJoined($tableName, $joinCond = null) {
+        return $this->_isAlreadyJoined($tableName, $joinCond);
+    }
+    
     /**
      * Check if the table has already been joined to avoid multiple join of the same table
      *
      * @param string $tableName
      * @param string $joinCond
      */
-    protected function _isAlreadyJoined($tableName, $joinCond)
-    {
+    protected function _isAlreadyJoined($tableName, $joinCond = null) {
         $fromParts = $this->getPart(self::FROM);
-
-        foreach ($this->getPart(self::FROM) as $key => $val) {
-            if ($val['joinCondition'] === $joinCond)
-                return true;
+        
+        try {
+            if (in_array($tableName, array_keys($fromParts))) {
+                if (null == $joinCond) {
+                    return true;
+                }
+                
+                //TODO: this should be foreach
+                if ($this->isConditionEquals($fromParts[$tableName]['joinCondition'], $joinCond)) {
+                    return true;
+                }
+                
+            }
+        } catch (Exception $e) {
+            return false;
         }
-
+        
         return false;
+    }
+    
+    public function isConditionEquals($cond1, $cond2)
+    {
+        if (false !== strpos($cond1, '(') || false !== strpos($cond2, '(')) {
+            throw new Exception('Not yet supported');
+        }
+        
+        $cond1 = strtolower($cond1);
+        $cond2 = strtolower($cond2);
+        
+        $tabAnd1 = explode(' and ', $cond1);
+        $tabAnd2 = explode(' and ', $cond2);
+        
+        if (count($tabAnd1) != count($tabAnd2)) {
+            return false;
+        }
+        
+        $tabAnd1 = array_map(array($this, 'normalizeCondition'), $tabAnd1);
+        $tabAnd2 = array_map(array($this, 'normalizeCondition'), $tabAnd2);
+        
+        foreach ($tabAnd1 as $val) {
+            $found = false;
+            foreach ($tabAnd2 as $val2) {
+                if (strcmp($val, $val2) == 0) {
+                    $found = true;
+                    break;
+                }
+            }
+            
+            if (!$found) {
+                return false; 
+            }
+        }
+        
+        return true;
+    }
+    
+    public function forcePrefix($cond) {
+        
+        $tabCondition = explode('.', $cond);
+        
+        if (!isset($tabCondition[1])) {
+            $tabCondition[1] = $tabCondition[0];
+            $tabCondition[0] = $this->getAdapter()->quoteTableAs($this->getTable()->info('name'));
+        }
+        
+        $tabCondition = array_map('trim', $tabCondition);
+        
+        if (false === strpos($tabCondition[0], '`')) {
+            $tabCondition[0] = $this->getAdapter()->quoteIdentifier($tabCondition[0]);
+        }
+        
+        if (false === strpos($tabCondition[1], '`')) {
+            $tabCondition[1] = $this->getAdapter()->quoteIdentifier($tabCondition[1]);
+        }
+        
+        
+        return implode('.', $tabCondition);
+    }
+    
+    public function normalizeCondition($cond)
+    {
+        if (trim($cond) == '') {
+            return $cond;
+        }
+        
+        $tabCond = preg_split('` *((?:[<>]=?)|=) *`', $cond, 2, PREG_SPLIT_DELIM_CAPTURE);
+        
+        if (count($tabCond) != 3) {
+            throw new Exception('Problem. Condition not supported');
+        }
+        
+        $tabCond[0] = $this->forcePrefix(trim($tabCond[0]));
+        $tabCond[2] = $this->forcePrefix($tabCond[2]);
+        
+        if (strcmp($tabCond[0], $tabCond[2]) > 0) {
+            switch($tabCond[1]) {
+                case '=':
+                    break;
+                case '<':
+                    $tabCond[1] = '>';
+                    break;
+                case '<=':
+                    $tabCond[1] = '>=';
+                    break;
+                case '>':
+                    $tabCond[1] = '<';
+                    break;
+                case '>=':
+                    $tabCond[1] = '<=';
+                    break;
+            }
+            
+            $temp = $tabCond[0];
+            $tabCond[0] = $tabCond[2];
+            $tabCond[2] = $temp;
+        }
+        
+        return implode(' ', $tabCond);
     }
 
     public function hasColumn($colName)
@@ -320,20 +440,44 @@ class Centurion_Db_Table_Select extends Zend_Db_Table_Select
         } while ($this->_isAlreadyJoined($tableName, $joinCond));
 
         if (!$this->_isAlreadyJoined($interTableName, $joinCond)) {
+            /**
+             * We will join to the table. We check that Zend will not generate a autoatic alias because in this case
+             * we must change the join condition
+             */
+            if ($interTableName !== $this->_uniqueCorrelation($interTableName)) {
+                $quotedInterTableName = $this->_adapter->quoteIdentifier($this->_uniqueCorrelation($interTableName));
+                $joinCond = sprintf('%s.%s = %s.%s', $quotedInterTableName,
+                                                 $this->_adapter->quoteIdentifier($ref['columns']['local']),
+                                                 $this->_adapter->quoteIdentifier($localTableName),
+                                                 $this->_adapter->quoteIdentifier($localPrimary));
+            } else {
+                $quotedInterTableName = $this->_adapter->quoteIdentifier($interTableName);
+            }
             $this->$method($interTableName, $joinCond, array());
         }
 
-        $joinCond = sprintf('%s.%s = %s.%s', $this->_adapter->quoteIdentifier($interTableName),
+        $joinCond = sprintf('%s.%s = %s.%s', $interTableName,
                                              $this->_adapter->quoteIdentifier($ref['columns']['foreign']),
                                              $this->_adapter->quoteIdentifier($refTableName),
                                              $this->_adapter->quoteIdentifier($refPrimary));
 
         if ($full && !$this->_isAlreadyJoined($refTableName, $joinCond)) {
-            call_user_func_array(array($this, $method), array($refTableName, $joinCond, array()));
+            /**
+             * We will join to the table. We check that Zend will not generate a autoatic alias because in this case
+             * we must change the join condition
+             */
+            if ($refTableName !== $this->_uniqueCorrelation($refTableName)) {
+                $joinCond = sprintf('%s.%s = %s.%s', $quotedInterTableName,
+                                             $this->_adapter->quoteIdentifier($ref['columns']['foreign']),
+                                             $this->_adapter->quoteIdentifier($this->_uniqueCorrelation($refTableName)),
+                                             $this->_adapter->quoteIdentifier($refPrimary));
+            }
+            $this->$method($refTableName, $joinCond, array());
         }
 
-        if ($cols)
+        if ($cols) {
             $this->_tableCols($localTableName, $cols, true);
+        }
 
         return $this;
     }
@@ -345,12 +489,14 @@ class Centurion_Db_Table_Select extends Zend_Db_Table_Select
      * @param Centurion_Db_Table_Abstract [OPTIONAL] $localTable
      * @param array $cols
      * @param string $joinType
+     * @return Centurion_Db_Table_Select
      */
     public function addDependentTable($rule, $localTable = null, $cols = null, $joinType = self::JOIN_TYPE_INNER)
     {
-        if (null == $localTable)
+        if (null == $localTable) {
             $localTable = $this->getTable();
-
+        }
+        
         if (!($localTable instanceof Centurion_Db_Table_Abstract)) {
             $cols = (array) $localTable;
             $localTable = $this->getTable();
@@ -362,32 +508,39 @@ class Centurion_Db_Table_Select extends Zend_Db_Table_Select
         $refTable = Centurion_Db::getSingletonByClassName($refMap['refTableClass']);
         $refTableName = $refTable->info(Zend_Db_Table::NAME);
 
-        if (!in_array($joinType, array_keys(self::$_joinMethod)))
+        if (!in_array($joinType, array_keys(self::$_joinMethod))) {
             throw new Centurion_Db_Exception(sprintf("unknown join type : %s", $joinType));
-
-        $tableName = $this->_adapter->quoteIdentifier($this->_uniqueCorrelation($refTableName));
-        
-        do {
-            $joinCond = sprintf('%s.%s = %s.%s', $tableName,
-                                             $this->_adapter->quoteIdentifier($refMap['refColumns']),
-                                             $this->_adapter->quoteIdentifier($localTableName),
-                                             $this->_adapter->quoteIdentifier($refMap['columns']));
-            $tableName = $this->_uniqueCorrelation($refTableName);
-        } while ($this->_isAlreadyJoined($tableName, $joinCond));
-
-        if (!$this->_isAlreadyJoined($refTableName, $joinCond)) {
-            $tableName = $this->_uniqueCorrelation($tableName);
         }
+
+        $tableName = $this->_adapter->quoteIdentifier($refTableName);
+        
+        $joinCond = sprintf('%s.%s = %s.%s', $tableName,
+                             $this->_adapter->quoteIdentifier($refMap['refColumns']),
+                             $this->_adapter->quoteIdentifier($localTableName),
+                             $this->_adapter->quoteIdentifier($refMap['columns']));
 
         if (!$this->_isAlreadyJoined($refTableName, $joinCond)) {
             $method = self::$_joinMethod[$joinType];
+            /**
+             * We will join to the table. We check that Zend will not generate a autoatic alias because in this case
+             * we must change the join condition
+             */ 
+            if ($refTableName !== $this->_uniqueCorrelation($refTableName)) {
+                $tableName = $this->_adapter->quoteIdentifier($this->_uniqueCorrelation($refTableName));
+                $joinCond = sprintf('%s.%s = %s.%s', $tableName,
+                        $this->_adapter->quoteIdentifier($refMap['refColumns']),
+                        $this->_adapter->quoteIdentifier($localTableName),
+                        $this->_adapter->quoteIdentifier($refMap['columns']));
+            }
+            
             $this->$method($refTableName, $joinCond, array());
         }
 
-        if ($cols)
+        if ($cols) {
             $this->_tableCols($localTableName, $cols, true);
+        }
 
-        return $this;
+        return $tableName;
     }
 
     /**
@@ -418,7 +571,7 @@ class Centurion_Db_Table_Select extends Zend_Db_Table_Select
         $depTable = Centurion_Db::getSingletonByClassName($depTableClassName);
         $depTableName = $depTable->info(Centurion_Db_Table_Abstract::NAME);
 
-        $tableName = $this->_adapter->quoteIdentifier($this->_uniqueCorrelation($depTableName));
+        $tableName = $depTableName;
         
         $foreignRefMap = $depTable->getReferenceMap();
         if (null == $foreignRule) {
@@ -428,33 +581,48 @@ class Centurion_Db_Table_Select extends Zend_Db_Table_Select
                 }
             }
 
-            if ($refRule['refTableClass'] != $localTableClass)
+            if ($refRule['refTableClass'] != $localTableClass) {
                 throw new Centurion_Db_Exception(sprintf('The foreign reference rules couldn\'t be found in %s', $depTableClassName));
+            }
 
         } else {
-            if (!in_array($foreignRule, array_keys($foreignRefMap)))
+            if (!in_array($foreignRule, array_keys($foreignRefMap))) {
                 throw new Centurion_Db_Exception('no such rule (%s) for model %s', $foreignRule, $depTableClassName);
+            }
 
             $refRule = $foreignRefMap[$foreignRule];
         }
 
-        if (!in_array($joinType, array_keys(self::$_joinMethod)))
+        if (!in_array($joinType, array_keys(self::$_joinMethod))) {
             throw new Centurion_Db_Exception(sprintf('unknown join type : %s', $joinType));
+        }
 
-        $joinCond = sprintf('%s.%s = %s.%s', $tableName,
+        $joinCond = sprintf('%s.%s = %s.%s', $this->_adapter->quoteIdentifier($tableName),
                                              $this->_adapter->quoteIdentifier($refRule['columns']),
                                              $this->_adapter->quoteIdentifier($localTableName),
                                              $this->_adapter->quoteIdentifier($refRule['refColumns']));
-
+        
         if (!$this->_isAlreadyJoined($depTableName, $joinCond)) {
             $method = self::$_joinMethod[$joinType];
+            /**
+             * We will join to the table. We check that Zend will not generate a autoatic alias because in this case
+             * we must change the join condition
+             */
+            if ($tableName !== $this->_uniqueCorrelation($tableName)) {
+                $tableName = $this->_adapter->quoteIdentifier($this->_uniqueCorrelation($tableName));
+                $joinCond = sprintf('%s.%s = %s.%s', $tableName,
+                        $this->_adapter->quoteIdentifier($refRule['columns']),
+                        $this->_adapter->quoteIdentifier($localTableName),
+                        $this->_adapter->quoteIdentifier($refRule['refColumns']));
+            }
             $this->$method($depTableName, $joinCond, array());
         }
 
-        if ($cols)
+        if ($cols) {
             $this->_tableCols($localTableName, $cols, true);
+        }
 
-        return $this;
+        return $tableName;
     }
 
     /**
@@ -513,23 +681,20 @@ class Centurion_Db_Table_Select extends Zend_Db_Table_Select
             } elseif (in_array($rule[1], array_keys($dependentRefMap))) {
                 if (null !== $nextRule) {
                     $foreignTable = Centurion_Db::getSingletonByClassName($dependentRefMap[$rule[1]]['refTableClass']);
-                    $uniqName = $this->_adapter->quoteIdentifier($this->_uniqueCorrelation($foreignTable->info('name')));
-                    $this->addDependentTable($rule[1], $localTable, array(), $rule[0]);
+                    $uniqName = $this->addDependentTable($rule[1], $localTable, array(), $rule[0]);
                 } else {
                     $sqlField = sprintf('%s.%s', $uniqName,
                                                  $this->_adapter->quoteIdentifier($dependentRefMap[$rule[1]]['columns']));
                 }
             } elseif (in_array($rule[1], array_keys($dependentTables))) {
                 $foreignTable = Centurion_Db::getSingletonByClassName($dependentTables[$rule[1]]);
-                $uniqName = $this->_adapter->quoteIdentifier($this->_uniqueCorrelation($foreignTable->info('name')));
-                $this->addOneToOneTable($rule[1], $localTable, array(), $rule[0]);
+                $uniqName = $this->addOneToOneTable($rule[1], $localTable, array(), $rule[0]);
             } else {
                 throw new Centurion_Db_Exception(sprintf('%s did not match any external rule', $rule[1]));
             }
 
             if (null === $sqlField && in_array($nextRule, $foreignTable->info(Centurion_Db_Table_Abstract::COLS))) {
-                $sqlField = sprintf('%s.%s', $uniqName,
-                                             $this->_adapter->quoteIdentifier($nextRule));
+                $sqlField = sprintf('%s.%s', $uniqName, $this->_adapter->quoteIdentifier($nextRule));
             }
 
             $localTable = $foreignTable;
