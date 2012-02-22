@@ -1,5 +1,4 @@
 <?php
-
 defined('APPLICATION_PATH')
     || define('APPLICATION_PATH', realpath(dirname(__FILE__) . '/../application'));
 
@@ -9,7 +8,7 @@ defined('APPLICATION_ENV')
 
 defined('RUN_CLI_MODE')
     || define('RUN_CLI_MODE', true);
-    
+
 defined('PHPUNIT')
     || define('PHPUNIT', true);
 
