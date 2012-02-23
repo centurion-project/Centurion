@@ -100,7 +100,7 @@ class Centurion_ZFDebug_Controller_Plugin_Debug_Plugin_Exception implements Cent
                     $t['file'] = 'unknown';
                 if (! isset($t['line']))
                     $t['line'] = 'n/a';
-                $html .= '<li>' . $func . '<br>in ' . str_replace($_SERVER['DOCUMENT_ROOT'], '', $t['file']) . ' on line ' . $t['line'] . '</li>';
+                $html .= '<li>' . $func . '<br />in ' . str_replace($_SERVER['DOCUMENT_ROOT'], '', $t['file']) . ' on line ' . $t['line'] . '</li>';
             }
             $html .= '</ol>';
         }
