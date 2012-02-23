@@ -1,6 +1,6 @@
 <?php
 
-class Cms_AdminFlatpageController extends Centurion_Controller_CRUD//implements Translation_Traits_Controller_CRUD_Interface
+class Cms_AdminFlatpageController extends Centurion_Controller_CRUD implements Translation_Traits_Controller_CRUD_Interface
 {
     public function init()
     {
