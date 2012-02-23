@@ -54,9 +54,6 @@ class Cms_Model_DbTable_Row_Flatpage extends Centurion_Db_Table_Row implements /
                         return '/';
                     }
 
-                    if (strlen($this->body) < 15) {
-                        return null;
-                    }
                     return $router->assemble(array('object' => $this), sprintf('%sflatpage_%d', Zend_Registry::get('ROUTE_PREFIX'), $this->pk), true);
                 break;
             case Cms_Model_DbTable_Flatpage::REDIRECT:

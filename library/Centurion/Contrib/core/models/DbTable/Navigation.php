@@ -159,19 +159,22 @@ class Core_Model_DbTable_Navigation extends Centurion_Db_Table_Abstract implemen
             if (null === $navigationData) {
                 continue;
             }
-            if (isset($navigationData['uri']) && $navigationData['uri'] === '#' && count($pages) > 0) {
-                if (isset($pages[0]['uri'])) {
-                    $navigationData['uri'] = $pages[0]['uri'];
+            if (isset($navigationData['uri']) && $navigationData['uri'] === '#') {
+
+                if (count($pages) > 0) {
+                    if (isset($pages[0]['uri'])) {
+                        $navigationData['uri'] = $pages[0]['uri'];
+                    } else {
+                        $navigationData['route'] = $pages[0]['route'];
+                        $navigationData['module'] = $pages[0]['module'];
+                        $navigationData['action'] = $pages[0]['action'];
+                        $navigationData['controller'] = $pages[0]['controller'];
+                        $navigationData['params'] = $pages[0]['params'];
+                    }
                 } else {
-                    $navigationData['route'] = $pages[0]['route'];
-                    $navigationData['module'] = $pages[0]['module'];
-                    $navigationData['action'] = $pages[0]['action'];
-                    $navigationData['controller'] = $pages[0]['controller'];
-                    $navigationData['params'] = $pages[0]['params'];
+                    //No href, so it will be display with span tag
+                    $navigationData['uri'] = '';
                 }
-            } else {
-                //No href, so it will be display with span tag
-                $navigationData['uri'] = '';
             }
 
             if (null !== $pages) {
