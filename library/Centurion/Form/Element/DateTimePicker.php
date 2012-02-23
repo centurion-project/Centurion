@@ -1,9 +1,9 @@
 <?php
 
-class Centurion_Form_Element_DatePicker extends Zend_Form_Element_Text
+class Centurion_Form_Element_DateTimePicker extends Zend_Form_Element_Text
 {
     protected $_defaultOptions = array(
-        'class' => 'field-datepicker',
+        'class' => 'field-datetimepicker',
     );
 
     public function __construct($spec, $options = null)
