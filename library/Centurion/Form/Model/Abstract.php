@@ -62,6 +62,8 @@ abstract class Centurion_Form_Model_Abstract extends Centurion_Form
      * @var array
      */
     protected $_columnTypes = array(
+        'bit'           =>  'onOff',
+        'boolean'       =>  'onOff',
         'integer'       =>  'text',
         'int'           =>  'text',
         'smallint'      =>  'text',
@@ -72,10 +74,10 @@ abstract class Centurion_Form_Model_Abstract extends Centurion_Form
         'string'        =>  'text',
         'varchar'       =>  'text',
         'char'          =>  'text',
-        'boolean'       =>  'checkbox',
-        'timestamp'     =>  'datepicker',
+        'timestamp'     =>  'dateTimePicker',
+        'datetime'      =>  'dateTimePicker',
         'time'          =>  'text',
-        'date'          =>  'text',
+        'date'          =>  'datePicker',
         'enum'          =>  'select',
         'text'          =>  'textarea',
         'mediumtext'    =>  'textarea',
@@ -867,7 +869,7 @@ abstract class Centurion_Form_Model_Abstract extends Centurion_Form
             if ($columnDetails['IDENTITY']) {
                 $config = array('hidden', array());
             } elseif (substr($columnName, 0, 2) == 'is' || substr($columnName, 0, 6) == 'can_be') {
-                $config = array('checkbox', array());
+                $config = array('onOff', array());
             } elseif (substr($columnName, 0, -3) == 'pwd' || $columnName == 'password') {
                 $config = array('password', array());
             } elseif (preg_match('/^enum/i', $columnDetails['DATA_TYPE'])) {
