@@ -382,9 +382,7 @@ class Check {
 
     protected function _checkDocumentRoot()
     {
-        $pos = strrpos($_SERVER['DOCUMENT_ROOT'], '/public');
-        
-        if ($pos == false || substr($_SERVER['DOCUMENT_ROOT'], $pos) !== '/public') {
+        if (!preg_match('`(/|\\\)public(/|\\\)?$`', $_SERVER['DOCUMENT_ROOT'])) {
             $this->_checklist[] = array(
                 'code' => -1,
                 'canBeBetter' => true,
