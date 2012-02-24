@@ -24,7 +24,7 @@
  * @license     http://centurion-project.org/license/new-bsd     New BSD License
  * @author      Florent Messa <florent.messa@gmail.com>
  */
-class Cms_Model_DbTable_Flatpage extends Centurion_Db_Table_Abstract implements /*Translation_Traits_Model_DbTable_Interface,*/ Core_Traits_Mptt_Model_DbTable_Interface
+class Cms_Model_DbTable_Flatpage extends Centurion_Db_Table_Abstract implements Translation_Traits_Model_DbTable_Interface, Core_Traits_Mptt_Model_DbTable_Interface
 {
     const NORMAL = 1;
     const REDIRECT = 4;
@@ -109,4 +109,8 @@ class Cms_Model_DbTable_Flatpage extends Centurion_Db_Table_Abstract implements 
 //        self::MPTT_TREE             =>  'tree_id',
 //        self::MPTT_PK               =>  'id'
 //    );
+    public function getTranslationSpec()
+    {
+        return array();
+    }
 }
