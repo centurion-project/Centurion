@@ -97,13 +97,5 @@ class Auth_AdminUserController extends Centurion_Controller_CRUD
             parent::deleteAction($rowset);
         }
     }
-
-    public function switchAction()
-    {
-        $name = $this->_getParam('name');
-        Centurion_Auth::getInstance()->getIdentity()->name;
-
-        parent::switchAction();
-    }
 }
 
