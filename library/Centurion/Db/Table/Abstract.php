@@ -791,7 +791,11 @@ abstract class Centurion_Db_Table_Abstract extends Zend_Db_Table_Abstract implem
                                 $primaryKey[$refCol], $type);
                         }
 
-                        foreach ($this->fetchAll(implode('AND', $where)) as $row) {
+			/*
+			* Fix : Suround, in the implode, AND with withspaces because if the relation is build with several key			
+			* the implode returned : "myKey=XANDmySecondKey=Y" instead of "myKey=X AND mySecondKey=Y"
+			*/
+                        foreach ($this->fetchAll(implode(' AND ', $where)) as $row) { 
                             $rowsAffected += $row->delete();
                         }
 
