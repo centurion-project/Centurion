@@ -138,15 +138,13 @@ class Centurion_Db_Table_SelectTest extends PHPUnit_Framework_TestCase
     
         $select->addRelated('groups__users__id');
     
-        $select->filter(array('user_parent__username' => 'admin'));
-    
-        echo $select;
-        die();
+        $select->filter(array('left|user_parent__username__isnull' => ''));
+        $select->filter(array('username' => 'admin'));
+
         $select->limit(2);
-    
         $rowSet = $select->fetchAll();
-    
         $this->assertEquals(1, $rowSet->count());
+        $this->assertEquals('admin', $rowSet[0]->username);
     }
 }
 

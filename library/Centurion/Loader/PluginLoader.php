@@ -39,6 +39,12 @@ class Centurion_Loader_PluginLoader extends Zend_Loader_PluginLoader
 
     protected static $_includeFileCacheBis;
 
+
+
+    public static function setCacheRotate($cacheRotate)
+    {
+        self::$_cacheWriteRotate = $cacheRotate;
+    }
     /**
      * Retrieve class file cache path
      *

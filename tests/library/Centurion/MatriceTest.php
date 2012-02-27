@@ -1,9 +1,9 @@
 <?php
 
+require_once dirname(__FILE__) . '/../../TestHelper.php';
+
 class Centurion_MatriceTest extends PHPUnit_Framework_TestCase
 {
-    
-    
     public function testConnection()
     {
         $matrice = new Centurion_Matrice();

@@ -1,5 +1,7 @@
 <?php
 
+require_once dirname(__FILE__) . '/../../../../tests/TestHelper.php';
+
 class Centurion_File_SystemTest extends PHPUnit_Framework_TestCase
 {
     public function testToto()
