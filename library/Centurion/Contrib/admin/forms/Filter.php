@@ -119,7 +119,8 @@ class Admin_Form_Filter extends Centurion_Form
                             $refRowSet = Centurion_Db::getSingletonByClassName($manyDependentTables[$key]['refTableClass'])->fetchAll();
                             $filterData['data'] = array();
                             foreach ($refRowSet as $refRow) {
-                                $filterData['data'][$refRow->id] = $refRow->__toString();
+                                //TODO: this doesn't work with multiple primary key
+                                $filterData['data'][$refRow->pk] = $refRow->__toString();
                             }
                             asort($filterData['data']);
                         }
