@@ -78,7 +78,7 @@ $(function(){
              });
 
     $('.field-rte').CUI('rte', {
-        basePath:'<?php echo $this->baseUrl() ?>',
+        basePath:'<?php echo $baseUrl ?>',
         content_css : "<?php echo  $baseUrl; ?>/layouts/frontoffice/css/rte.css",
         mediacenter_popup_action: '<?php echo $this->url(array('module'=>'media', 'controller'=>'admin-mediacenter', 'action'=>'index', 'popup'=>true, 'saving' => null), 'default') ?>',
         add_buttons: 'inlinepopups',
