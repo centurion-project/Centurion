@@ -109,8 +109,23 @@ class Cms_Model_DbTable_Flatpage extends Centurion_Db_Table_Abstract implements 
 //        self::MPTT_TREE             =>  'tree_id',
 //        self::MPTT_PK               =>  'id'
 //    );
+
     public function getTranslationSpec()
     {
-        return array();
+        return array(
+            Translation_Traits_Model_DbTable::TRANSLATED_FIELDS => array(
+                'title',
+                'description',
+                'keywords',
+                'body',
+                'flatpage_template_id',
+            ),
+            Translation_Traits_Model_DbTable::DUPLICATED_FIELDS => array(
+                'is_published',
+            ),
+            Translation_Traits_Model_DbTable::SET_NULL_FIELDS => array(
+
+            )
+        );
     }
 }
