@@ -760,10 +760,20 @@ abstract class Centurion_Form_Model_Abstract extends Centurion_Form
             $i = 0;
             foreach ($objectsRelated as $objectRelated) {
                 if (!empty($objectRelated)) {
-                    list($intersectionRow, $created) = $intersectionTable->getOrCreate(array(
-                        $manyDependentTable['columns']['local']    =>  $this->_instance->id,
-                        $manyDependentTable['columns']['foreign']  =>  $objectRelated
-                    ));
+
+                    foreach ((array) $refLocalArray['columns'] as $key => $columnName) {
+                        $getOrCreateArgsArray[$columnName] = $this->_instance->{$reColumnsfLocalArray[$key]};
+                    }
+                    $getOrCreateArgsArray[$refForeignArray['columns']] = $objectRelated;
+                    //Zend_Debug::dump($refLocalArray);
+                    //Zend_Debug::dump($refForeignArray);
+
+                    try {
+                        list($intersectionRow, $created) = $intersectionTable->getOrCreate($getOrCreateArgsArray);
+                    } catch(Exception $e) {
+                        Zend_Debug::dump($getOrCreateArgsArray);
+                        die;
+                    }
 
                     if (isset($intersectionRow->order)) {
                         $intersectionRow->order = $i++;
@@ -781,8 +791,11 @@ abstract class Centurion_Form_Model_Abstract extends Centurion_Form
             if (count($restrincts))
                 $where .= sprintf(' AND (%s)', implode(' AND ', $restrincts));
 
-            $rowset = $intersectionTable->fetchAll($intersectionTable->select(true)
-                                                                     ->where($where));
+            $select = $intersectionTable->select(true);
+            if('' !== trim($where)) {
+                $select->where($where);
+            }
+            $rowset = $intersectionTable->fetchAll($select);
 
             foreach ($rowset as $key => $row) {
                 $row->delete();
