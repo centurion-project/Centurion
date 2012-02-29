@@ -1374,8 +1374,8 @@ abstract class Centurion_Db_Table_Row_Abstract extends Zend_Db_Table_Row_Abstrac
      */
     protected function _getNextOrPreviousSelectByField($column, $isNext = true, $kwargs = null, $select = null)
     {
-        $op = $isNext ? '<' : '>';
-        $order = $isNext ? 'DESC' : 'ASC';
+        $op = $isNext ? '>' : '<';
+        $order = $isNext ? 'ASC' : 'DESC';
 
         $adapter = $select->getTable()->getAdapter();
 
@@ -1384,9 +1384,7 @@ abstract class Centurion_Db_Table_Row_Abstract extends Zend_Db_Table_Row_Abstrac
         if (strpos($column, Centurion_Db_Table_Select::RULES_SEPARATOR) !== false) {
             $cleanColumn = $this->_cleanColumn($column);
             $solumnString = $select->addRelated($column);
-            //$column = new Zend_Db_Expr($solumnString);
             list($columnSchema, $column) = explode('.', $solumnString);
-            //list($columnSchema, ) = explode(".", $solumnString);
         } else {
             $cleanColumn = $column;
             $column = $adapter->quoteIdentifier($column);
