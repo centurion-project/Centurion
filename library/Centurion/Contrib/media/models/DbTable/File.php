@@ -69,6 +69,8 @@ class Media_Model_DbTable_File extends Centurion_Db_Table_Abstract
         'tags'         => array(
             'refTableClass'     => 'Media_Model_DbTable_Tag',
             'intersectionTable' => 'Media_Model_DbTable_TagFile',
+            'reflocal'          => 'file',
+            'refforeign'        => 'tag',
             'columns'           => array(
                 'local'     => 'file_id',
                 'foreign'   => 'tag_id'
