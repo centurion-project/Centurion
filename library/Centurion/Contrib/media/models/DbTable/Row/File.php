@@ -162,6 +162,7 @@ class Media_Model_DbTable_Row_File extends Centurion_Db_Table_Row_Abstract
 
     /**
      * Counts how many times this media is used throughout the application
+     * @fixme uses of media in rte fields is not taken into account
      */
     public function countTimesUsed()
     {
