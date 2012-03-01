@@ -43,13 +43,8 @@ class Admin_Form_Filter extends Centurion_Form
             'ViewHelper',
             array('Label', array('placement' => null)),
             array('HtmlTag', array('tag' => 'div', 'class' => 'in')),
-
             array(array('ElementContainer' => 'HtmlTag'), array('tag' => 'div')),
         );
-    public function __construct($options = null)
-    {
-        parent::__construct($options);
-    }
 
     public function init()
     {
@@ -95,14 +90,17 @@ class Admin_Form_Filter extends Centurion_Form
             $checkboxType = 'multiCheckbox';
             $element = null;
 
-            if (!isset($filterData['type']))
+            if (!isset($filterData['type'])) {
                 $filterData['type'] = Centurion_Controller_CRUD::FILTER_TYPE_TEXT;
+            }
 
-            if (!isset($filterData['column']))
+            if (!isset($filterData['column'])) {
                 $filterData['column'] = $key;
+            }
 
-            if (!isset($filterData['behavior']))
+            if (!isset($filterData['behavior'])) {
                 $filterData['behavior'] = Centurion_Controller_CRUD::FILTER_BEHAVIOR_CONTAINS;
+            }
 
             switch ($filterData['type']) {
                 case Centurion_Controller_CRUD::FILTER_TYPE_RADIO:
@@ -128,8 +126,9 @@ class Admin_Form_Filter extends Centurion_Form
 
                     $element->addMultiOptions($filterData['data']);
                     $element->setSeparator('');
-                    if ($checkboxType === 'multiCheckbox')
+                    if ($checkboxType === 'multiCheckbox') {
                         $element->setIsArray(true);
+                    }
                     break;
                 case Centurion_Controller_CRUD::FILTER_TYPE_TEXT:
                 case Centurion_Controller_CRUD::FILTER_TYPE_NUMERIC:
@@ -142,10 +141,11 @@ class Admin_Form_Filter extends Centurion_Form
                 case Centurion_Controller_CRUD::FILTER_TYPE_BETWEEN_DATETIME:
                     $form = new self();
                     
-                    if ($filterData['type'] == Centurion_Controller_CRUD::FILTER_TYPE_BETWEEN_DATETIME)
+                    if ($filterData['type'] == Centurion_Controller_CRUD::FILTER_TYPE_BETWEEN_DATETIME) {
                         $class = 'field-datetimepicker';
-                    else
+                    } else {
                         $class = 'datepicker';
+                    }
                         
                     $element = $form->createElement('text', 'gt', array('class' => $class, 'belongsTo' => $key, 'label' => $this->_translate('From'), 'value' => '26/08/11 03:00'));
                     $form->addElement($element, 'gt');
