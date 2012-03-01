@@ -114,6 +114,7 @@ class Admin_Form_Filter extends Centurion_Form
                     $element = $this->createElement($checkboxType, $key, array('label' => $label));
 
                     if (!isset($filterData['data'])) {
+                        if(!$this->_table) break;
                         $manyDependentTables = $this->_table->info('manyDependentTables');
                         if (isset($manyDependentTables[$key])) {
                             $refRowSet = Centurion_Db::getSingletonByClassName($manyDependentTables[$key]['refTableClass'])->fetchAll();
