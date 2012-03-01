@@ -1,0 +1,246 @@
+/*
+* COMPONENTS CSS
+* CenturionUI CSS-JS Framework
+* Copyright (c) 2009
+* Dual licensed under the MIT (MIT-LICENSE.txt) and GPL (GPL-LICENSE.txt) licenses.
+*/
+
+/* ---------------------------------------------------------------------------------------------------------------------
+DATAS GRID */
+
+.datas {                        margin:10px 0; padding:0; font:normal 12px/14px Arial, sans-serif; width:100%;
+                                border-top:solid 1px #d6d6d6; border-bottom:solid 1px #d6d6d6;  } 
+
+.datas tr.even td {             background-color:#f7f7f7; }
+.datas tr.hover td {            background-color:#e5ecf9; }
+.datas tr.select td {           background-color:#ffc; }
+
+.datas th {                     margin:0; padding:7px 10px; text-align:left; font-weight:bold;
+                                background:url(../images/cell-separator.png) no-repeat left; }
+							
+.datas th a {                   margin:0; padding:0 16px 0 0; text-decoration:none; color:#5b5b5b; position:relative; zoom:1; }
+.datas th a:hover {             text-decoration:none; color:#5b5b5b; }
+.datas th a .ui-icon {          font-size:1px; position:absolute; bottom:0; right:0; display:none; }
+.datas th.sorting-asc 
+.ui-icon {                      background: url(../images/ui-icons_0066cc_256x240.png) -64px -16px; display:block;  }
+.datas th.sorting-desc 
+.ui-icon {                      background: url(../images/ui-icons_0066cc_256x240.png) 0 -16px; display:block;  }
+.datas th.sorting-asc, 
+.datas th.sorting-desc {        border-top:solid 3px #06c; color:#06c; }
+.datas th.sorting-asc a, 
+.datas th.sorting-desc a {      color:#06c; }
+							
+							
+.datas td {                     margin:0; padding:7px 10px; border-top:solid 1px #d6d6d6; line-height:18px; }
+.datas td.first,
+.datas th.first {               background-image:none; }
+					
+.grid a {                       color:#aaa; text-decoration:none; }
+.grid a:hover {                 color:#aaa; text-decoration:underline; }
+.grid a.edit {                  margin:0; padding:0; color:#06c; text-decoration:underline;  }	
+.grid a.edit:hover {            color:#06c; text-decoration:none; }							
+.grid a.link {                  padding:0 18px 0 0; text-decoration:none; position:relative; zoom:1;}
+.grid a.link:hover {            text-decoration:underline; }
+.grid a.link .ui-icon {         font-size:1px; position:absolute; bottom:0; right:0; 
+                                background: url(../images/ui-icons_c1c1c1_256x240.png) -32px -80px; }
+.grid .row-template {           display:none; }                               
+
+
+.medias {                       margin:10px 0; padding:10px 0; width:100%;
+                                border-top:solid 1px #d6d6d6; border-bottom:solid 1px #d6d6d6; }
+.medias .row {                  padding:10px 10px; width:180px; height:150px; float:left; position:relative;
+                                -webkit-border-radius:5px; -moz-border-radius:5px; border-radius:5px;  }
+.medias .col-picture {          margin-bottom:5px; padding:2px; border:solid 1px #d6d6d6; background:#fff; }
+.medias .hover {                background:#e5ecf9; }
+.medias .select {               background:#ffc; }
+.medias .col-title {            margin-bottom:5px; color:#06c; font-size:12px; }
+.medias .col-infos {            margin-bottom:5px; font-size:12px; }
+.medias ul.actions {            position:absolute; bottom:8px; right:10px; }
+
+ul.actions li .tree-context {   width:100px; }
+
+.datas-permissions td {         border-top:1px solid #f0f0f0;}
+.datas-permissions th {         border-bottom:1px solid #d6d6d6; }
+.datas-permissions tr.head td { background-color:#f5f5f5; border-bottom:1px solid #d6d6d6; color:#06c; }
+.datas-permissions tr.even td { background-color:#fff; }
+
+
+.datas tbody.ui-sortable
+tr:hover {                      cursor:move }
+.datas .ui-state-highlight,
+.datas .ui-state-highlight td { background-color:#ffc; }
+.datas tbody.ui-sortable
+td.first  {                     width:20px; background-image:url(../images/drag.png);
+                                background-repeat: no-repeat; background-position: 18px 12px;  }
+.datas tbody.ui-sortable
+td.first input {                display:none; }
+
+/* ---------------------------------------------------------------------------------------------------------------------
+TOOLBAR */
+
+.toolbar {						margin:0; padding:10px 0; border-top:dotted 1px #d6d6d6; position:relative;
+                                border-bottom:solid 1px #d6d6d6; color:#999; zoom:1; }
+.toolbar-top {                  border-bottom:none; padding-bottom:0; }
+.toolbar-bottom {               border-top:none; border-bottom:dotted 1px #d6d6d6; padding-top:0;  }
+.toolbar .select {				color:#aaa; font:normal 12px/16px Arial, sans-serif;  }
+.toolbar .select a {			color:#aaa; text-decoration:underline; font:normal 12px/16px Arial, sans-serif; }
+.toolbar .select a:hover {		text-decoration:none; }
+
+.toolbar .pager {				float:right; display:inline; font-size:13px; color:#555; }
+.toolbar .pager a {		        color:#fe340c; text-decoration:underline;  }
+.toolbar .pager .infos {        margin:0 5px; }
+.toolbar .no-underline a {		text-decoration:none;  }				
+.toolbar .pager a:hover {		color:#aaa; text-decoration:none; }	
+.toolbar .pager a.selected {	color:#444; font-weight:bold; text-decoration:none;  }				
+.toolbar .link	{				color:#444; font:normal 11px/25px Arial, sans-serif; }
+.toolbar .link-desactive	{	color:#aaa; font:normal 11px/25px Arial, sans-serif; }                             
+.toolbar .select .ui-button {   color:#444; }
+.toolbar .ui-button-tiny-squared { display:inline; }
+
+/* ---------------------------------------------------------------------------------------------------------------------
+FILTER */
+
+.box {                          margin:0 0 10px 0; padding:20px; width:190px; font:normal 12px/16px Arial, sans-serif; color:#333;
+                                background:#e5ebf9; -moz-border-radius:8px; -khtml-border-radius:8px; -webkit-border-radius:8px; }
+.box h2 {                       font:bold 16px/18px Arial, sans-serif; margin:0 0 10px 0; color:#333; }
+.box h3 {                       margin:0 0 5px 0; padding:0; font:bold 12px/16px Arial, sans-serif; color:#333 }
+.filter-link-active .arrow {    margin:-2px 0 0 0; padding:0; height:16px; width:16px; display:block; float:left;
+                                background:url(../images/sprite-icons-black.png) no-repeat -48px -48px }
+.filter h3 
+.ui-icon-triangle-1-s {         margin:-1px 2px 0 -1px; float:left; }		
+.filter-closed h3 
+.ui-icon-triangle-1-s {         background-position:-32px -16px }								
+.grid-filter .filter-link {     color:#06c; }
+.grid-filter 
+.filter-link-active {           font-weight:bold; }
+.grid-filter 
+.filter-link-remove {           color:#06c; }
+.grid-filter .filter {          margin:0 0 10px 0; }
+.grid-filter .filter .in {      display:block; margin-left:12px;}
+.grid-filter .filter-closed 
+.in {                           display:none;  }
+.grid-loading {                 padding:0 0 0 30px; font:bold 12px/24px Arial, sans-serif; color:#999; 
+                                background:url('../images/ajax-loader.gif') no-repeat; z-index:5; display:none;}
+.grid-filter div.in label {     font-size:10px; display:block; }
+.grid-filter input {            margin-left:-10px;  }	
+.grid-filter input.field-text { width:175px; font-size:11px; padding:3px 5px; color:#444;
+                                border:solid 1px #dbdfe6; border-top-color:#abadb3; border-right-color:#cfd4de;
+                                -moz-border-radius:2px; }	
+.grid-filter .submit {          text-align:right; }	
+.grid-filter .submit input {    margin-right:2px; }
+
+.grid-filter .reset-filter {        margin-left:5px; padding:2px 5px 2px 0; font-size:10px; font-weight:normal; 
+                                    text-decoration:none; -moz-border-radius:3px; -webkit-border-radius:3px;
+                                    border-radius:3px; background:#fff; color:#ff2d03; border-bottom:solid 1px #DBDFE6; 
+                                    border-right:solid 1px #DBDFE6; } 
+.grid-filter .reset-filter:hover {  text-decoration:none; border-bottom:none; border-right:none; }
+.grid-filter .reset-filter .icon {  display:inline-block; background-position:-128px -16px; 
+                                    position:relative; top:4px; #top:1px; width:15px;  } 
+
+.table tr.whileDrag td {	border-top:solid 1px #06c; background:#cde; color:#06c;  }
+
+/* order */
+.table td.dragHandle {		padding-left:20px; }
+.table td.showDragHandle {	background: url(../images/icon-move.png) no-repeat 5px center; cursor:move;  }
+.table td span.position {	display:none; }
+
+/* comparative */
+.comparative {				border-top:none; }
+.comparative th {			padding:7px 10px; font:bold 12px/15px Arial, sans-serif; }
+.comparative tr.even td {   background-color:#fbfbfb; } 
+.comparative tr.head td {   background-color:#f7f7f7; borsder-bottom:solid 1px #dedede; } 
+
+/* number */
+.number {					border-top:none; }
+.number th {				background: url(none); font:bold 14px/15px Arial, sans-serif; color:#ff2d03; }
+.number td {				background: url(none);  }
+.number {                   margin:0; padding:3px 8px; display:inline-block; background:#444; 
+                            font:bold 14px/14px Arial, sans-serif; color:#fff; text-align:right;
+                            -moz-border-radius:10px;  -webkit-border-radius:10px; border-radius: 10px;}
+.number-gray {				background:#666; }
+.number-red {				background:#ff2d03; }
+.number-blue {				background:#5794d6; }
+.number-bluelight {         background:#c8d5ed; color:#555; }
+.number-white {             background:#fff; color:#555; }
+.number-silver {            background:#d6d6d6; }
+							
+span.switch-1 {				height:20px; width:62px; display:block; text-indent:-99999px; 
+							background:url(../images/icon-on.png) no-repeat; }
+span.switch-0 {				height:20px; width:62px; display:block; text-indent:-99999px; 
+							background:url(../images/icon-off.png) no-repeat; }
+
+
+h1 .filter-list {				margin-left:10px; font-size:11px; color:#444 }
+h1 .filter-list .red {			color:#ff2d03 }
+h1 .filter-list .remove-all  {	margin-left:5px; font-weight:normal; }
+h1 .filter-list .remove-all a {	color:#ff2d03; text-decoration:underline; }
+h1 .filter-list .remove-all a:hover {	color:#ff2d03; text-decoration:none; }
+
+
+
+/* ---------------------------------------------------------------------------------------------------------------------
+PAGES GRID */
+
+
+.pages {                        margin:0; padding:0 0 5px 0; font:normal 12px/16px Arial, sans-serif; 
+                                border-bottom:solid 1px #d6d6d6; position:relative; width:100%; overflow:hidden;
+                                background:url(../images/tree-zebra.png) repeat 0 72px; } 
+.pages .cell, .pages .cell-1, 
+.pages .cell-2, .pages .cell-3{ display:block; float:left; padding:8px 1.3%; width:14%; position:relative;
+                                border-top:solid 1px #d6d6d6; line-height:18px; }
+.pages .cell-2 {                width: 30.6%; }
+.pages .cell-3 {                width: 47.2%; }
+
+.pages .heading {               padding:10px 10px; font-weight:bold; background:#fff; 
+                                border-top:solid 1px #d6d6d6; border-bottom:solid 1px #d6d6d6; margin-bottom:0; }
+.pages .heading .cell,
+.pages .heading .cell-1,
+.pages .heading .cell-2,
+.pages .heading .cell-3 {       padding:4px 1.3%; } 
+.pages .jstree {                border-top:solid 10px #fff;}
+
+.cells {                        display:none; }
+.page {                         font:normal 12px/22px Arial, sans-serif; text-decoration:none; color:#06c;
+                                position:relative; top:-4px; }
+.page ins {                     position:relative; top:2px; #top:-2px; }
+
+.pages .cells {                 display:inline; position:absolute; right:5px;  width:275px; }
+.pages .cells .online {         margin-left:10px; display:inline; float:left; width:75px; }
+.pages .cells .date {           margin-left:10px; display:inline; float:left; width:100px; }
+.pages .cells .actions {        margin-left:10px; display:inline;  }
+.pages .cells .actions ins {    display:none; }
+
+
+/* tree */
+.tree ul {                      margin:0 0 0 5px; background-position:6px 1px; background-repeat:repeat-y;                                 background-image:url("../images/tree-dotted.png"); }                               .tree li {                      display:block; line-height:16px; padding:0 0 0 15px; clear:both;                                 background-position:-64px -16px; background-repeat:no-repeat;                                background-image:url("../images/tree-icons.png"); zoom:1; }   .tree li ul {                   display:none; } .tree li a, .tree li span {     display:inline-block; line-height:16px; min-height:16px; color:#5b5b5b; white-space:nowrap;                                 text-decoration:none; padding:4px; } 
+.pages .tree li a {             line-height:21px; min-height:21px; }.tree li a:focus {              outline: none; } .tree .page:hover {             text-decoration:none; color:#ff2f05;  }.tree .ltr li.last {            float:left;                                 #margin-top: expression( (this.previousSibling && /open/.test(this.previousSibling.className) ) ? "-2px" : "0"); } .tree > ul li.last {            overflow:visible; } .tree li.open ul {              display:block; } .tree li.closed ul {            display:none !important; } #jstree-dragged {               position:absolute; top:-10px; left:-10px; margin:0; padding:0; z-index:5; } #jstree-dragged ul ul ul {      display:none; } #jstree-marker {                padding:0; margin:0; line-height:5px; font-size:1px; overflow:hidden; height:5px;                                 position:absolute; left:-45px; top:-30px; z-index:1000; background-color:transparent;                                 background-repeat:no-repeat; display:none; } #jstree-marker.marker {         width:45px; background-position:-32px top; } #jstree-marker.marker_plus {    width:5px; background-position:right top; margin-top:-3px; } .marker {                       _width:45px; _background-position:-32px top; } .marker_plus {                  _width:5px; _background-position:right top; }.tree li li {                   overflow:hidden; #overflow:visible; } .tree > .ltr > li {             display:table; } .tree ul ins {                  display:inline-block; text-decoration:none; width:16px; height:16px; } .tree .ltr ins {                margin:0 4px 0 0px; } .tree .locked li a {            color:gray; }                   .tree .no_dots, .tree .no_dots ul {             background:transparent; }.tree .no_dots li.leaf{         background-image:none; background-color:transparent; }.tree li.open {                 background:url("../images/tree-icons.png") -32px -48px no-repeat; }.tree li.closed, #jstree-dragged.tree li li.open {                    background:url("../images/tree-icons.png") -48px -32px no-repeat; }#jstree-marker {                background-image:url("../images/tree-icons.png"); }.tree li a:hover, .tree li a.hover, .tree li span {                 }.tree ins {                     background-image:url("../images/tree-icons.png"); background-position:0 0;                                 background-repeat:no-repeat; }.tree ul li a.loading ins {     background-image:url("throbber.gif") !important; background-position:0 0 !important; } .tree li.closed a ins, .tree li.leaf a ins {           background-position:0 0px; } UL is added to make selector stronger.tree ul li a.loading ins {     background-image:url("throbber.gif"); background-position:0 0; } UL is added to make selector stronger.tree li a ins.forbidden {      background-position:-16px -16px; }.tree .locked li a ins{         background-position:0 -48px; }.tree li span ins {             background-position:0px -32px; }#jstree-dragged.tree ins {      background:url("../images/tree-icons.png") -16px -32px no-repeat; }#jstree-dragged.tree ins.forbidden {                 background:url("../images/tree-icons.png") -16px -16px no-repeat; }.tree-context a ins {           background-image:url("../images/tree-icons.png"); background-repeat:no-repeat;                                 background-position:-64px -64px; }.tree li a input, .tree li span input {           margin:0; padding:0 0; display:inline-block; height:16px !important; color:#5b5b5b;                                border:1px solid white; background:white; font:normal 12px/16px Arial, sans-serif; }.tree ul li a.loading ins {     background-image:url("../images/ui-anim_basic_16x16.gif")!important;                                 background-image:url("../images/ui-anim_basic_16x16.gif"); }.tree-default-context a ins.create {                    background:url("../images/ui-icons_333333_256x240.png") -16px -128px; }.tree-default-context a ins.rename {                    background:url("../images/ui-icons_333333_256x240.png") -64px -112px; }.tree-default-context a ins.remove {                    background:url("../images/ui-icons_333333_256x240.png") -80px -128px; }.tree-default-context a ins.hide {                      background:url("../images/ui-icons_333333_256x240.png") 0px -128px; }.tree-default-context a ins.publish {                   background:url("../images/ui-icons_333333_256x240.png") -128px -128px; }.tree-default-context a ins.hide-menu {                 background:url("../images/ui-icons_333333_256x240.png") 0px -128px; }.tree-default-context a ins.appear-menu {               background:url("../images/ui-icons_333333_256x240.png") -128px -128px; }.tree-default-context a ins.edit {                      background:url("../images/ui-icons_333333_256x240.png") -112px -144px; }.tree li a.hidden ins,.tree li.leaf a.hidden ins,.tree li.closed a.hidden ins {  background-position:-32px -32px; }.tree-default-context a:hover ins {                           opacity:0.4;  } .tree li a.hidden,.tree li.leaf a.hidden,.tree li.closed a.hidden {      color:#999 }.tree li a.hidden:hover {       color:#ff2f05; }.tree a:hover ins,.tree li.leaf a:hover ins,.tree li.closed a:hover ins {   background-position:0 -16px;  }.tree li.root span ins {        background-position:-16px 0px; }.tree li.root {                 background:none; font:bold 12px/16px Arial, sans-serif; color:#5b5b5b; }.tree li.root span {            height:16px; color:#5b5b5b; }.tree .closed .actions {        display:block !important; display:block; }.tree .actions {                background:none; padding:0; }.tree .actions span,.tree .actions a {              padding:0; }.tree .actions span.bullet {    padding:2px 5px; }.tree .actions a:hover .ui-icon {                      background-image:url("../images/ui-icons_5794d6_256x240.png"); } 
+ /*context menu*/
+#jstree-contextmenu {           display:none; position:absolute; z-index:2000; list-style-type:none; 
+                                left:-2000px; top:-2000px; } 
+.tree-context {                 margin:0 20px; padding:0; width:140px; background:#fff; position:relative;
+                                border-left:1px solid #e3e3e3; font:normal 11px/24px Arial; 
+                                border-bottom:1px solid #c5c5c5; border-right:1px solid #c5c5c4; }
+.tree-context li {              }
+.tree-context li a {            position:relative; display:block; height:24px; line-height:24px; margin:0; 
+                                text-decoration:none; color:#444; padding:0; border-top:1px solid #e3e3e3; }
+.tree-context li a ins {        text-decoration:none; float:left; width:16px; height:16px; margin:3px 4px 0 4px; 
+                                line-height:16px; }
+.tree-context li a span {       display:block; padding-left:5px; }
+.tree-context li a:hover {      height:24px; line-height:24px; }
+.tree-context li a:hover span { background:#f1f1f1; color:#aaa; }
+.tree-context li a:hover ins {  background-color:#f1f1f1; }
+.tree-context li a.disabled {   display:none; }
+.tree-context .separator {      display:none; }
+.tree-context li 
+a.disabled ins {                }
+.tree-context li 
+a.disabled:hover {              border:0; height:22px; line-height:22px; }
+.tree-context li 
+a.disabled:hover span {         background:#f0f0f0; margin-left:29px; }
+.tree-context li 
+a.disabled:hover ins {          }
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+    .pages ul li .cells { display: block; margin-top:-29px; }
+}
+
+

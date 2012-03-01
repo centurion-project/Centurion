@@ -9,6 +9,17 @@ class Media_AdminMediaController extends Centurion_Controller_CRUD
         return ''; //<img src="'.$row->getStaticUrl(array('cropcenterresize' => array('width' => 174, 'height' => 94))).'" height="94" width="174" alt="" class="picture">';
     }
 
+    public function displayInfos($row)
+    {
+        $count = $row->countTimesUsed();
+        if(!is_numeric($count)) {
+            return null;
+        }
+        if(0 == $count) return $this->view->translate('Never used');
+        if(1 == $count) return $this->view->translate('Used only once');
+        return $this->view->translate('Used in %s places', $count);
+    }
+
     public function init()
     {
         $this->_helper->authCheck();
@@ -27,7 +38,12 @@ class Media_AdminMediaController extends Centurion_Controller_CRUD
             ),
             'filename' => array(
                     'label' => '',
-            )
+            ),
+           'infos' => array(
+                    'label' => $this->view->translate('Infos'),
+                    'type' => Centurion_Controller_CRUD::COLS_CALLBACK,
+                    'callback' => array($this, 'displayInfos')
+            ),
         );
 
         //TODO: behaviour => behavior
