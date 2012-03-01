@@ -19,7 +19,7 @@ class Admin_View_Helper_GridRowActions extends Zend_View_Helper_HtmlElement
             }
             
             $this->_row = $this->view->row;
-            $url = preg_replace_callback('`/___(.*)___(/|\?|$)`', array(&$this, 'replace_row_callback'), $url);
+            $url = preg_replace_callback('`/___(.*)___(/|\?|$)`', array(&$this, '_replaceRowCallback'), $url);
             $this->_row = null;
 
             $url = $url . '?ticket=' . $this->view->ticket()->getKey($url);
@@ -37,10 +37,9 @@ class Admin_View_Helper_GridRowActions extends Zend_View_Helper_HtmlElement
         return sprintf('<li><a href="%s" class="help" %s><span class="ui-icon %s">%s</span></a></li>', $url, $linkAttribs, $cls, $label); 
     }
     
-    protected function replace_row_callback($match)
+    protected function _replaceRowCallback($match)
     {   
-        $row = $this->_row;
-        if(!$row) {
+        if(!$this->_row) {
             throw new InvalidArgumentException('no row was specified when replacing pattern');
         }
         $field = $match[1];
@@ -48,6 +47,6 @@ class Admin_View_Helper_GridRowActions extends Zend_View_Helper_HtmlElement
         if(!$field) {
             throw new InvalidArgumentException('no row identifier was specified when replacing pattern');
         }
-        return '/' . $row->{$field} . $endChar;
+        return '/' . $this->_row->{$field} . $endChar;
     }
 }
