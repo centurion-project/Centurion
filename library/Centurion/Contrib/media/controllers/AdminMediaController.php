@@ -71,4 +71,13 @@ class Media_AdminMediaController extends Centurion_Controller_CRUD
 
         return $this->_form;
     }
+    public function deleteAction($rowset = null) {
+        try {
+            return parent::deleteAction($rowset);
+        }
+        catch(Zend_Db_Statement_Exception $e) {
+            $this->view->error = $this->view->translate('Some media could not be deleted. They probably are in use somewhere else');
+            return $this->_forward('index');
+        }
+    }
 }

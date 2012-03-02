@@ -108,11 +108,14 @@ class Media_Model_DbTable_Row_File extends Centurion_Db_Table_Row_Abstract
 
     public function delete()
     {
-        if ($this->file_id !== null && $this->getTable()->select(true)->where('file_id=?', $this->file_id)->count() == 1) {
-            unlink(Centurion_Config_Manager::get('media.uploads_dir') . DIRECTORY_SEPARATOR . $this->local_filename);
-        }
+        $localFilename = $this->local_filename;
 
         parent::delete();
+
+        if ($this->file_id !== null && $this->getTable()->select(true)->where('file_id=?', $this->file_id)->count() == 0) {
+            unlink(Centurion_Config_Manager::get('media.uploads_dir') . DIRECTORY_SEPARATOR . $localFilename);
+        }
+
     }
 
     public function getRelativePath($effects = null, $extra = false, $realPath = false)
