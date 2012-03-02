@@ -96,8 +96,11 @@ class Media_Model_DbTable_Image extends Centurion_Db_Table_Abstract
 
     protected function _getImageSize($filename)
     {
+        if (!is_file($filename)) {
+            $filename = Centurion_Config_Manager::get('media.uploads_dir') . DIRECTORY_SEPARATOR . $filename;
+        }
         $adapter = Centurion_Image::factory();
-        $adapter->open(Centurion_Config_Manager::get('media.uploads_dir') . DIRECTORY_SEPARATOR . $filename);
+        $adapter->open($filename);
 
         return array(
             'height'    =>  $adapter->getSourceHeight(),

@@ -104,6 +104,77 @@ class Media_Model_DbTable_File extends Centurion_Db_Table_Abstract
         return $this->_dependentProxies;
     }
 
+    public function getFullPath($path = null)
+    {
+        if ($path == null) {
+            $path = $this->local_filename;
+        }
+
+        if (!is_file($path)) {
+            $path = Centurion_Config_Manager::get('media.uploads_dir')
+                . DIRECTORY_SEPARATOR
+                . $path;
+        }
+
+        return $path;
+    }
+
+
+    /**
+     * @param $value
+     * @param null $file
+     * @return bool
+     */
+    public function getMimeType($value, $file = null)
+    {
+        if ($file === null) {
+            $file = array(
+                'type' => null,
+                'name' => $value
+            );
+        }
+
+        // Is file readable ?
+        //$1 'Zend/Loader.php';
+        if (!Zend_Loader::isReadable($value)) {
+            return $this->_throw($file, self::NOT_READABLE);
+        }
+
+        $validate = new Zend_Validate_File_MimeType('');
+
+        $mimefile = $validate->getMagicFile();
+        if (class_exists('finfo', false)) {
+            $const = defined('FILEINFO_MIME_TYPE') ? FILEINFO_MIME_TYPE : FILEINFO_MIME;
+            if (!empty($mimefile) && empty($finfo)) {
+                $finfo = @finfo_open($const, $mimefile);
+            }
+
+            if (empty($finfo)) {
+                $finfo = @finfo_open($const);
+            }
+
+            $type = null;
+            if (!empty($finfo)) {
+                $type = finfo_file($finfo, $value);
+            }
+        }
+
+        if (empty($type) &&
+            (function_exists('mime_content_type') && ini_get('mime_magic.magicfile'))) {
+            $type = mime_content_type($value);
+        }
+
+        if (empty($type) && $this->_headerCheck) {
+            $type = $file['type'];
+        }
+
+        if (empty($type)) {
+            return $this->_throw($file, self::NOT_DETECTED);
+        }
+
+        return $type;
+    }
+
     public function insert(array $data)
     {
         $primary = $this->_primary;
@@ -115,27 +186,42 @@ class Media_Model_DbTable_File extends Centurion_Db_Table_Abstract
             $data[$primary] = md5(Centurion_Inflector::uniq(uniqid()));
         }
 
+        $fullPath = $this->getFullPath($data['local_filename']);
+
         if (!isset($data['sha1'])) {
-            $data['sha1'] = sha1_file(Centurion_Config_Manager::get('media.uploads_dir')
-                                      . DIRECTORY_SEPARATOR
-                                      . $data['local_filename']);
+            $data['sha1'] = sha1_file($fullPath);
         }
+
+        if (!isset($data['filesize'])) {
+            $data['filesize'] = filesize($fullPath);
+        }
+
 
         $row = $this->fetchRow(array('sha1=?' => $data['sha1'], 'filesize=?' => $data['filesize']));
         //We want to be sure
-        if ($row !== null && sha1_file(Centurion_Config_Manager::get('media.uploads_dir') . DIRECTORY_SEPARATOR . $data['local_filename']) == $row->sha1
-                && filesize(Centurion_Config_Manager::get('media.uploads_dir') . DIRECTORY_SEPARATOR . $data['local_filename']) == $row->filesize) {
+        if ($row !== null && $data['sha1']== $row->sha1
+        && $data['filesize'] == $row->filesize) {
 
             //We reuse the same local filename
             unlink(Centurion_Config_Manager::get('media.uploads_dir') . DIRECTORY_SEPARATOR . $data['local_filename']);
 
             $data['file_id'] = $row->file_id;
             $data['local_filename'] = $row->local_filename;
+            $data['mime'] = $row->mime;
             $data['filesize'] = $row->filesize;
             $data['proxy_model'] = $row->proxy_model;
             $data['proxy_pk'] = $row->proxy_pk;
             $data['belong_model'] = $row->belong_model;
             $data['belong_pk'] = $row->belong_pk;
+        }
+
+        if (!isset($data['mime'])) {
+            //TODO: find a better way to get mime type with Zend.
+            $data['mime'] = $this->getMimeType($fullPath);
+        }
+
+        if (!isset($data['filename'])) {
+            $data['filename'] = basename($fullPath);
         }
 
         if (!isset($data['file_id'])) {
@@ -158,7 +244,7 @@ class Media_Model_DbTable_File extends Centurion_Db_Table_Abstract
                         continue;
                     }
 
-                   $proxyData[$key] = $value;
+                    $proxyData[$key] = $value;
                    unset($data[$key]);
                 }
 
