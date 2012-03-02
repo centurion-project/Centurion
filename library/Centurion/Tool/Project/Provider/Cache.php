@@ -51,7 +51,7 @@ class Centurion_Tool_Project_Provider_Cache extends Centurion_Tool_Project_Provi
 
         define('APPLICATION_PATH', $this->_loadedProfile->search('applicationDirectory')->getPath());
 
-        $config = Centurion_Config_Directory::loadConfig($this->_loadedProfile->search('ConfigsDirectory')->getPath(), $environment);
+        $config = Centurion_Config_Directory::loadConfig(APPLICATION_PATH . '/configs', $environment);
         
         $cacheManager = new Centurion_Cache_Manager();
         $options = $config['resources']['cachemanager'];

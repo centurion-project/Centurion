@@ -1,5 +1,7 @@
 <?php
 
+require_once dirname(__FILE__) . '/../../../../../tests/TestHelper.php';
+
 class Centurion_Model_DbTable_GroupTest extends Centurion_Model_DbTable_AbstractModelTestCase
 {
     protected $_data = array(

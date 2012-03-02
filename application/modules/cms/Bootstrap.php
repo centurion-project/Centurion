@@ -209,8 +209,9 @@ class Cms_Bootstrap extends Centurion_Application_Module_Bootstrap
         Zend_Registry::set('ROUTE_PREFIX', $this->_routePrefix);
 
         foreach ($routes as $name => $route) {
-            if (null !== $baseRoute)
+            if (null !== $baseRoute) {
                 $route = $baseRoute->chain($route);
+            }
             $router->addRoute($name, $route);
         }
     }

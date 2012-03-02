@@ -1,5 +1,7 @@
 <?php
 
+require_once dirname(__FILE__) . '/../../../../tests/TestHelper.php';
+
 class Centurion_Signal_PreInitTest extends PHPUnit_Framework_TestCase
 {
     public function testAttach()

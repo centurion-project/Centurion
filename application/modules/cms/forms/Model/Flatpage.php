@@ -1,6 +1,6 @@
 <?php
 
-class Cms_Form_Model_Flatpage extends Centurion_Form_Model_Abstract //implements Translation_Traits_Form_Model_Interface
+class Cms_Form_Model_Flatpage extends Centurion_Form_Model_Abstract implements Translation_Traits_Form_Model_Interface
 {
     public function __construct($options = array(), Centurion_Db_Table_Row_Abstract $instance = null)
     {

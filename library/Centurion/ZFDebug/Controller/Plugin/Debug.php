@@ -6,8 +6,7 @@
  * @package    Centurion_ZFDebug
  * @subpackage Plugin
  * @copyright  Copyright (c) 2008-2009 ZF Debug Bar Team (http://code.google.com/p/zfdebug)
- * @license    http://code.google.com/p/Centurion/ZFDebug/wiki/License     New BSD License
- * @version    $Id: Debug.php 83 2009-05-21 13:36:05Z gugakfugl $
+ * @license    http://code.google.com/p/zfdebug/wiki/License     New BSD License
  */
 
 /**
@@ -284,13 +283,13 @@ class Centurion_ZFDebug_Controller_Plugin_Debug extends Zend_Controller_Plugin_A
     protected function _getVersionPanel()
     {
         $panel = '<h4>ZFDebug v'.$this->_version.'</h4>' .
-                 '<p>©2008-2009 <a href="http://jokke.dk">Joakim Nygård</a> & <a href="http://www.bangal.de">Andreas Pankratz</a></p>' .
+                 '<p>©2008-2009 <a href="http://jokke.dk">Joakim Nygård</a> &amp; <a href="http://www.bangal.de">Andreas Pankratz</a></p>' .
                  '<p>The project is hosted at <a href="http://code.google.com/p/Centurion/ZFDebug/">http://zfdebug.googlecode.com</a> and released under the BSD License<br />' .
                  'Includes images from the <a href="http://www.famfamfam.com/lab/icons/silk/">Silk Icon set</a> by Mark James</p>';
         // $panel .= '<h4>Zend Framework '.Zend_Version::VERSION.' / PHP '.phpversion().' with extensions:</h4>';
         // $extensions = get_loaded_extensions();
         // natcasesort($extensions);
-        // $panel .= implode('<br>', $extensions);
+        // $panel .= implode('<br />', $extensions);
         return $panel;
     }
 
@@ -474,7 +473,7 @@ class Centurion_ZFDebug_Controller_Plugin_Debug extends Zend_Controller_Plugin_A
     protected function _output($html)
     {
         $response = $this->getResponse();
-        $response->setBody(preg_replace('/(<\/head.*>)/i', '$1' . $this->_headerOutput(), $response->getBody()));
+        $response->setBody(preg_replace('/(<\/head.*>)/i', $this->_headerOutput() . '$1', $response->getBody()));
         $response->setBody(str_ireplace('</body>', '<div id="Centurion_ZFDebug_debug">'.$html.'</div></body>', $response->getBody()));
     }
 }

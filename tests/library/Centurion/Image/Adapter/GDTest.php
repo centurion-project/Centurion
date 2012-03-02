@@ -1,5 +1,7 @@
 <?php
 
+require_once dirname(__FILE__) . '/../../../../../tests/TestHelper.php';
+
 class Centurion_Image_Adapter_GDTest extends PHPUnit_Framework_TestCase
 {
     protected $_path = null;

@@ -1,5 +1,7 @@
 <?php
 
+require_once dirname(__FILE__) . '/../../../../../tests/TestHelper.php';
+
 class Centurion_Contrib_Auth_Acl extends PHPUnit_Framework_TestCase
 {
     protected function setUp()

@@ -27,7 +27,7 @@ CREATE TABLE IF NOT EXISTS `translation_language` (
   `name` varchar(255) NOT NULL,
   `flag` varchar(255) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=3 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `translation_language`
@@ -47,7 +47,7 @@ CREATE TABLE IF NOT EXISTS `translation_tag` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `tag` varchar(255) CHARACTER SET utf8 NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=2 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -61,7 +61,7 @@ CREATE TABLE IF NOT EXISTS `translation_tag_uid` (
   `tag_id` int(11) unsigned NOT NULL,
   PRIMARY KEY  (`uid_id`,`tag_id`),
   KEY `FK_translation_tag_uid2` (`tag_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -90,7 +90,7 @@ CREATE TABLE IF NOT EXISTS `translation_uid` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `uid` text COLLATE utf8_bin NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=123 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 --
 -- Contraintes pour les tables exportées

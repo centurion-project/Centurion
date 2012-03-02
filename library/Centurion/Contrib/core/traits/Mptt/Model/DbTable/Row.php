@@ -219,7 +219,7 @@ class Core_Traits_Mptt_Model_DbTable_Row extends Centurion_Traits_Model_DbTable_
      * @param string $position Valid values are first-child, last-child, left or right
      * @return Core_Traits_Mptt_Model_DbTable
      */
-    public function moveTo($target, $position = null)
+    public function moveTo($target = null, $position = null)
     {
         if (null === $position) {
             $position = Core_Traits_Mptt_Model_DbTable::POSITION_LAST_CHILD;

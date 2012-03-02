@@ -1,5 +1,7 @@
 <?php
 
+require_once dirname(__FILE__) . '/../../TestHelper.php';
+
 class Centurion_VideopianTest extends PHPUnit_Framework_TestCase
 {
     protected $_services = array(
