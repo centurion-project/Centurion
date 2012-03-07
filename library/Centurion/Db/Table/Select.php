@@ -712,6 +712,8 @@ class Centurion_Db_Table_Select extends Zend_Db_Table_Select
      * build a select that filters values according to arguments
      *
      * @param array $kwargs an array of filters clauses
+     * @todo allow pass juste string
+     * @todo phpdoc to explain who to use it
      * @return Centurion_Db_Table_Select
      */
     public function filter(array $kwargs)
@@ -728,16 +730,13 @@ class Centurion_Db_Table_Select extends Zend_Db_Table_Select
             }
 
             $sqlValue = '';
-            $sqlColumn = '';
             $sqlAssert = '';
-            $sqlNegativeAssert  = false;
-            $prefix = '';
             $suffix = '';
             $method = 'where';
             $altSuffix = '';
             $sqlColumnPattern = '';
 
-            if (is_int($key)) {
+            if (is_int($key) && is_array($value)) {
                 $key = $value[0];
                 $value = $value[1];
             }
@@ -748,7 +747,9 @@ class Centurion_Db_Table_Select extends Zend_Db_Table_Select
             }
 
             $tmpSqlColumn = $key;
+            //If it's a negative condition
             if (!strncmp($key, self::OPERATOR_NEGATION, strlen(self::OPERATOR_NEGATION))) {
+                //We remove the prefix from the
                 $tmpSqlColumn = substr($tmpSqlColumn, strlen(self::OPERATOR_NEGATION));
                 $sqlNegativeAssert = true;
             } else {
@@ -762,7 +763,6 @@ class Centurion_Db_Table_Select extends Zend_Db_Table_Select
             }
 
              while (in_array($suffix, self::$_suffixes)) {
-
                  list($negative, $positive, $pattern) = self::$_operators[$suffix];
 
                  $sqlAssert = $sqlNegativeAssert ? $negative : $positive;
@@ -772,8 +772,9 @@ class Centurion_Db_Table_Select extends Zend_Db_Table_Select
                  } else if ($suffix === self::OPERATOR_ISNULL) {
                      $sqlValue = 'NULL';
                  } else if ($suffix === self::OPERATOR_RANGE) {
-                     if (!is_array($value) || count($value) != 2)
+                     if (!is_array($value) || count($value) != 2) {
                          throw new Centurion_Db_Table_Exception('Value must be an array that contains 2 elements with range operator');
+                     }
                      if (!$value[0]) {
                          $value[0] = $value[1];
                          $altSuffix = self::OPERATOR_LESS_EQUAL;
@@ -815,15 +816,16 @@ class Centurion_Db_Table_Select extends Zend_Db_Table_Select
             }
 
             if (!$sqlAssert) {
-                list($negative, $positive, $pattern) = self::$_operators[self::DEFAULT_OPERATOR];
+                list($negative, $positive, ) = self::$_operators[self::DEFAULT_OPERATOR];
                 $sqlAssert = $sqlNegativeAssert ? $negative : $positive;
             }
 
             // check if field is natural or external
             $natural = $this->getTable()->info(Centurion_Db_Table_Abstract::COLS);
             if (in_array($tmpSqlColumn, $natural)) {
-
                 $name = $this->_table->info(Centurion_Db_Table_Abstract::NAME);
+
+                //We look for any alias for this table
                 foreach ($this->_parts[self::FROM] as $key => $from) {
                     if ($from['tableName'] == $name && $from['joinType'] == 'inner join') {
                         $name = $key;
@@ -841,6 +843,7 @@ class Centurion_Db_Table_Select extends Zend_Db_Table_Select
                 $sqlColumn = sprintf($sqlColumnPattern, $sqlColumn);
             }
 
+            //We make the join with calculated condition
             call_user_func_array(array($this, $method), array(sprintf('%s %s %s', $sqlColumn, $sqlAssert, $sqlValue)));
         }
 
@@ -925,17 +928,17 @@ class Centurion_Db_Table_Select extends Zend_Db_Table_Select
     /**
      *
      * Enter description here ...
-     * @param Zend_Db_Table_Row_Abstract|Zend_Db_Table_RowSet_Abstract $rowset
+     * @param Zend_Db_Table_Row_Abstract|Zend_Db_Table_RowSet_Abstract $rowSet
      * @todo It could be a problem with rowset and multiple primary. We must check that with a test case.
      */
-    public function not($rowset)
+    public function not($rowSet)
     {
-        if($rowset instanceof Zend_Db_Table_Row_Abstract)
-            $rowset = array($rowset);
+        if($rowSet instanceof Zend_Db_Table_Row_Abstract)
+            $rowSet = array($rowSet);
 
         $primaries = $this->_table->info(Centurion_Db_Table_Abstract::PRIMARY);
 
-        foreach ($rowset as $row) {
+        foreach ($rowSet as $row) {
             $conditions = array();
             foreach ($primaries as $primary) {
                 $conditions[] = $this->getAdapter()->quote($primary) . ' = ' . $this->getAdapter()->quote($row->{$primary});
@@ -949,7 +952,7 @@ class Centurion_Db_Table_Select extends Zend_Db_Table_Select
     /**
      *
      * @param $dependences
-     * @todo accepter une reférence "lointaine" (ex user__profile__avatar)
+     * @todo accepter une refÃ©rence "lointaine" (ex user__profile__avatar)
      * @return Centurion_Db_Table_Select
      */
     public function hydrate($dependences, $joinType = self::JOIN_TYPE_LEFT)

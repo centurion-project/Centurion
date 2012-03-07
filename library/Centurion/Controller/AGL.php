@@ -333,6 +333,12 @@ class Centurion_Controller_AGL extends Centurion_Controller_Action
         return $this->_select;
     }
 
+    public function resetFilter()
+    {
+        $session = new Zend_Session_Namespace(sprintf('crud_%s_%s', $this->_request->getModuleName(), $this->_request->getControllerName()));
+        $session->unsetAll();
+    }
+
     protected function _preGenerateList()
     {
         

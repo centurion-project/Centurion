@@ -1383,8 +1383,8 @@ abstract class Centurion_Db_Table_Row_Abstract extends Zend_Db_Table_Row_Abstrac
 
         if (strpos($column, Centurion_Db_Table_Select::RULES_SEPARATOR) !== false) {
             $cleanColumn = $this->_cleanColumn($column);
-            $solumnString = $select->addRelated($column);
-            list($columnSchema, $column) = explode('.', $solumnString);
+            $columnString = $select->addRelated($column);
+            list($columnSchema, $column) = explode('.', $columnString);
         } else {
             $cleanColumn = $column;
             $column = $adapter->quoteIdentifier($column);
