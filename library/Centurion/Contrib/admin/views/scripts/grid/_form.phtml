@@ -42,7 +42,8 @@ $this->headScript()->captureStart();
 ?>
 $(function(){
     $(".form .form-main .form-group").CUI('fieldset', {basePath: '<?php echo Zend_Controller_Front::getInstance()->getBaseUrl(); ?>', autoClose: <?php  echo (method_exists($this->form, 'hasInstance') && $this->form->hasInstance()) ? 'true':'false'?>});
-    $(".field-multiselect").CUI('multiselect', {basePath: '<?php echo Zend_Controller_Front::getInstance()->getBaseUrl(); ?>'});
+    $(".field-multiselect:not(.sortable)").CUI('multiselect', {basePath: '<?php echo Zend_Controller_Front::getInstance()->getBaseUrl(); ?>'});
+    $(".field-multiselect.sortable").CUI('multiselect', {basePath: '<?php echo Zend_Controller_Front::getInstance()->getBaseUrl(); ?>', multiselectSortable:true});
     $(".field-switcher").CUI('switcher', {basePath: '<?php echo Zend_Controller_Front::getInstance()->getBaseUrl(); ?>'});
 
     $(".field-letterlimit").CUI('letterLimit', { basePath: '<?php echo Zend_Controller_Front::getInstance()->getBaseUrl(); ?>', maxChar: 100 });

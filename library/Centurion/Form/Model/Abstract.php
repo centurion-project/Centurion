@@ -947,14 +947,19 @@ abstract class Centurion_Form_Model_Abstract extends Centurion_Form
 
             //TODO: remove this Media_Model_DbTable_File reference from core
             if ($manyDependentTable['refTableClass'] !== 'Media_Model_DbTable_File') {
+                $table = Centurion_Db::getSingletonByClassName($manyDependentTable['refTableClass']);
                 $options['multioptions'] = $this->_buildOptions(
-                        Centurion_Db::getSingletonByClassName($manyDependentTable['refTableClass']),
+                        $table,
                         $key,
                         false,
                         true
                     );
 
                 $options['multioptions'][null] = '';
+
+                if ($table->hasColumn('order')) {
+                    $options['class'] = 'sortable';
+                }
 
                 $elementName = 'multiselect';
             } else {
