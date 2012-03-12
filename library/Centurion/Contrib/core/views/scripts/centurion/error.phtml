@@ -1,11 +1,13 @@
 <a href="javascript:history.back()"><?php echo $this->translate('back'); ?></a>
 <hr />
-    DEBUG INFOS :
-    <br />
-    <strong>
-        Exception <em><?php echo get_class($this->exception) ?></em>
-        <u><?php echo $this->exception->getMessage() ?></u> sent in <?php echo $this->exception->getFile() ?> at line <?php echo $this->exception->getLine() ?>
-    </strong>
+    <?php if (null !== $this->exception): ?>
+        DEBUG INFOS :
+        <br />
+        <strong>
+            Exception <em><?php echo get_class($this->exception) ?></em>
+            <u><?php echo $this->exception->getMessage() ?></u> sent in <?php echo $this->exception->getFile() ?> at line <?php echo $this->exception->getLine() ?>
+        </strong>
+    <?php endif; ?>
     <br />
     <br />
     <?php if (null !== $this->profiler):?>
