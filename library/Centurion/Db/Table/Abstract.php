@@ -476,6 +476,9 @@ abstract class Centurion_Db_Table_Abstract extends Zend_Db_Table_Abstract implem
     {
         $lcMethod = strtolower($method);
 
+        /**
+         * @deprecated : to much time consuming wihtout real gain. use $this->findOneBy('id', 1) instead of $this->findOneById(1); Preserve also autocompletion.
+         */
         if (substr($lcMethod, 0, 6) == 'findby') {
             $by = substr($method, 6, strlen($method));
             $method = '_findBy';
@@ -503,10 +506,12 @@ abstract class Centurion_Db_Table_Abstract extends Zend_Db_Table_Abstract implem
     /**
      * Generates a string representation of this object, inspired by Doctrine_Table.
      *
+     * @TODO: this method should be refactored
      * @return Centurion_Db_Table_Select
      */
     protected function _buildFindByWhere($by, $values)
     {
+        $values = (array) $values;
         $ands = array();
         $e = explode('And', $by);
         $i = 0;
@@ -1007,13 +1012,22 @@ abstract class Centurion_Db_Table_Abstract extends Zend_Db_Table_Abstract implem
         return $this;
     }
 
+
+    /**
+     * @deprecated use public function findOneBy instead
+     */
+    protected function _findOneBy($fieldName, $values)
+    {
+        return $this->findOneBy($fieldName, $values);
+    }
+
     /**
      * Find a row with a formatted field name.
      *
      * @param   string    $fieldName    Formatted field name
      * @param   array     $values       Values
      */
-    protected function _findOneBy($fieldName, $values)
+    public function findOneBy($fieldName, $values)
     {
         return $this->fetchRow($this->_buildFindByWhere($fieldName, $values));
     }
@@ -1024,9 +1038,17 @@ abstract class Centurion_Db_Table_Abstract extends Zend_Db_Table_Abstract implem
      * @param   string    $fieldName    Formatted field name
      * @param   array     $values       Values
      */
-    protected function _findBy($fieldName, $values)
+    public function findBy($fieldName, $values)
     {
         return $this->fetchAll($this->_buildFindByWhere($fieldName, $values));
+    }
+
+    /**
+     * @deprecated use public function findBy instead
+     */
+    protected function _findBy($fieldName, $values)
+    {
+        return $this->findBy($fieldName, $values);
     }
 
     /**
