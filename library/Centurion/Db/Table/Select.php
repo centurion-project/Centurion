@@ -719,7 +719,7 @@ class Centurion_Db_Table_Select extends Zend_Db_Table_Select
     public function filter(array $kwargs)
     {
         foreach ($kwargs as $key => $value) {
-            if ($value instanceof Zend_Db_Expr) {
+            if ($value instanceof Zend_Db_Expr && is_numeric($key)) {
                 $this->where($value);
                 continue;
             }
