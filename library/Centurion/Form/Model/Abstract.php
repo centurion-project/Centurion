@@ -336,10 +336,10 @@ abstract class Centurion_Form_Model_Abstract extends Centurion_Form
                 if (is_string($value) && '' !== trim($value)) {
                     if (false !== strpos($class, 'field-datetimepicker')) {
                         //In the case the field is empty, else Zend_Date is current time
-                        $posted_at = new Zend_Date($value, 'YYYY-MM-dd HH:mm:ss');
+                        $posted_at = new Zend_Date($value, Centurion_Date::MYSQL_DATETIME);
                         $val->setValue($posted_at->get($this->getDateFormat(true)));
                     } else if (false !== strpos($class, 'field-datepicker')) {
-                        $posted_at = new Zend_Date($value, 'YYYY-MM-dd HH:mm:ss');
+                        $posted_at = new Zend_Date($value, Centurion_Date::MYSQL_DATETIME);
                         $val->setValue($posted_at->get($this->getDateFormat()));
                     }
                 }
@@ -740,10 +740,10 @@ abstract class Centurion_Form_Model_Abstract extends Centurion_Form
                 $class = $element->getAttrib('class');
                 if (false !== strpos($class, 'field-datetimepicker')) {
                     $posted_at = new Zend_Date($value, $this->getDateFormat(true));
-                    $values[$key] = $posted_at->get('yyyy-MM-dd HH:mm:ss');
+                    $values[$key] = $posted_at->get(Centurion_Date::MYSQL_DATETIME);
                 } else if (false !== strpos($class, 'field-datepicker')) {
                     $posted_at = new Zend_Date($value, $this->getDateFormat());
-                    $values[$key] = $posted_at->get('yyyy-MM-dd HH:mm:ss');
+                    $values[$key] = $posted_at->get(Centurion_Date::MYSQL_DATETIME);
                 }
             }
         }

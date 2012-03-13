@@ -365,7 +365,7 @@ abstract class Centurion_Db_Table_Abstract extends Zend_Db_Table_Abstract implem
         Centurion_Signal::factory('pre_insert')->send($this, $data);
 
         if (in_array(self::CREATED_AT_COL, $this->_getCols()) && empty($data[self::CREATED_AT_COL])) {
-            $data[self::CREATED_AT_COL] = Zend_Date::now()->toString('yyyy-MM-dd HH:mm:ss');
+            $data[self::CREATED_AT_COL] = Zend_Date::now()->toString(Centurion_Date::MYSQL_DATETIME);
         }
 
         $retrieveRowOnInsert = false;
@@ -412,7 +412,7 @@ abstract class Centurion_Db_Table_Abstract extends Zend_Db_Table_Abstract implem
         Centurion_Signal::factory('pre_update')->send($this, array($data, $where));
 
         if (in_array(self::UPDATED_AT_COL, $this->_getCols()) && empty($data[self::UPDATED_AT_COL])) {
-            $data[self::UPDATED_AT_COL] = Zend_Date::now()->toString('yyyy-MM-dd HH:mm:ss');
+            $data[self::UPDATED_AT_COL] = Zend_Date::now()->toString(Centurion_Date::MYSQL_DATETIME);
         }
 
         $count = parent::update($data, $where);

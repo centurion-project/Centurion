@@ -13,7 +13,7 @@ class Centurion_Form_ModelTest extends PHPUnit_Framework_TestCase
 
         $row = Centurion_Db::getSingleton('cms/flatpage')->createRow();
         
-        $row->published_at = $date->get('YYYY-MM-dd HH:mm:ss');
+        $row->published_at = $date->get(Centurion_Date::MYSQL_DATETIME);
         $form->setInstance($row);
 
         $expected = $date->get('dd/MM/yy');
@@ -21,7 +21,7 @@ class Centurion_Form_ModelTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($expected, $value);
         
         $values = $form->processValues($form->getValues());
-        $this->assertEquals($date->get('YYYY-MM-dd HH:mm:ss'), $values['published_at']);
+        $this->assertEquals($date->get(Centurion_Date::MYSQL_DATETIME), $values['published_at']);
 
         //With Time
         $date = new Zend_Date('1/12/2009 11:32', 'dd/MM/YYYY HH:mm');
@@ -30,7 +30,7 @@ class Centurion_Form_ModelTest extends PHPUnit_Framework_TestCase
         
         $row = Centurion_Db::getSingleton('cms/flatpage')->createRow();
         
-        $row->published_at = $date->get('YYYY-MM-dd HH:mm:ss');
+        $row->published_at = $date->get(Centurion_Date::MYSQL_DATETIME);
         $form->setInstance($row);
         
         $expected = $date->get('dd/MM/yy hh:mm');
@@ -38,6 +38,6 @@ class Centurion_Form_ModelTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($expected, $value);
         
         $values = $form->processValues($form->getValues());
-        $this->assertEquals($date->get('YYYY-MM-dd HH:mm:ss'), $values['published_at']);
+        $this->assertEquals($date->get(Centurion_Date::MYSQL_DATETIME), $values['published_at']);
     }
 }

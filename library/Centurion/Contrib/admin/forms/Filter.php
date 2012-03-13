@@ -252,12 +252,12 @@ class Admin_Form_Filter extends Centurion_Form
                         
                     if (trim($lt) !== '') {
                         $lt = new Zend_Date($lt, $format);
-                        $sqlSubFilter[$this->_filters[$key]['column'] . Centurion_Db_Table_Select::RULES_SEPARATOR . Centurion_Db_Table_Select::OPERATOR_LESS_EQUAL] = $lt->toString('yyyy-MM-dd HH:mm:ss');
+                        $sqlSubFilter[$this->_filters[$key]['column'] . Centurion_Db_Table_Select::RULES_SEPARATOR . Centurion_Db_Table_Select::OPERATOR_LESS_EQUAL] = $lt->toString(Centurion_Date::MYSQL_DATETIME);
                     }
                     
                     if (trim($gt) !== '') {
                         $gt = new Zend_Date($gt, $format);
-                        $sqlSubFilter[$this->_filters[$key]['column'] . Centurion_Db_Table_Select::RULES_SEPARATOR . Centurion_Db_Table_Select::OPERATOR_GREATER_EQUAL] = $gt->toString('yyyy-MM-dd HH:mm:ss');
+                        $sqlSubFilter[$this->_filters[$key]['column'] . Centurion_Db_Table_Select::RULES_SEPARATOR . Centurion_Db_Table_Select::OPERATOR_GREATER_EQUAL] = $gt->toString(Centurion_Date::MYSQL_DATETIME);
                     }
                     break;
                 default;
