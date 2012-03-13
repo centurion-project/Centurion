@@ -380,6 +380,38 @@ class Check {
         }
     }
 
+    public function _checkRedirect()
+    {
+        $url = 'http://' . $_SERVER['SERVER_NAME'];
+        if ($_SERVER['SERVER_PORT'] !== 80) {
+            $url .= ':' . $_SERVER['SERVER_PORT'];
+        }
+
+        $url .= str_replace('/status', '/test_redirect', $_SERVER['REQUEST_URI']);
+
+        $url .= '?noredirect=true';
+
+        $fp = @file_get_contents($url);
+
+        if ($fp === 'Mod_Rewrite works!') {
+            $this->_checklist[] = array(
+                'code' => 1,
+                'canBeBetter' => false,
+                'isNotSecure' => true,
+                'text' => 'The rewrite works',
+                'alt'  => '',
+            );
+        } else {
+            $this->_checklist[] = array(
+                'code' => 1,
+                'canBeBetter' => true,
+                'isNotSecure' => true,
+                'text' => 'Your mod_rewrite seems to not worked. <a href="' . $url . '" target="_blank">Click here</a> to check',
+                'alt' => 'Click on the link above. If it\'s not worked check mod_rewrite is enabled, or that the directive AllowOverride All is set to the application root.',
+            );
+        }
+    }
+
     protected function _checkDocumentRoot()
     {
         if (!preg_match('`(/|\\\)public(/|\\\)?$`', $_SERVER['DOCUMENT_ROOT'])) {
@@ -424,6 +456,8 @@ class Check {
         $this->_checkPhpExtensions();
         $this->_checkHtaccess();
         $this->_checkApplicationEnv();
+
+        $this->_checkRedirect();
 
         $this->_checkDbConnect();
         $this->_checkDbTable();
