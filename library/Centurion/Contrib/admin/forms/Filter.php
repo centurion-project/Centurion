@@ -121,6 +121,20 @@ class Admin_Form_Filter extends Centurion_Form
                                 $filterData['data'][$refRow->pk] = $refRow->__toString();
                             }
                             asort($filterData['data']);
+                            //Add before a joker to disable this filter
+                            $filterData['data'] = array('' => $this->_translate('All')) + $filterData['data'];
+                        }
+                    }
+                    else{
+                        //To allow rowset in the option "data" and not force developper to pass an array
+                        if($filterData['data'] instanceof Centurion_Db_Table_Rowset_Abstract){
+                            $_tmpData = array();
+                            foreach($filterData['data'] as $row)
+                                $_tmpData[$row->pk] = (string) $row;
+
+                            asort($_tmpData);
+                            //Add before a joker to disable this filter
+                            $filterData['data'] = array('' => $this->_translate('All')) + $_tmpData;
                         }
                     }
 
