@@ -26,7 +26,11 @@ foreach ($this->result as $key => $result) {
         $thumb = '<a href="'.$editUrl.'">' . $thumb . '</a>';
     }
     $tab[] = $thumb;
-    $tab[] = '<input type="checkbox" value="' . $this->row->id . '" name="rowId[]"><a href="' .  $editUrl . '" class="edit">' . $this->smartTextCrop($this->row->filename, 20, true). '</a>';
+    $name = '<a href="' .  $editUrl . '" class="edit">' . $this->smartTextCrop($this->row->filename, 20, true). '</a>';
+    if(!$this->popup) {
+        $name = '<input type="checkbox" value="' . $this->row->id . '" name="rowId[]">' . $name;
+    }
+    $tab[] = $name;
     $tab[] = $this->partial($this->_selectScript(array(sprintf('%s/_actions.phtml', $this->controller),
                                      'grid/_actions.phtml')), $this);
     $json['rows'][] = $tab;
