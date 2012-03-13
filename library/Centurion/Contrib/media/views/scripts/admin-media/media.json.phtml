@@ -15,13 +15,17 @@ foreach ($this->result as $key => $result) {
         $cover = $this->row;
 
     if (isset($this->popup)) :
-        $editUrl = 'javascript:mySubmit(\'' . $cover->getStaticUrl() . '\', \''.$this->escape($cover->filename).'\', \'\')';
+        $editUrl = 'javascript:mySubmit(\'' . $this->GetCdnUrl($cover->getStaticUrl()) . '\', \''.$this->escape($cover->filename).'\', \'\')';
     else :
-        $editUrl = $this->url(array('id' => $this->row->id, 'action' => 'get', 'saving' => null));
+        $editUrl = $this->url(array('id' => $row['row']->id, 'action' => 'get', 'saving' => null));
     endif;
 
     $tab = array();
-    $tab[] = '<div style="background: url('.$cover->getStaticUrl(array('cropcenterresize' => array('width' => 174, 'height' => 94))).'); width: 174px; height: 94px;" class="picture"></div>';
+    $thumb = '<div style="background: url('.$cover->getStaticUrl(array('cropcenterresize' => array('width' => 174, 'height' => 94))).'); width: 174px; height: 94px;" class="picture"></div>';
+    if($this->popup) {
+        $thumb = '<a href="'.$editUrl.'">' . $thumb . '</a>';
+    }
+    $tab[] = $thumb;
     $tab[] = '<input type="checkbox" value="' . $this->row->id . '" name="rowId[]"><a href="' .  $editUrl . '" class="edit">' . $this->smartTextCrop($this->row->filename, 20, true). '</a>';
     $tab[] = $this->partial($this->_selectScript(array(sprintf('%s/_actions.phtml', $this->controller),
                                      'grid/_actions.phtml')), $this);

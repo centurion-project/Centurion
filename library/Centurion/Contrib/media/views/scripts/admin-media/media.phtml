@@ -19,11 +19,18 @@
     endif;
 
     $infos = isset($row['infos']) ? $row['infos'] : null;  
+    
     ?>
         <div class="row">
             <div class="col col-picture" title="<?php echo $row['row']->filename ?>">
+                <?php if($this->popup) : ?>
+                <a href="<?php echo $editUrl ?>">
+                <?php endif ?>
                 <div style="background: url('<?php echo $this->escape($cover->getStaticUrl(array('cropcenterresize' => array('width' => 174, 'height' => 94))))?>'); width: 174px; height: 94px;" class="picture">
                 </div>
+                <?php if($this->popup) : ?>
+                </a>
+                <?php endif ?>
             </div>
             <div class="col col-title">
                 <input type="checkbox" value="<?php echo $id;?>" name="rowId[]">
