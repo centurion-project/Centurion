@@ -83,6 +83,8 @@ class Media_Model_DbTable_Video extends Centurion_Db_Table_Abstract
     public function getMimeTypes()
     {
         return array(
+            'video/x-flv' => 'flv',
+            /*
             'application/x-shockwave-flash' => 'swf',
             'video/3gpp' => '3gp',
             'video/dl' => 'dl',
@@ -102,11 +104,11 @@ class Media_Model_DbTable_Video extends Centurion_Db_Table_Abstract
             'video/vnd.sealedmedia.softseal.mov' => 'smov',
             'video/vnd.vivo' => 'vivo',
             'video/x-fli' => 'fli',
-            'video/x-flv' => 'flv',
             'video/x-ms-asf' => 'asf',
             'video/x-ms-wmv' => 'wmv',
             'video/x-msvideo' => 'avi',
             'video/x-sgi-movie' => 'movie',
+            */
         );
     }
 }
