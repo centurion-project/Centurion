@@ -513,11 +513,23 @@ class Centurion_Db_Table_Select extends Zend_Db_Table_Select
         }
 
         $tableName = $this->_adapter->quoteIdentifier($refTableName);
-        
-        $joinCond = sprintf('%s.%s = %s.%s', $tableName,
-                             $this->_adapter->quoteIdentifier($refMap['refColumns']),
-                             $this->_adapter->quoteIdentifier($localTableName),
-                             $this->_adapter->quoteIdentifier($refMap['columns']));
+
+        // Caster les variables en tableau, utile quand une seule colonne est précisé dans la referenceMap
+        $refMap['refColumns'] = (array) $refMap['refColumns'];
+        $refMap['columns'] = (array) $refMap['columns'];
+
+        // Création de la condition de jointure pour la referenceMap
+        $joinCond = array();
+        foreach ($refMap['refColumns'] as $key => $refColumn) {
+            $joinCond[] = sprintf('%s.%s = %s.%s', $tableName,
+                $this->_adapter->quoteIdentifier($refColumn),
+                $this->_adapter->quoteIdentifier($localTableName),
+                $this->_adapter->quoteIdentifier($refMap['columns'][$key]));
+        }
+        /* Dans le cas où il y a plusieurs colonnes dans la referenceMap, créer une string avec toutes les conditions
+         * du tableau $joinCond
+         */
+        $joinCond = implode(' AND ', $joinCond);
 
         if (!$this->_isAlreadyJoined($refTableName, $joinCond)) {
             $method = self::$_joinMethod[$joinType];
