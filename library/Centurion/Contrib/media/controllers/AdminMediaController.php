@@ -80,6 +80,7 @@ class Media_AdminMediaController extends Centurion_Controller_CRUD
     {
         $select = parent::getSelectFiltred();
         $select->reset(Centurion_Db_Table_Select::GROUP);
+        $select->filter(array('!id'=>'88888888')); // don't list our empty pixel, @todo make a general rule for unlistable media
         if($this->_getParam('duplicates', null)) {
             $select->filter(array('sha1'=>$this->_getParam('duplicates')));
         }
