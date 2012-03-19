@@ -31,8 +31,10 @@ foreach ($this->result as $key => $result) {
         $name = '<input type="checkbox" value="' . $this->row->id . '" name="rowId[]">' . $name;
     }
     $tab[] = $name;
-    $tab[] = $this->partial($this->_selectScript(array(sprintf('%s/_actions.phtml', $this->controller),
-                                     'grid/_actions.phtml')), $this);
+    if(!$this->displayDuplicates || !isset($row['duplicates']) || $row['duplicates'] < 2) {
+        $tab[] = $this->partial($this->_selectScript(array(sprintf('%s/_actions.phtml', $this->controller),
+                                         'grid/_actions.phtml')), $this);
+    }
     $json['rows'][] = $tab;
 }
 

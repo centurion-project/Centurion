@@ -20,11 +20,19 @@ class Media_AdminMediaController extends Centurion_Controller_CRUD
         return $this->view->translate('Used in %s places', $count);
     }
 
+    public function displayDuplicates($row)
+    {
+        $count = $row->getTable()->select(true)->filter(array('sha1'=>$row->sha1))->count();
+        return $count;
+    }
+
     public function init()
     {
         $this->_helper->authCheck();
         $this->_helper->aclCheck();
         $this->_helper->layout->setLayout('admin');
+
+        $this->view->displayDuplicates = !$this->_getParam('duplicates', null);
 
         $this->_model = Centurion_Db::getSingleton('media/file');
         $this->_formClassName = 'Media_Form_Model_Admin_File2';
@@ -44,6 +52,12 @@ class Media_AdminMediaController extends Centurion_Controller_CRUD
                     'type' => Centurion_Controller_CRUD::COLS_CALLBACK,
                     'callback' => array($this, 'displayInfos')
             ),
+           'duplicates' => array(
+                    'label' => $this->view->translate('Duplicates'),
+                    'type' => Centurion_Controller_CRUD::COLS_CALLBACK,
+                    'callback' => array($this, 'displayDuplicates')
+            ),
+            'sha1'      => $this->view->translate('sha')
         );
 
         //TODO: behaviour => behavior
@@ -60,6 +74,19 @@ class Media_AdminMediaController extends Centurion_Controller_CRUD
         $this->view->placeholder('headling_1_content')->set($this->view->translate('Manage media'));
 
         parent::init();
+    }
+
+    public function getSelectFiltred()
+    {
+        $select = parent::getSelectFiltred();
+        $select->reset(Centurion_Db_Table_Select::GROUP);
+        if($this->_getParam('duplicates', null)) {
+            $select->filter(array('sha1'=>$this->_getParam('duplicates')));
+        }
+        else {
+            $select->group('sha1');
+        }
+        return $select;
     }
 
     protected function _getForm()

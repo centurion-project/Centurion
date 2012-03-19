@@ -1,3 +1,12 @@
+<?php if(!$this->displayDuplicates) : ?>
+    <?php $this->placeholder('headling_1')->captureStart();?>
+    <div class="ui-button-big ui-button-back" id="bidule">
+        <a href="<?php echo $this->url(array('duplicates'=>null));?>" class="ui-button ui-button-bg-white ui-button-text-red ui-button-text-only">
+            <span class="ui-button-text"><?php echo $this->translate('Back')?></span>
+        </a>
+    </div>
+    <?php $this->placeholder('headling_1')->captureEnd();?>
+<?php endif ?>
 <div class="grid medias grid-sortable">
     <div class="row row-template">
         <div class="col col-picture"></div>
@@ -40,15 +49,21 @@
             </div>
             <?php if($infos): ?>
             <div class="col col-infos">
-                <?php echo $row['infos'] ?>
+                <?php if($this->displayDuplicates && isset($row['duplicates']) && $row['duplicates'] > 1) : ?>
+                    <a href="<?php echo $this->url(array('duplicates'=>$row['sha1'], 'page'=>null)) ?>"><?php echo $this->translate('%s duplicates', $row['duplicates']) ?></a>
+                <?php else : ?>
+                    <?php echo $row['infos'] ?>
+                <?php endif ?>
             </div>
             <?php endif; //infos ?>
-            <div class="col col-actions">
-            <?php
-                $this->row = $row['row'];
-                echo $this->partial($this->_selectScript(array(sprintf('%s/_actions.phtml', $this->controller),
-                                         'grid/_actions.phtml')), $this); ?>
-            </div>
+            <?php if(!$this->displayDuplicates || !isset($row['duplicates']) || $row['duplicates'] < 2) : ?>
+                <div class="col col-actions">
+                <?php
+                    $this->row = $row['row'];
+                    echo $this->partial($this->_selectScript(array(sprintf('%s/_actions.phtml', $this->controller),
+                                             'grid/_actions.phtml')), $this); ?>
+                </div>
+            <?php endif ?>
         </div>
     <?php endforeach; ?>
     <div class="clear"></div>
