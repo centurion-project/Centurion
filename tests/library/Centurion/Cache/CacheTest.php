@@ -19,7 +19,7 @@ class Centurion_Cache_CacheTest extends PHPUnit_Framework_TestCase
     {
         $cacheManager = $this->getCacheManager();
         if (is_null($cacheManager)) {
-            $this->fail();
+            $this->fail('Could not find cache manager in test Centurion_Cache_CacheTest');
         }
         
         //TODO: fix this, we don't have to force signal to be connected, it must already been connected. PB came frome Centurion_Test_PHPUnit_ControllerTestCase::tearDown() with Centurion_Signal::unregister(); command
