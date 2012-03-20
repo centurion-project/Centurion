@@ -17,8 +17,13 @@ class Centurion_Cache_CacheTest extends PHPUnit_Framework_TestCase
     
     protected function setUp()
     {
-    	//TODO: fix this, we don't have to force signal to be connected, it must already been connected. PB came frome Centurion_Test_PHPUnit_ControllerTestCase::tearDown() with Centurion_Signal::unregister(); command
-    	$this->getCacheManager()->connectSignal();
+        $cacheManager = $this->getCacheManager();
+        if (is_null($cacheManager)) {
+            $this->fail();
+        }
+        
+        //TODO: fix this, we don't have to force signal to be connected, it must already been connected. PB came frome Centurion_Test_PHPUnit_ControllerTestCase::tearDown() with Centurion_Signal::unregister(); command
+        $this->getCacheManager()->connectSignal();
         $this->getCacheManager()->cleanCache(Zend_Cache::CLEANING_MODE_ALL);
     }
     
@@ -81,20 +86,24 @@ class Centurion_Cache_CacheTest extends PHPUnit_Framework_TestCase
     
     public function testCacheObject()
     {
-    	
+        
     }
     
     public function testCacheWithRelation()
     {
         $userTable = Centurion_Db::getSingleton('auth/user');
         $userPermissionTable = Centurion_Db::getSingleton('auth/userPermission');
-    	$cacheCore = $this->getCacheManager()->getCache('core');
-    	
-    	$str = sha1(uniqid());
+        $cacheCore = $this->getCacheManager()->getCache('core');
+        
+        $str = sha1(uniqid());
         $id = sha1(uniqid());
         
         $tags = array();
         $adminUser = $userTable->fetchRow(array('username=?' => 'admin'));
+        if (null == $adminUser) {
+            //TODO: We should add row that we need
+            $this->fail('Admin not found in db');
+        }
         $tags[] = $adminUser->getCacheTag('user_permissions');
         
         $cacheCore->save($str, $id, $tags);
