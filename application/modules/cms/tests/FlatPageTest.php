@@ -2,7 +2,7 @@
 
 require_once dirname(__FILE__) . '/../../../../tests/TestHelper.php';
 
-class Cms_Test_FLatPageTest extends PHPUnit_Framework_TestCase
+class Cms_Test_FlatPageTest extends PHPUnit_Framework_TestCase
 {
     protected function setUp()
     {
