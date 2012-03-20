@@ -24,6 +24,10 @@
  * @author      Hans Lemuet <hans@upian.com>
  * @author      Florent Messa <florent.messa@gmail.com>
  */
+
+/**
+ * @TODO: This should be in it's own file
+ */
 class Centurion_Videopian_Exception extends Exception
 {
     const SERVICE_NOT_SUPPORTED = 'Unable to get the video data. Please make sure the service you are trying to use is supported by Videopian.';
@@ -81,7 +85,6 @@ class Centurion_Videopian
     # Fetch and return the video data
     public static function get($url)
     {
-        
         list($service, $id) = self::getService($url);
         
         $video = new stdClass();
@@ -95,7 +98,11 @@ class Centurion_Videopian
         
         return call_user_func_array(array(__CLASS__, $method), array($id, $video));
     }
-    
+
+    /**
+     * @TODO: All function below must be in it's own class file adapter
+     */
+
     public static function getBlip($id, $video = null)
     {
         if (null === $video) {
@@ -578,7 +585,7 @@ class Centurion_Videopian
         }
         
         # PHP serialized data URL
-        $url_data = 'http://vimeo.com/api/clip/'.$id.'/php';
+        $url_data = 'http://vimeo.com/api/v2/video/'.$id.'/php';
         
         # Data
         $data = unserialize(file_get_contents($url_data));
@@ -587,7 +594,7 @@ class Centurion_Videopian
         $video->title = $data[0]['title'];
         
         # Description
-        $video->description = $data[0]['caption'];
+        $video->description = $data[0]['description'];
         
         # Tags
         $video->tags = explode(', ',$data[0]['tags']);
