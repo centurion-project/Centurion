@@ -42,35 +42,41 @@ class Centurion_Image_Adapter_GDTest extends PHPUnit_Framework_TestCase
             throw new Centurion_Exception(sprintf('The guinea-pig "%s" is not readable', $guineaPath));
         }
     }
-    
-    public function testResize()
+
+    /**
+     * @dataProvider getSizeData
+     */
+    public function testResize($width, $height)
     {
-        foreach ($this->_sizes as $key => $size) {
-            list($width, $height) = $size;
-            $this->_getAdapter()->open($this->_path . DIRECTORY_SEPARATOR . $this->_guinea)
-                                ->resize($width, $height)
-                                ->save($this->_buildPath
-                                       . DIRECTORY_SEPARATOR
-                                       . sprintf("resize_%d_%d_%s", $width, $height, $this->_guinea));
-            
-            $this->assertFalse($this->_getAdapter()->getThumbHeight() > $height);
-            $this->assertFalse($this->_getAdapter()->getThumbWidth() > $width);
-        }
+        $this->_getAdapter()->open($this->_path . DIRECTORY_SEPARATOR . $this->_guinea)
+                            ->resize($width, $height)
+                            ->save($this->_buildPath
+                                   . DIRECTORY_SEPARATOR
+                                   . sprintf("resize_%d_%d_%s", $width, $height, $this->_guinea));
+
+        $this->assertFalse($this->_getAdapter()->getThumbHeight() > $height);
+        $this->assertFalse($this->_getAdapter()->getThumbWidth() > $width);
     }
-    
-    public function testAdaptiveResize()
+
+
+    public function getSizeData()
     {
-        foreach ($this->_sizes as $key => $size) { 
-            list($width, $height) = $size;
-            $this->_getAdapter()->open($this->_path . DIRECTORY_SEPARATOR . $this->_guinea)
-                                ->adaptiveResize($width, $height)
-                                ->save($this->_buildPath
-                                       . DIRECTORY_SEPARATOR
-                                       . sprintf("adaptive_resize_%d_%d_%s", $width, $height, $this->_guinea));
-            
-            $this->assertFalse($this->_getAdapter()->getThumbHeight() === $height);
-            $this->assertFalse($this->_getAdapter()->getThumbWidth() === $width);
-        }
+        return $this->_sizes;
+    }
+
+    /**
+     * @dataProvider getSizeData
+     */
+    public function testAdaptiveResize($width, $height)
+    {
+        $this->_getAdapter()->open($this->_path . DIRECTORY_SEPARATOR . $this->_guinea)
+                            ->adaptiveResize($width, $height)
+                            ->save($this->_buildPath
+                                   . DIRECTORY_SEPARATOR
+                                   . sprintf("adaptive_resize_%d_%d_%s", $width, $height, $this->_guinea));
+
+        $this->assertFalse($this->_getAdapter()->getThumbHeight() === $height);
+        $this->assertFalse($this->_getAdapter()->getThumbWidth() === $width);
     }
     
     protected function _getAdapter()
