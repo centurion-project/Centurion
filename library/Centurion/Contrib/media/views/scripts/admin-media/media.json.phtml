@@ -8,6 +8,7 @@ $json['rows'] = array();
 
 foreach ($this->result as $key => $result) {
     $this->row = $result['row'];
+    $infos = isset($result['infos']) ? $result['infos'] : null;  
 
     if (isset($this->coverName))
         $cover = $this->row->{'get'.$this->coverName.'OrPx'}();
@@ -31,6 +32,17 @@ foreach ($this->result as $key => $result) {
         $name = '<input type="checkbox" value="' . $this->row->id . '" name="rowId[]">' . $name;
     }
     $tab[] = $name;
+    
+    if($infos) {
+        if($this->displayDuplicates && isset($row['duplicates']) && $row['duplicates'] > 1) {
+            $infos = '<a href="'.$this->url(array('duplicates'=>$row['sha1'], 'page'=>null)).'">'.$this->translate('%s duplicates', $row['duplicates']).'</a>';
+        }
+        else {
+            $infos = $result['infos'];
+        }
+    }
+    $tab[] = $infos;
+
     if(!$this->displayDuplicates || !isset($row['duplicates']) || $row['duplicates'] < 2) {
         $tab[] = $this->partial($this->_selectScript(array(sprintf('%s/_actions.phtml', $this->controller),
                                          'grid/_actions.phtml')), $this);
