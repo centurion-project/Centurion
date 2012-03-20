@@ -381,6 +381,7 @@ class Centurion_Db_Table_Select extends Zend_Db_Table_Select
      * @param boolean $full due to many-to-many relations this function may add two JOIN statement ($full = true), if false only one JOIN statement with the intersection table will be done
      * @param array $cols
      * @param string $joinType
+     * @return string The qutoed table name
      */
     public function addManyToManyTable($rule, $localTable = null, $full = true,
         $cols = null, $joinType = self::JOIN_TYPE_INNER
@@ -413,18 +414,21 @@ class Centurion_Db_Table_Select extends Zend_Db_Table_Select
         $refTableName = $refTable->info(Centurion_Db_Table_Abstract::NAME);
         $refPrimary = $refTable->info(Centurion_Db_Table_Abstract::PRIMARY);
 
-        if (count($localPrimary) != 1)
+        if (count($localPrimary) != 1) {
             throw new Centurion_Db_Exception('Can\'t add filter from many-to-many rule, local model %s has a composed primary key', get_class($localTable));
+        }
 
         $localPrimary = array_shift($localPrimary);
 
-        if (count($refPrimary) != 1)
+        if (count($refPrimary) != 1) {
             throw new Centurion_Db_Exception('Can\'t add filter from many-to-many rule, foreign model %s has a composed primary key', $ref['refTableClass']);
+        }
 
         $refPrimary = array_shift($refPrimary);
 
-        if (!in_array($joinType, array_keys(self::$_joinMethod)))
-            throw new Centurion_Db_Exception(sprintf("unknown join type : %s", $joinType));
+        if (!in_array($joinType, array_keys(self::$_joinMethod))) {
+            throw new Centurion_Db_Exception(sprintf('Unknown join type : %s', $joinType));
+        }
 
         $method = self::$_joinMethod[$joinType];
 
@@ -453,6 +457,7 @@ class Centurion_Db_Table_Select extends Zend_Db_Table_Select
             } else {
                 $quotedInterTableName = $this->_adapter->quoteIdentifier($interTableName);
             }
+
             $this->$method($interTableName, $joinCond, array());
         }
 
@@ -461,15 +466,18 @@ class Centurion_Db_Table_Select extends Zend_Db_Table_Select
                                              $this->_adapter->quoteIdentifier($refTableName),
                                              $this->_adapter->quoteIdentifier($refPrimary));
 
+        $quotedRefTableName = $this->_adapter->quoteIdentifier($refTableName);
+
         if ($full && !$this->_isAlreadyJoined($refTableName, $joinCond)) {
             /**
              * We will join to the table. We check that Zend will not generate a autoatic alias because in this case
              * we must change the join condition
              */
             if ($refTableName !== $this->_uniqueCorrelation($refTableName)) {
+                $quotedRefTableName = $this->_adapter->quoteIdentifier($this->_uniqueCorrelation($refTableName));
                 $joinCond = sprintf('%s.%s = %s.%s', $quotedInterTableName,
                                              $this->_adapter->quoteIdentifier($ref['columns']['foreign']),
-                                             $this->_adapter->quoteIdentifier($this->_uniqueCorrelation($refTableName)),
+                                             $quotedRefTableName,
                                              $this->_adapter->quoteIdentifier($refPrimary));
             }
             $this->$method($refTableName, $joinCond, array());
@@ -479,7 +487,7 @@ class Centurion_Db_Table_Select extends Zend_Db_Table_Select
             $this->_tableCols($localTableName, $cols, true);
         }
 
-        return $this;
+        return $quotedRefTableName;
     }
 
     /**
@@ -668,16 +676,14 @@ class Centurion_Db_Table_Select extends Zend_Db_Table_Select
             if (in_array($rule[1], array_keys($manyToManyMap))) {
                 $full = true;
                 $foreignTable = Centurion_Db::getSingletonByClassName($manyToManyMap[$rule[1]]['refTableClass']);
-                $uniqName = $this->_adapter->quoteIdentifier($this->_uniqueCorrelation($foreignTable->info('name')));
                 if (null === $nextRule) {
-
                     $full = false;
                     $interTable = Centurion_Db::getSingletonByClassName($manyToManyMap[$rule[1]]['intersectionTable']);
                     $sqlField = sprintf('%s.%s', $this->_adapter->quoteIdentifier($interTable->info(Centurion_Db_Table_Abstract::NAME)),
                                                  $this->_adapter->quoteIdentifier($manyToManyMap[$rule[1]]['columns']['foreign']));
                 }
 
-                $this->addManyToManyTable($rule[1], $localTable, $full, array(), $rule[0]);
+                $uniqName = $this->addManyToManyTable($rule[1], $localTable, $full, array(), $rule[0]);
             } elseif (in_array($rule[1], array_keys($dependentRefMap))) {
                 if (null !== $nextRule) {
                     $foreignTable = Centurion_Db::getSingletonByClassName($dependentRefMap[$rule[1]]['refTableClass']);
