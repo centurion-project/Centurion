@@ -44,7 +44,9 @@
             </div>
             <div class="col col-title">
                 <?php if(!$this->popup) : ?>
-                <input type="checkbox" value="<?php echo $id;?>" name="rowId[]">
+                    <?php if(!$this->displayDuplicates || !isset($row['duplicates']) || $row['duplicates'] < 2) : ?>
+                    <input type="checkbox" value="<?php echo $id;?>" name="rowId[]">
+                    <?php endif ?>
                 <?php endif ?>
                 <a href="<?php echo $editUrl;?>" class="edit" title="<?php echo $this->escape($row['row']->filename) ?>"><?php echo $this->smartTextCrop($row['row']->filename, 20, true) ?></a>
             </div>

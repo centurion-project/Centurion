@@ -29,7 +29,9 @@ foreach ($this->result as $key => $result) {
     $tab[] = $thumb;
     $name = '<a href="' .  $editUrl . '" class="edit">' . $this->smartTextCrop($this->row->filename, 20, true). '</a>';
     if(!$this->popup) {
-        $name = '<input type="checkbox" value="' . $this->row->id . '" name="rowId[]">' . $name;
+        if(!$this->displayDuplicates || !isset($row['duplicates']) || $row['duplicates'] < 2) {
+            $name = '<input type="checkbox" value="' . $this->row->id . '" name="rowId[]">' . $name;
+        }
     }
     $tab[] = $name;
     
