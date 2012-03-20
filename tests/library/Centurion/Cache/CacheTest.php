@@ -33,7 +33,7 @@ class Centurion_Cache_CacheTest extends PHPUnit_Framework_TestCase
         if (is_null($cacheManager)) {
             $this->fail();
         }
-        
+
         $this->getCacheManager()->cleanCache(Zend_Cache::CLEANING_MODE_ALL);
     }
     
@@ -99,12 +99,14 @@ class Centurion_Cache_CacheTest extends PHPUnit_Framework_TestCase
         $userTable = Centurion_Db::getSingleton('auth/user');
         $userPermissionTable = Centurion_Db::getSingleton('auth/userPermission');
         $cacheCore = $this->getCacheManager()->getCache('core');
-        
+
+        $userTable->getOrCreate(array('username' => 'userrow for testCacheWithRelation'));
+
         $str = sha1(uniqid());
         $id = sha1(uniqid());
         
         $tags = array();
-        $adminUser = $userTable->fetchRow(array('username=?' => 'admin'));
+        $adminUser = $userTable->fetchRow(array('username=?' => 'userrow for testCacheWithRelation'));
         if (null == $adminUser) {
             //TODO: We should add row that we need
             $this->fail('Admin not found in db');
