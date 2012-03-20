@@ -52,7 +52,10 @@ class Centurion_MatriceTest extends PHPUnit_Framework_TestCase
     
     public function testPuissance()
     {
-        $nbNode = 20000;
+        //It's not a real test unit, but a function to test how much time it will do to generate a matrice and find path in it
+        $this->markTestSkipped();
+
+        $nbNode = 2000;
         $nbLinkByNode = 50;
         
         $nbTest = 5;
