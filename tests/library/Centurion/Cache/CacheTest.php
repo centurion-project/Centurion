@@ -29,6 +29,11 @@ class Centurion_Cache_CacheTest extends PHPUnit_Framework_TestCase
     
     protected function tearDown()
     {
+        $cacheManager = $this->getCacheManager();
+        if (is_null($cacheManager)) {
+            $this->fail();
+        }
+        
         $this->getCacheManager()->cleanCache(Zend_Cache::CLEANING_MODE_ALL);
     }
     
