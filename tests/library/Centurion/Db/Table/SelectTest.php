@@ -44,7 +44,7 @@ class Centurion_Db_Table_SelectTest extends PHPUnit_Framework_TestCase
     {
         $select = Centurion_Db::getSingleton('user/profile')->select(true);
         $select->addRelated('user__id');
-        
+
         $this->assertTrue($select->isAlreadyJoined('auth_user'));
         
         $this->assertTrue($select->isAlreadyJoined('auth_user', '`auth_user`.`id` = `user_profile`.`user_id`'));
@@ -89,36 +89,69 @@ class Centurion_Db_Table_SelectTest extends PHPUnit_Framework_TestCase
     
     public function testAddRelatedForManyUniq()
     {
-        $select = Centurion_Db::getSingleton('user/profile')->select(true);
-        
+        $select = Centurion_Db::getSingleton('auth/user')->select(true);
+        $sqlColumns1 = $select->addRelated('groups__id');
+        $sqlColumns2 = $select->addRelated('groups__id');
+
+        $this->assertEquals($sqlColumns1, $sqlColumns2);
+
     }
-    
+
+    public static function getUserForTest($withProfile = false)
+    {
+        $data = array(
+            'username' => 'user for function Centurion_Db_Table_SelectTest::getUserForTest',
+        );
+
+        list($userRow, ) = Centurion_Db::getSingleton('auth/user')->getOrCreate($data);
+
+        if ($withProfile) {
+            $data = array(
+                'user_id' => $userRow->id,
+            );
+            Centurion_Db::getSingleton('user/profile')->getOrCreate($data);
+        }
+
+        return $userRow;
+    }
+
     /**
      * TODO should add user before try to get it.
      * @
      */
     public function testFilter()
     {
-        $select = Centurion_Db::getSingleton('user/profile')->select(true);
+        $profileTable = Centurion_Db::getSingleton('user/profile');
+
+        $userRow = self::getUserForTest(true);
+
+        $select = $profileTable->select(true);
     
-        $select->filter(array('user__id' => 1));
-        $select->filter(array('user__username' => 'admin'));
-        
+        $select->filter(array('user__id' => $userRow->id));
+        //Two join on same table
+        $select->filter(array('user__username' => $userRow->username));
+        //In case someone do filter twice
+        $select->filter(array('user__username' => $userRow->username));
+
         $adminRow = $select->fetchAll();
         
-        $this->assertNotNull($adminRow);
+        $this->assertCount(1, $adminRow);
     }
     
     public function testMany()
     {
         $select = Centurion_Db::getSingleton('auth/user')->select(true);
-        $select->addRelated('groups__id');
+        $select->addRelated('belongs__user_id');
     
         $this->assertTrue($select->isAlreadyJoined('auth_belong'));
         $this->assertTrue($select->isAlreadyJoined('auth_belong', '`auth_belong`.`user_id` = `auth_user`.`id`'));
-    
-        $select->addRelated('groups__id');
-        $select->addRelated('groups__users__id');
+
+        $select->filter(array('groups__id' => 1));
+
+        $select->filter(array('groups__name' => 'test1'));
+
+        $this->assertNotContains('auth_group_2', $select->__toString());
+        $this->assertCount(3, $select->getPart(Zend_Db_Select::FROM));
     }
     
     public function testDependant()
@@ -130,12 +163,15 @@ class Centurion_Db_Table_SelectTest extends PHPUnit_Framework_TestCase
         $select->filter(array('!profiles__id__isnull' => null));
         
         //TODO: test that is good
+        $this->markTestIncomplete();
     }
     
     public function testJoinToSameTableWithDifferCondition()
     {
         $select = Centurion_Db::getSingleton('auth/user')->select(true);
-    
+
+
+        //TODO: create data
         $select->addRelated('groups__users__id');
     
         $select->filter(array('left|user_parent__username__isnull' => ''));
