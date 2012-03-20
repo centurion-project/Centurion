@@ -2,32 +2,39 @@
 
 require_once dirname(__FILE__) . '/../../TestHelper.php';
 
+/**
+ * TODO: change the url that is on 404
+ */
 class Centurion_VideopianTest extends PHPUnit_Framework_TestCase
 {
     protected $_services = array(
-        'vimeo'         =>  array(
-            'url' => array('2884813'    =>  'http://www.vimeo.com/2884813',
+        array('vimeo', array('2884813'    =>  'http://www.vimeo.com/2884813',
                            '7022191'    =>  'http://vimeo.com/moogaloop.swf?clip_id=7022191')
         ),
-        'youtube'       =>  array(
-            'url' => array('NCauq7LFOAQ'    =>  'http://www.youtube.com/watch?v=NCauq7LFOAQ',
+        array('youtube', array('NCauq7LFOAQ'    =>  'http://www.youtube.com/watch?v=NCauq7LFOAQ',
                            'SToOccPytl8'    =>  'http://www.youtube.com/watch?v=SToOccPytl8')
         ),
-        'dailymotion'   =>  array(
-            'url' => array('xbcrrc'             =>  'http://www.dailymotion.com/swf/xbcrrc',
-                           'x2bein_vwater_ads'  =>  'http://www.dailymotion.com/video/x2bein_vwater_ads')
+        array('dailymotion', array('xbcrrc'             =>  'http://www.dailymotion.com/swf/xbcrrc',
+                       'x2bein_vwater_ads'  =>  'http://www.dailymotion.com/video/x2bein_vwater_ads')
         )
     );
-    
-    public function testService()
+
+    public function getServices()
     {
-        foreach ($this->_services as $key => $value) {
-            foreach ($value['url'] as $id => $url) {
-                $data = Centurion_Videopian::get($url);
-                $this->assertTrue($data instanceof stdClass);
-                $this->assertEquals($key, $data->site);
-                $this->assertEquals($url, $data->url);
-            }
+        return $this->_services;
+    }
+
+    /**
+     * @dataProvider getServices
+     */
+
+    public function testService($key, $urls)
+    {
+        foreach ($urls as $id => $url) {
+            $data = Centurion_Videopian::get($url);
+            $this->assertTrue($data instanceof stdClass);
+            $this->assertEquals($key, $data->site);
+            $this->assertEquals($url, $data->url);
         }
     }
     
