@@ -6,11 +6,11 @@ class Media_Test_Model_DbTable_File extends PHPUnit_Framework_TestCase
 {
     public function testGetPx()
     {
-        $fileTable = Centurion_Db::getSingleton('media/file');
+        $fileTable = new Media_Model_DbTable_File();
         $pxRow = $fileTable->findOneBy('id', '88888888');
 
         if (null !== $pxRow) {
-            //$pxRow->delete();
+            $pxRow->delete();
         }
 
         $row = $fileTable->getPx();

@@ -78,6 +78,7 @@ class Media_Model_DbTable_File extends Centurion_Db_Table_Abstract
             $data = array();
             $data['id'] = sha1(rand());
             $data['local_filename'] = '../../public/layouts/backoffice/images/px.png';
+            $data['delete_original'] = 0;
 
             list(self::$_px, ) = Centurion_Db::getSingleton('media/file')->getOrCreate($data);
         }
@@ -293,7 +294,7 @@ class Media_Model_DbTable_File extends Centurion_Db_Table_Abstract
             $oldProxyTableClass = $currentFileRow->proxy_model;
         }
 
-        foreach($currentFileRow->duplicates as $duplicate) {
+        foreach ($currentFileRow->duplicates as $duplicate) {
             $duplicate->delete();
         }
 

@@ -59,6 +59,7 @@ CREATE TABLE IF NOT EXISTS `media_file` (
   KEY `fk_file__user_id___user__id` (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+ALTER TABLE  `media_file` ADD  `delete_original` INT( 1 ) NOT NULL DEFAULT  '1'
 
 -- --------------------------------------------------------
 
