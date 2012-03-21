@@ -1289,7 +1289,6 @@ abstract class Centurion_Db_Table_Row_Abstract extends Zend_Db_Table_Row_Abstrac
         }
 
         $select = $this->_getNextOrPreviousSelectByField($column, $isNext, $kwargs, $select);
-
         return $select->limit(1, 0)->fetchRow();
     }
 
@@ -1374,6 +1373,8 @@ abstract class Centurion_Db_Table_Row_Abstract extends Zend_Db_Table_Row_Abstrac
      */
     protected function _getNextOrPreviousSelectByField($column, $isNext = true, $kwargs = null, $select = null)
     {
+        $select = clone $select;
+        $nonQuotedColumn = $column;
         $op = $isNext ? '>' : '<';
         $order = $isNext ? 'ASC' : 'DESC';
 
@@ -1410,14 +1411,46 @@ abstract class Centurion_Db_Table_Row_Abstract extends Zend_Db_Table_Row_Abstrac
             $columnData = $adapter->quoteInto('?', $columnData);
         }
 
+        $actualOrders = $select->getPart(Zend_Db_Select::ORDER);
+
         $select->order(new Zend_Db_Expr(sprintf('%s.%s %s', $columnSchema, $column, $order)));
 
         $expr = sprintf('IFNULL(%s.%s, 0) %s %s', $columnSchema, $column, $op, $columnData);
 
+
         $previousColumn = $column;
         $previousColumnData = $columnData;
 
+        $i = 0;
+
+        $alreadyDoneColumn = array();
+        $alreadyDoneColumn[$nonQuotedColumn] = true;
+
+        foreach ($actualOrders as $selectOrder) {
+            if (isset($alreadyDoneColumn[$selectOrder[0]])) {
+                continue;
+            }
+            $alreadyDoneColumn[$selectOrder[0]] = true;
+            $i++;
+            $op = ($selectOrder[1] == 'asc') ? '>' : '<';
+
+            $pkData = $adapter->quoteInto('?', $this->{$selectOrder[0]});
+
+            $quotedName = $adapter->quoteIdentifier($selectOrder[0]);
+
+            $expr .= sprintf(' or (%s.%s = %s and (%s.%s %s %s', $columnSchema, $previousColumn, $previousColumnData, $tableName, $quotedName, $op, $pkData);
+            $previousColumn = $tableName . '.' . $quotedName;
+            $previousColumnData = $pkData;
+        }
+
+        $op = $isNext ? '>' : '<';
+
         foreach ($this->_primary as $primary) {
+            if (isset($alreadyDoneColumn[$primary])) {
+                continue;
+            }
+            $alreadyDoneColumn[$primary] = true;
+            $i++;
             $select->order(new Zend_Db_Expr(sprintf('%s.%s %s', $tableName, $primary, $order)));
 
             $pkData = $adapter->quoteInto('?', $this->{$primary});
@@ -1429,7 +1462,7 @@ abstract class Centurion_Db_Table_Row_Abstract extends Zend_Db_Table_Row_Abstrac
             $previousColumnData = $pkData;
         }
 
-        $expr .= str_repeat(')', count($this->_primary) * 2);
+        $expr .= str_repeat(')', $i * 2);
 
         $select->where(new Zend_Db_Expr($expr));
 

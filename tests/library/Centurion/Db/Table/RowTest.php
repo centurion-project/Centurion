@@ -16,7 +16,7 @@ class Centurion_Db_Table_RowTest extends PHPUnit_Framework_TestCase
         );
 
         foreach ($data as $data) {
-            $groupTable->insert(array('name' => $data[1], 'id' => $data[0]));
+            $groupTable->getOrCreate(array('name' => $data[1], 'id' => $data[0]));
         }
 
     }
