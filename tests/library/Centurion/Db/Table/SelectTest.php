@@ -171,16 +171,18 @@ class Centurion_Db_Table_SelectTest extends PHPUnit_Framework_TestCase
         $select = Centurion_Db::getSingleton('auth/user')->select(true);
 
 
+        $userRow = self::getUserForTest();
+
         //TODO: create data
-        $select->addRelated('groups__users__id');
+        $select->addRelated('left|groups__left|users__id');
     
         $select->filter(array('left|user_parent__username__isnull' => ''));
-        $select->filter(array('username' => 'admin'));
+        $select->filter(array('username' => $userRow->username));
 
         $select->limit(2);
         $rowSet = $select->fetchAll();
         $this->assertEquals(1, $rowSet->count());
-        $this->assertEquals('admin', $rowSet[0]->username);
+        $this->assertEquals($userRow->username, $rowSet[0]->username);
     }
 }
 
