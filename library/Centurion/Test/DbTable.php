@@ -85,7 +85,8 @@ abstract class Centurion_Test_DbTable extends Zend_Test_PHPUnit_DatabaseTestCase
         
         foreach ($this->_columns as $column) {
             if (
-                0 === strncmp('is_', $column, 3) || 
+                0 === strncmp('is_', $column, 3) ||
+                0 === strncmp('has_', $column, 4) ||
                 0 === strncmp('can_be_', $column, 6) ||
                 substr($column, -3) == '_id'
                 ) {
