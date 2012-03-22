@@ -239,6 +239,11 @@ class Admin_Form_Filter extends Centurion_Form
                 continue;
             }
             switch ($this->_filters[$key]['behavior']) {
+                case Centurion_Controller_CRUD::FILTER_BEHAVIOR_CALLBACK:
+                    $sqlSubFilter = array();
+                    call_user_func_array($this->_filters[$key]['callback'], array($subform->getValues(), &$sqlFilter));
+                    //TODO:
+                    break;
                 case Centurion_Controller_CRUD::FILTER_BEHAVIOR_BETWEEN:
                     $sqlSubFilter = array();
                     $lt = $subform->getElement('lt')->getValue();
