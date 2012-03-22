@@ -27,6 +27,7 @@
  * @author      Florent Messa <florent.messa@gmail.com>
  * @author      Mathias Desloges <m.desloges@gmail.com>
  * @todo        refactor filter method, add more unit tests
+ * @TODO        Make a contain function that check if a row is in a select
  */
 class Centurion_Db_Table_Select extends Zend_Db_Table_Select
 {
@@ -205,6 +206,7 @@ class Centurion_Db_Table_Select extends Zend_Db_Table_Select
      * @param unknown_type $tableName
      * @param unknown_type $joinCond
      * @return boolean
+     * @TODO: this should not be done like that.
      */
     public function isAlreadyJoined($tableName, $joinCond = null) {
         return $this->_isAlreadyJoined($tableName, $joinCond);
@@ -951,8 +953,9 @@ class Centurion_Db_Table_Select extends Zend_Db_Table_Select
      */
     public function not($rowSet)
     {
-        if($rowSet instanceof Zend_Db_Table_Row_Abstract)
+        if ($rowSet instanceof Zend_Db_Table_Row_Abstract) {
             $rowSet = array($rowSet);
+        }
 
         $primaries = $this->_table->info(Centurion_Db_Table_Abstract::PRIMARY);
 
