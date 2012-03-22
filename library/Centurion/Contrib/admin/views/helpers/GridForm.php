@@ -109,7 +109,9 @@ class Admin_View_Helper_GridForm extends Zend_View_Helper_Abstract
         if (null !== ($displayGroups = $form->getDisplayGroup('_aside'))) {
             foreach ($form->getDisplayGroup('_aside') as $displayGroup) {
                 foreach ($displayGroup->getElements() as $name => $element) {
-                    if (!strncmp($element->getName(), 'is_', 3) || !strncmp($element->getName(), 'can_be_', 7)) {
+                    if (!strncmp($element->getName(), 'is_', 3)
+                        || !strncmp($element->getName(), 'can_be_', 7)
+                        || !strncmp($element->getName(), 'has_', 4)) {
                         $onLabel = $this->view->translate('On');
                         $offLabel = $this->view->translate('Off');
 
