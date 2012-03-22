@@ -13,7 +13,8 @@ class Centurion_Image_Adapter_GDTest extends PHPUnit_Framework_TestCase
     protected $_adapter = null;
     
     protected $_guinea = 'article.jpg';
-    
+
+    //TODO: find real sizes for real test unit: squared and not, below and above original size
     protected $_sizes = array(
         array(25, 25),
         array(50, 50),
@@ -30,7 +31,7 @@ class Centurion_Image_Adapter_GDTest extends PHPUnit_Framework_TestCase
     public function setUp()
     {
         $this->_path = realpath(dirname(__FILE__) . '/_files');
-        $this->_buildPath = $this->_path . '/build';
+        $this->_buildPath = APPLICATION_PATH . '/../data/temp/';
         
         if (!is_writable($this->_buildPath)) {
             throw new Centurion_Exception(sprintf('The path "%s" is not writable', $this->_buildPath));
@@ -54,8 +55,8 @@ class Centurion_Image_Adapter_GDTest extends PHPUnit_Framework_TestCase
                                    . DIRECTORY_SEPARATOR
                                    . sprintf("resize_%d_%d_%s", $width, $height, $this->_guinea));
 
-        $this->assertFalse($this->_getAdapter()->getThumbHeight() > $height);
-        $this->assertFalse($this->_getAdapter()->getThumbWidth() > $width);
+        $this->assertLessThanOrEqual($height, $this->_getAdapter()->getThumbHeight());
+        $this->assertLessThanOrEqual($width, $this->_getAdapter()->getThumbWidth());
     }
 
 
@@ -75,8 +76,8 @@ class Centurion_Image_Adapter_GDTest extends PHPUnit_Framework_TestCase
                                    . DIRECTORY_SEPARATOR
                                    . sprintf("adaptive_resize_%d_%d_%s", $width, $height, $this->_guinea));
 
-        $this->assertFalse($this->_getAdapter()->getThumbHeight() === $height);
-        $this->assertFalse($this->_getAdapter()->getThumbWidth() === $width);
+        $this->assertGreaterThanOrEqual($height, $this->_getAdapter()->getThumbHeight());
+        $this->assertGreaterThanOrEqual($width, $this->_getAdapter()->getThumbWidth());
     }
     
     protected function _getAdapter()
