@@ -797,7 +797,12 @@ abstract class Centurion_Form_Model_Abstract extends Centurion_Form
         $manyDependentTables = $this->getModel()->info(Centurion_Db_Table_Abstract::MANY_DEPENDENT_TABLES);
 
         foreach ($manyDependentTables as $key => $manyDependentTable) {
-            $objectsRelated = $this->getValue($key);
+            
+            if ($element = $this->getElement($key)) {
+                $objectsRelated = $element->getValue();
+            } else if ($subForm = $this->getSubForm($key)) {
+                $objectsRelated = $subForm->getValue($key);
+            }
 
             if ($this->isExcluded($key) || null === $objectsRelated) {
                 continue;
