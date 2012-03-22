@@ -1,4 +1,5 @@
 <?php
+$baseUrl = $this->baseUrl();
 $this->placeholder('headling_1')->captureStart(); ?>
 <h1>
     <?php echo $this->placeholder('headling_1_content') ?>
@@ -41,21 +42,21 @@ if (isset($this->error) || isset($this->infos)) : ?>
 $this->headScript()->captureStart();
 ?>
 $(function(){
-    $(".form .form-main .form-group").CUI('fieldset', {basePath: '<?php echo Zend_Controller_Front::getInstance()->getBaseUrl(); ?>', autoClose: <?php  echo (method_exists($this->form, 'hasInstance') && $this->form->hasInstance()) ? 'true':'false'?>});
-    $(".field-multiselect").CUI('multiselect', {basePath: '<?php echo Zend_Controller_Front::getInstance()->getBaseUrl(); ?>'});
-    $(".field-switcher").CUI('switcher', {basePath: '<?php echo Zend_Controller_Front::getInstance()->getBaseUrl(); ?>'});
+    $(".form .form-main .form-group").CUI('fieldset', {basePath: '<?php echo $baseUrl; ?>', autoClose: <?php  echo (method_exists($this->form, 'hasInstance') && $this->form->hasInstance()) ? 'true':'false'?>});
+    $(".field-multiselect").CUI('multiselect', {basePath: '<?php echo $baseUrl; ?>'});
+    $(".field-switcher").CUI('switcher', {basePath: '<?php echo $baseUrl; ?>'});
 
-    $(".field-letterlimit").CUI('letterLimit', { basePath: '<?php echo Zend_Controller_Front::getInstance()->getBaseUrl(); ?>', maxChar: 100 });
+    $(".field-letterlimit").CUI('letterLimit', { basePath: '<?php echo $baseUrl; ?>', maxChar: 100 });
 
     $(".field-datepicker").CUI('datepicker', {
-        basePath: '<?php echo Zend_Controller_Front::getInstance()->getBaseUrl(); ?>', 
+        basePath: '<?php echo $baseUrl; ?>', 
         changeMonth: true,
         changeYear: true,
         dateFormat: '<?php echo $this->dateFormat; ?>'
     });
     
     $(".field-datetimepicker").CUI('datetimepicker', {
-                basePath: '<?php echo Zend_Controller_Front::getInstance()->getBaseUrl(); ?>', 
+                basePath: '<?php echo $baseUrl; ?>', 
                 duration: '',
                 showTime: true,
                 showHour: true,
@@ -69,11 +70,11 @@ $(function(){
              });
 
      $('.field-rte').CUI('rte', {
-         basePath: '<?php echo Zend_Controller_Front::getInstance()->getBaseUrl(); ?>', 
+         basePath: '<?php echo $baseUrl; ?>', 
         convert_urls : false,
-        content_css : "<?php echo Zend_Controller_Front::getInstance()->getBaseUrl(); ?>/layouts/frontoffice/css/rte.css"
+        content_css : "<?php echo $baseUrl; ?>/layouts/frontoffice/css/rte.css"
      });
-        $(".field-file").CUI('file', {basePath: '<?php echo Zend_Controller_Front::getInstance()->getBaseUrl(); ?>'});
+        $(".field-file").CUI('file', {basePath: '<?php echo $baseUrl; ?>'});
 });
 <?php $this->headScript()->captureEnd();
 ?>
@@ -91,20 +92,25 @@ $this->Cui_MakeSaveButton($this->form);
 
 $this->form->addDisplayGroup(array('_save', '_cancel', '_addanother', '_continue'), 'submit');
 
-$this->form->getDisplayGroup('submit')->addDecorator('HtmlTag', array('tag' => 'div', 'class' => 'clear'));
+$this->form->getDisplayGroup('submit')->addDecorator('HtmlTag', array('tag'  => 'div',
+                                                                     'class' => 'clear'
+                                                                ));
 
 $this->getHelper('gridForm')->makeOnOff($this->form);
 
 
 // move elements to ensure the form will be rendered correctly
-if ($this->form->_aside)
+if ($this->form->_aside) {
     $this->form->moveElement('_aside', Centurion_Form::FIRST);
+}
 
-if ($this->form->_main)
+if ($this->form->_main) {
     $this->form->moveElement('_main', Centurion_Form::FIRST);
+}
 
-if ($this->form->_header)
+if ($this->form->_header) {
     $this->form->moveElement('_header', Centurion_Form::FIRST);
+}
 
 $decoratorsArray = array(
     'FormElements',
