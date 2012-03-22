@@ -988,6 +988,7 @@ abstract class Centurion_Db_Table_Row_Abstract extends Zend_Db_Table_Row_Abstrac
      * @param string $type
      * @param string $pk
      * @todo add manyDependentTables
+     * @TODO: this is time and memory consume. It make fetchAll only to test if exist
      * @return void
      */
     public function has($type, $object)
@@ -1124,19 +1125,6 @@ abstract class Centurion_Db_Table_Row_Abstract extends Zend_Db_Table_Row_Abstrac
         $this->_postSave();
 
         return $result;
-    }
-
-    /**
-     * Set the read-only status of the row.
-     *
-     * @param boolean $flag
-     * @return Centurion_Db_Table_Row_Abstract
-     */
-    public function setReadOnly($flag)
-    {
-        parent::setReadOnly($flag);
-
-        return $this;
     }
 
     /**
@@ -1316,6 +1304,7 @@ abstract class Centurion_Db_Table_Row_Abstract extends Zend_Db_Table_Row_Abstrac
     /**
      * Remove join in column name.
      * @param $column
+     * @TODO: why a public column prefixed with '_'?
      */
     public function _cleanColumn($column)
     {
@@ -1337,6 +1326,7 @@ abstract class Centurion_Db_Table_Row_Abstract extends Zend_Db_Table_Row_Abstrac
      * @param null $select
      * @return null
      * @todo documentation
+     * @TODO this should be tested
      */
     protected function _getFirstOrLastSelectByField($column, $isFirst = true, $kwargs = null, $select = null)
     {
@@ -1354,8 +1344,9 @@ abstract class Centurion_Db_Table_Row_Abstract extends Zend_Db_Table_Row_Abstrac
 
         $select->order(new Zend_Db_Expr(sprintf('%s %s', $column, $order)));
 
-        foreach ($this->_primary as $primary)
+        foreach ($this->_primary as $primary) {
             $select->order(sprintf('%s %s', $primary, $order));
+        }
 
         $select->filter($kwargs);
 
@@ -1374,6 +1365,7 @@ abstract class Centurion_Db_Table_Row_Abstract extends Zend_Db_Table_Row_Abstrac
     protected function _getNextOrPreviousSelectByField($column, $isNext = true, $kwargs = null, $select = null)
     {
         $select = clone $select;
+
         $nonQuotedColumn = $column;
         $op = $isNext ? '>' : '<';
         $order = $isNext ? 'ASC' : 'DESC';
@@ -1417,8 +1409,7 @@ abstract class Centurion_Db_Table_Row_Abstract extends Zend_Db_Table_Row_Abstrac
 
         $expr = sprintf('IFNULL(%s.%s, 0) %s %s', $columnSchema, $column, $op, $columnData);
 
-
-        $previousColumn = $column;
+        $previousColumn = $columnSchema . '.' . $column;
         $previousColumnData = $columnData;
 
         $i = 0;
@@ -1432,18 +1423,18 @@ abstract class Centurion_Db_Table_Row_Abstract extends Zend_Db_Table_Row_Abstrac
             }
             $alreadyDoneColumn[$selectOrder[0]] = true;
             $i++;
-            $op = ($selectOrder[1] == 'asc') ? '>' : '<';
+
+            $cmp = ($selectOrder[1] == 'asc') ? '>' : '<';
 
             $pkData = $adapter->quoteInto('?', $this->{$selectOrder[0]});
 
             $quotedName = $adapter->quoteIdentifier($selectOrder[0]);
 
-            $expr .= sprintf(' or (%s.%s = %s and (%s.%s %s %s', $columnSchema, $previousColumn, $previousColumnData, $tableName, $quotedName, $op, $pkData);
+            $expr .= sprintf(' or (%s = %s and (%s.%s %s %s', $previousColumn, $previousColumnData, $tableName, $quotedName, $cmp, $pkData);
+
             $previousColumn = $tableName . '.' . $quotedName;
             $previousColumnData = $pkData;
         }
-
-        $op = $isNext ? '>' : '<';
 
         foreach ($this->_primary as $primary) {
             if (isset($alreadyDoneColumn[$primary])) {
@@ -1457,7 +1448,7 @@ abstract class Centurion_Db_Table_Row_Abstract extends Zend_Db_Table_Row_Abstrac
 
             $primary = $adapter->quoteIdentifier($primary);
 
-            $expr .= sprintf(' or (%s.%s = %s and (%s.%s %s %s', $columnSchema, $previousColumn, $previousColumnData, $tableName, $primary, $op, $pkData);
+            $expr .= sprintf(' or (%s = %s and (%s.%s %s %s', $previousColumn, $previousColumnData, $tableName, $primary, $op, $pkData);
             $previousColumn = $tableName . '.' . $primary;
             $previousColumnData = $pkData;
         }
@@ -1498,10 +1489,11 @@ abstract class Centurion_Db_Table_Row_Abstract extends Zend_Db_Table_Row_Abstrac
     /**
      * @return array
      * @todo documentation
+     * @TODO: i thinks we could resuse getModifiedData
      */
     public function getModifiedFields() {
         $fields = array();
-        if(!$this->isNew()) {
+        if (!$this->isNew()) {
             foreach($this->_data as $field => $value) {
                 if (isset($this->_cleanData[$field]) && $this->_cleanData[$field] != $value) {
                     $fields[] = $field;
