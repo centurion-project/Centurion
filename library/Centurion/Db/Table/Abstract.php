@@ -626,7 +626,7 @@ abstract class Centurion_Db_Table_Abstract extends Zend_Db_Table_Abstract implem
 
     public function getCacheTag()
     {
-    	return sprintf('__%s', $this->info(Centurion_Db_Table_Abstract::NAME));
+        return sprintf('__%s', $this->info(Centurion_Db_Table_Abstract::NAME));
     }
     
     /**
@@ -792,14 +792,15 @@ abstract class Centurion_Db_Table_Abstract extends Zend_Db_Table_Abstract implem
 
                             $type = $this->_metadata[$col]['DATA_TYPE'];
                             $where[] = $this->_db->quoteInto(
-				sprintf('%s.%s = ?', $this->_db->quoteIdentifier($this->_name), $this->_db->quoteIdentifier($col, true)),
-                                $primaryKey[$refCol], $type);
+                                    sprintf('%s.%s = ?', $this->_db->quoteIdentifier($this->_name), $this->_db->quoteIdentifier($col, true)),
+                                    $primaryKey[$refCol], $type
+                            );
                         }
 
-			/*
-			* Fix : Suround, in the implode, AND with withspaces because if the relation is build with several key			
-			* the implode returned : "myKey=XANDmySecondKey=Y" instead of "myKey=X AND mySecondKey=Y"
-			*/
+            /*
+            * Fix : Suround, in the implode, AND with withspaces because if the relation is build with several key            
+            * the implode returned : "myKey=XANDmySecondKey=Y" instead of "myKey=X AND mySecondKey=Y"
+            */
                         foreach ($this->fetchAll(implode(' AND ', $where)) as $row) { 
                             $rowsAffected += $row->delete();
                         }
@@ -1091,7 +1092,7 @@ abstract class Centurion_Db_Table_Abstract extends Zend_Db_Table_Abstract implem
         $existingRefRules = array();
         $mergeAllRefs = array_merge($this->getReferenceMap(), $this->getDependentTables(), $this->getManyDependentTables());
         
-    	foreach ($mergeAllRefs as $key => $val) {
+        foreach ($mergeAllRefs as $key => $val) {
              if (!is_int($key)) {
                  $existingRefRules[$key] = true;
              }
@@ -1107,6 +1108,6 @@ abstract class Centurion_Db_Table_Abstract extends Zend_Db_Table_Abstract implem
     
     public function getTestCondition()
     {
-    	return null;
+        return null;
     }
 }
