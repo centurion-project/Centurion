@@ -346,7 +346,9 @@ abstract class Centurion_Form_Model_Abstract extends Centurion_Form
                 }
             }
         }
-
+        
+        Centurion_Traits_Common::checkTraitOverload($this, 'setInstance', array($instance), false);
+        
         return $this;
     }
 
