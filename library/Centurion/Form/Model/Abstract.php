@@ -874,7 +874,7 @@ abstract class Centurion_Form_Model_Abstract extends Centurion_Form
 
             if ($columnDetails['IDENTITY']) {
                 $config = array('hidden', array());
-            } elseif (substr($columnName, 0, 2) == 'is' || substr($columnName, 0, 6) == 'can_be') {
+            } elseif (substr($columnName, 0, 2) == 'is' || substr($columnName, 0, 6) == 'can_be' || substr($columnName, 0, 3) == 'has') {
                 $config = array('checkbox', array());
             } elseif (substr($columnName, 0, -3) == 'pwd' || $columnName == 'password') {
                 $config = array('password', array());
