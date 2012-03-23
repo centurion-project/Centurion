@@ -188,8 +188,9 @@ abstract class Centurion_Form_Model_Abstract extends Centurion_Form
 
         $this->addElements($this->_columnToElements());
 
-        if (!defined('PHPUNIT') || PHPUNIT == false)
+        if (!defined('PHPUNIT') || PHPUNIT == false) {
             $this->addElement('Hash', '_XSRF', array('salt' => $this->getAttrib('id')));
+        }
 
         // Extensions...
         $this->init();
@@ -217,7 +218,7 @@ abstract class Centurion_Form_Model_Abstract extends Centurion_Form
     /**
      * Retrieve instance of model form.
      *
-     * @return Centurion_Db_Table_Abstract
+     * @return Centurion_Db_Table_Row_Abstract
      */
     public function getInstance()
     {
