@@ -47,7 +47,7 @@ class Centurion_Import
             $importName = __CLASS__ . '_';
             $importName .= str_replace(' ', '_', ucwords(str_replace('_', ' ', strtolower($adapterName))));
             
-        } elseif ($adapter instanceof Zend_Db_Adapter_Abstract) {
+        } else if ($adapter instanceof Zend_Db_Adapter_Abstract) {
             $importName = str_replace('Zend_Db_Adapter', __CLASS__, get_class($adapter));
         }
         

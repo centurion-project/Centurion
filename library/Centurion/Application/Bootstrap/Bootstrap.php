@@ -10,12 +10,12 @@
  * obtain it through the world-wide-web, please send an email
  * to license@centurion-project.org so we can send you a copy immediately.
  *
- * @category    Centurion
- * @package     Centurion_Application
- * @subpackage  Bootstrap
- * @copyright   Copyright (c) 2008-2011 Octave & Octave (http://www.octaveoctave.com)
- * @license     http://centurion-project.org/license/new-bsd     New BSD License
- * @version     $Id$
+ * @category         Centurion
+ * @package          Centurion_Application
+ * @subpackage       Bootstrap
+ * @copyright        Copyright (c) 2008-2011 Octave & Octave (http://www.octaveoctave.com)
+ * @license          http://centurion-project.org/license/new-bsd     New BSD License
+ * @version          $Id$
  */
 
 /**
@@ -29,6 +29,7 @@
  */
 abstract class Centurion_Application_Bootstrap_Bootstrap extends Zend_Application_Bootstrap_Bootstrap
 {
+
     /**
      * Constructor
      *
@@ -52,8 +53,8 @@ abstract class Centurion_Application_Bootstrap_Bootstrap extends Zend_Applicatio
     {
         if ($this->_pluginLoader === null) {
             $options = array(
-                'Zend_Application_Resource'     =>  'Zend/Application/Resource',
-                'Centurion_Application_Resource'=>  'Centurion/Application/Resource',
+                'Zend_Application_Resource'      => 'Zend/Application/Resource',
+                'Centurion_Application_Resource' => 'Centurion/Application/Resource',
             );
 
             $this->_pluginLoader = new Centurion_Loader_PluginLoader($options, 'Bootstrap');
@@ -106,7 +107,7 @@ abstract class Centurion_Application_Bootstrap_Bootstrap extends Zend_Applicatio
         $this->bootstrap('FrontController');
         $front = $this->getResource('FrontController');
         $front->registerPlugin(new Centurion_Controller_Plugin_ModuleBootstrap())
-              ->registerPlugin(new Centurion_Controller_Plugin_ErrorControllerBootstrap());
+            ->registerPlugin(new Centurion_Controller_Plugin_ErrorControllerBootstrap());
     }
 
     /**
@@ -122,19 +123,19 @@ abstract class Centurion_Application_Bootstrap_Bootstrap extends Zend_Applicatio
             $this->bootstrap('FrontController');
             $this->bootstrap('db');
             $this->bootstrap('modules');
-            
-            $front = $this->getResource('FrontController');
+
+            $front   = $this->getResource('FrontController');
             $modules = $front->getControllerDirectory();
 
             $references = array();
 
             $moduleEnabled = Centurion_Config_Manager::get('resources.modules');
-            
+
             foreach ($modules as $moduleName => $module) {
                 if (!in_array($moduleName, $moduleEnabled)) {
                     continue;
                 }
-                
+
                 $dbTableDir = realpath($module . '/../models/DbTable');
                 if (!file_exists($dbTableDir)) {
                     continue;
@@ -143,22 +144,22 @@ abstract class Centurion_Application_Bootstrap_Bootstrap extends Zend_Applicatio
                 $dir = new Centurion_Iterator_DbTableFilter($dbTableDir);
 
                 foreach ($dir as $fileInfo) {
-                    $filename = $fileInfo->getFilenameWithoutExtension();
+                    $filename  = $fileInfo->getFilenameWithoutExtension();
                     $className = sprintf('%s_Model_DbTable_%s', ucfirst($moduleName), $filename);
 
-                    $model = Centurion_Db::getSingletonByClassName($className);
-                    $meta = $model->getMeta();
+                    $model    = Centurion_Db::getSingletonByClassName($className);
+                    $meta     = $model->getMeta();
                     $metaData = $model->info('metadata');
-                    
+
                     foreach ($model->getReferenceMap() as $key => $referenceMap) {
-                        $refTableClass = $referenceMap['refTableClass'];
+                        $refTableClass   = $referenceMap['refTableClass'];
                         $referencedModel = Centurion_Db::getSingletonByClassName($refTableClass);
-                        
+
                         $plural = true;
                         if (isset($metaData[$referenceMap['columns']]['UNIQUE']) && $metaData[$referenceMap['columns']]['UNIQUE'] == true) {
                             $plural = false;
                         }
-                        
+
                         if ($plural) {
                             $dependentTableKey = $meta['verbosePlural'];
                         } else {
@@ -177,7 +178,7 @@ abstract class Centurion_Application_Bootstrap_Bootstrap extends Zend_Applicatio
                     }
                 }
             }
-            
+
             $cache->save($references, 'references_apps');
         }
 
