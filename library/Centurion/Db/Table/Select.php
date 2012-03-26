@@ -962,7 +962,7 @@ class Centurion_Db_Table_Select extends Zend_Db_Table_Select
         foreach ($rowSet as $row) {
             $conditions = array();
             foreach ($primaries as $primary) {
-                $conditions[] = $this->getAdapter()->quote($primary) . ' = ' . $this->getAdapter()->quote($row->{$primary});
+                $conditions[] = $this->getAdapter()->quoteIdentifier($primary) . ' = ' . $this->getAdapter()->quote($row->{$primary});
             }
             $this->where('!(' . implode(' and ', $conditions). ')');
         }
