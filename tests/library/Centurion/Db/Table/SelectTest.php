@@ -27,7 +27,7 @@ class Centurion_Db_Table_SelectTest extends PHPUnit_Framework_TestCase
     
     public function testIsConditionEqualsFunction()
     {
-        $select = Centurion_Db::getSingleton('user/profile')->select(true);
+        $select = new Asset_Db_Table_Select(Centurion_Db::getSingleton('user/profile'));
         
         $full = '`auth_user`.`id` = `user_profile`.`user_id`';
         
@@ -42,7 +42,7 @@ class Centurion_Db_Table_SelectTest extends PHPUnit_Framework_TestCase
     
     public function testIsAlreadyJoinFunction()
     {
-        $select = Centurion_Db::getSingleton('user/profile')->select(true);
+        $select = new Asset_Db_Table_Select(Centurion_Db::getSingleton('user/profile'));
         $select->addRelated('user__id');
 
         $this->assertTrue($select->isAlreadyJoined('auth_user'));
@@ -140,7 +140,7 @@ class Centurion_Db_Table_SelectTest extends PHPUnit_Framework_TestCase
     
     public function testMany()
     {
-        $select = Centurion_Db::getSingleton('auth/user')->select(true);
+        $select = new Asset_Db_Table_Select(Centurion_Db::getSingleton('auth/user'));
         $select->addRelated('belongs__user_id');
     
         $this->assertTrue($select->isAlreadyJoined('auth_belong'));
@@ -208,7 +208,7 @@ class Centurion_Db_Table_SelectTest extends PHPUnit_Framework_TestCase
      */
     public function testNotFunctionWithMultiplePkTable()
     {
-        $simpleTable = new Asset_Model_DbTable_Simple();
+        $simpleTable = new Asset_Model_DbTable_MultiplePk();
 
         $test1Row = $simpleTable->insert(array('title' => 'test1', 'retrieve' => true));
         $test2Row = $simpleTable->insert(array('title' => 'test2', 'retrieve' => true));
@@ -219,6 +219,28 @@ class Centurion_Db_Table_SelectTest extends PHPUnit_Framework_TestCase
         $this->assertCount(2, $resultRowSet);
         $this->assertEquals($test1Row->pk, $resultRowSet[0]->pk);
         $this->assertEquals($test3Row->pk, $resultRowSet[1]->pk);
+    }
+
+    /**
+     * @covers Centurion_Db_Table_Select::count
+     */
+    public function testCountFunction()
+    {
+        $simpleTable = new Asset_Model_DbTable_MultiplePk();
+
+        $simpleTable->insert(array('title' => 'test1'));
+        $simpleTable->insert(array('title' => 'test2'));
+        $test3Row = $simpleTable->insert(array('title' => 'test3', 'retrieve' => true));
+        $simpleTable->insert(array('title' => '4'));
+
+        $this->assertEquals(4, $simpleTable->count());
+
+        $select = $simpleTable->select(true)->where(new Zend_Db_Expr('title like (\'%test%\')'));
+
+        $this->assertEquals(3, $select->count());
+        $select->not($test3Row);
+
+        $this->assertEquals(2, $select->count());
     }
 }
 

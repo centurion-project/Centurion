@@ -40,4 +40,31 @@ class Centurion_Form_ModelTest extends PHPUnit_Framework_TestCase
         $values = $form->processValues($form->getValues());
         $this->assertEquals($date->get(Centurion_Date::MYSQL_DATETIME), $values['published_at']);
     }
+
+    /**
+     * @TODO : Ajouter la vérification de chaque groupe
+     */
+    public function testSaveManyToMany()
+    {
+        $groupArray = array('1', '2');
+
+        $belongRowset = Centurion_Db::getSingleton('auth/belong')->findByUser_id(1)->delete();
+
+        $userForm = new Auth_Form_Model_User();
+        $userRow = Centurion_Db::getSingleton('auth/user')->findOneById(1);
+
+        $userForm->setInstance($userRow);
+
+        $userForm->getElement('groups')->setValue($groupArray);
+
+        $this->assertEquals($groupArray, $userForm->getElement('groups')->getValue(), 'Avant enregistrement');
+
+        $userRow = $userForm->saveInstance();
+
+        $belongRowset = Centurion_Db::getSingleton('auth/belong')->findByUser_id(1);
+
+        $this->assertEquals(count($groupArray), count($belongRowset), 'Après enregistrement');
+
+        //$this->markTestIncomplete('Ajouter la vérification de chaque groupe');
+    }
 }

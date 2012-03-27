@@ -17,10 +17,12 @@ ini_set('memory_limit', '2048M');
 set_include_path(implode(PATH_SEPARATOR, array(
     realpath(dirname(__FILE__) . '/application'),
     realpath(dirname(__FILE__) . '/library'),
+    realpath(dirname(__FILE__) . '/support'),
     get_include_path(),
 )));
 
 require realpath(dirname(__FILE__) . '/../library/library.php');
+//TODO: we should not include this. If a test need application, we need to make to propose a factory
 require realpath(dirname(__FILE__) . '/../public/index.php');
 
 $autoloader = Zend_Loader_Autoloader::getInstance()
@@ -28,28 +30,10 @@ $autoloader = Zend_Loader_Autoloader::getInstance()
         "return @include str_replace('_', '/', \$class) . '.php';"
     ), '');
 
+/*
 $application->bootstrap('db')
             ->bootstrap('FrontController')
             ->bootstrap('modules')
             ->getBootstrap()->getResource('FrontController')
                             ->setParam('bootstrap', $application->getBootstrap());
-
-try {
-    $db = Zend_Db_Table_Abstract::getDefaultAdapter();
-    $db->beginTransaction();
-
-    $query = '';
-    foreach (new SplFileObject(dirname(__FILE__) . DIRECTORY_SEPARATOR . 'schema.sql') as $line) {
-        $query .= $line;
-        if (substr(rtrim($query), -1) == ';') {
-            $db->query($query);
-            $query = '';
-        }
-    }
-
-    $db->commit();
-
-} catch(Exception $e) {
-    $db->rollback();
-    exit($e->getMessage());
-}
+*/

@@ -1,6 +1,9 @@
 <?php
 require_once dirname(__FILE__) . '/../../../../TestHelper.php';
 
+/**
+ * @TODO: test _getFirstOrLastSelectByField
+ */
 class Centurion_Db_Table_RowTest extends PHPUnit_Framework_TestCase
 {
 
@@ -142,5 +145,57 @@ class Centurion_Db_Table_RowTest extends PHPUnit_Framework_TestCase
 
         $this->assertEquals($expected, $data);
     }
+
+    /**
+     * @covers Centurion_Db_Table_Row_Abstract::isNew
+     */
+    public function testFunctionIsNew()
+    {
+        $table = new Asset_Model_DbTable_Simple();
+
+        $row = $table->createRow();
+
+        $this->assertTrue($row->isNew());
+
+        $row->title = 'test';
+        $row->save();
+
+        $this->assertFalse($row->isNew());
+    }
+
+    /**
+     * @covers Centurion_Db_Table_Row_Abstract::__get
+     */
+    public function testUnExistantColumnsDirectly()
+    {
+        $table = new Asset_Model_DbTable_Simple();
+        $row = $table->createRow();
+
+        //This columns exists. No exception should be throw
+        $row->title;
+
+        $this->setExpectedException('Zend_Db_Table_Row_Exception');
+
+        //This columns does not exist. An exception should be throw
+        $row->label;
+    }
+
+    /**
+     * @covers Centurion_Db_Table_Row_Abstract::__get
+     */
+    public function testUnExistantColumnsWithColumnsExistsFunction()
+    {
+        $table = new Asset_Model_DbTable_Simple();
+        $row = $table->createRow();
+
+        //This columns exists
+        $this->assertTrue($row->columnsExists('title'));
+
+        //This columns does not exist
+        $this->assertFalse($row->columnsExists('label'));
+    }
+
+
+
 }
 
