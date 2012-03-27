@@ -46,6 +46,11 @@ class Centurion_Form_ModelTest extends PHPUnit_Framework_TestCase
      */
     public function testSaveManyToMany()
     {
+        $groupTable = Centurion_Db::getSingleton('auth/group');
+
+        $groupTable->getOrCreate(array('id' => 1, 'name' => 'Administrator'));
+        $groupTable->getOrCreate(array('id' => 2, 'name' => 'Webmaster'));
+
         $groupArray = array('1', '2');
 
         $belongRowset = Centurion_Db::getSingleton('auth/belong')->findByUser_id(1)->delete();
