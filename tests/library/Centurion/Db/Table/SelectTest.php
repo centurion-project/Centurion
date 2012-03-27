@@ -184,5 +184,41 @@ class Centurion_Db_Table_SelectTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(1, $rowSet->count());
         $this->assertEquals($userRow->username, $rowSet[0]->username);
     }
+
+    /**
+     * @covers Centurion_Db_Table_Select::not
+     */
+    public function testNotFunctionWithSimpleTable()
+    {
+        $simpleTable = new Asset_Model_DbTable_Simple();
+
+        $test1Row = $simpleTable->insert(array('title' => 'test1', 'retrieve' => true));
+        $test2Row = $simpleTable->insert(array('title' => 'test2', 'retrieve' => true));
+        $test3Row = $simpleTable->insert(array('title' => 'test3', 'retrieve' => true));
+
+        $resultRowSet = $simpleTable->select(true)->not($test2Row)->order('id asc')->fetchAll();
+
+        $this->assertCount(2, $resultRowSet);
+        $this->assertEquals($test1Row->pk, $resultRowSet[0]->pk);
+        $this->assertEquals($test3Row->pk, $resultRowSet[1]->pk);
+    }
+
+    /**
+     * @covers Centurion_Db_Table_Select::not
+     */
+    public function testNotFunctionWithMultiplePkTable()
+    {
+        $simpleTable = new Asset_Model_DbTable_Simple();
+
+        $test1Row = $simpleTable->insert(array('title' => 'test1', 'retrieve' => true));
+        $test2Row = $simpleTable->insert(array('title' => 'test2', 'retrieve' => true));
+        $test3Row = $simpleTable->insert(array('title' => 'test3', 'retrieve' => true));
+
+        $resultRowSet = $simpleTable->select(true)->not($test2Row)->order('id asc')->fetchAll();
+
+        $this->assertCount(2, $resultRowSet);
+        $this->assertEquals($test1Row->pk, $resultRowSet[0]->pk);
+        $this->assertEquals($test3Row->pk, $resultRowSet[1]->pk);
+    }
 }
 

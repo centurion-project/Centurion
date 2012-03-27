@@ -947,9 +947,9 @@ class Centurion_Db_Table_Select extends Zend_Db_Table_Select
 
     /**
      *
-     * Enter description here ...
+     * Exclude a Row or a RowSet from the current select.
+     *
      * @param Zend_Db_Table_Row_Abstract|Zend_Db_Table_RowSet_Abstract $rowSet
-     * @todo It could be a problem with rowset and multiple primary. We must check that with a test case.
      */
     public function not($rowSet)
     {
