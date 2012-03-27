@@ -202,17 +202,6 @@ class Centurion_Db_Table_Select extends Zend_Db_Table_Select
     }
 
     /**
-     * Proxy function to test isAlreadyJoined
-     * @param unknown_type $tableName
-     * @param unknown_type $joinCond
-     * @return boolean
-     * @TODO: this should not be done like that.
-     */
-    public function isAlreadyJoined($tableName, $joinCond = null) {
-        return $this->_isAlreadyJoined($tableName, $joinCond);
-    }
-    
-    /**
      * Check if the table has already been joined to avoid multiple join of the same table
      *
      * @param string $tableName
@@ -228,7 +217,7 @@ class Centurion_Db_Table_Select extends Zend_Db_Table_Select
                 }
                 
                 //TODO: this should be foreach
-                if ($this->isConditionEquals($fromParts[$tableName]['joinCondition'], $joinCond)) {
+                if ($this->_isConditionEquals($fromParts[$tableName]['joinCondition'], $joinCond)) {
                     return true;
                 }
                 
@@ -240,7 +229,7 @@ class Centurion_Db_Table_Select extends Zend_Db_Table_Select
         return false;
     }
     
-    public function isConditionEquals($cond1, $cond2)
+    protected function _isConditionEquals($cond1, $cond2)
     {
         if (false !== strpos($cond1, '(') || false !== strpos($cond2, '(')) {
             throw new Exception('Not yet supported');
