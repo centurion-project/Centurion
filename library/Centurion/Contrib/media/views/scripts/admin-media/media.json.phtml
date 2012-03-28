@@ -22,7 +22,7 @@ foreach ($this->result as $key => $result) {
     endif;
 
     $tab = array();
-    $thumb = '<div style="background: url('.$cover->getStaticUrl(array('cropcenterresize' => array('width' => 174, 'height' => 94))).'); width: 174px; height: 94px;" class="picture"></div>';
+    $thumb = '<div style="background: url(\''.$cover->getStaticUrl(array('cropcenterresize' => array('width' => 174, 'height' => 94))).'\'); width: 174px; height: 94px;" class="picture"></div>';
     if($this->popup) {
         $thumb = '<a href="'.$editUrl.'">' . $thumb . '</a>';
     }
