@@ -20,12 +20,14 @@
 !/data/cache/page/.gitkeep
 !/data/cache/tags/.gitkeep
 !/data/cache/config/.gitkeep
+!/data/temp/.gitkeep
 
 /data/uploads/*
 /data/logs/*
 /data/indexes/*
 /data/build/*
 /data/locales/*
+/data/temp/*
 
 !/data/build/.gitkeep
 !/data/uploads/.gitkeep

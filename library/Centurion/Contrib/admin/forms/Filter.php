@@ -121,6 +121,19 @@ class Admin_Form_Filter extends Centurion_Form
                                 $filterData['data'][$refRow->pk] = $refRow->__toString();
                             }
                             asort($filterData['data']);
+                            $filterData['data'] = array('' => $this->_translate('All')) + $filterData['data'];
+                        }
+                    }
+                    else{
+                        //To allow rowset in the option "data" and not force developper to pass an array
+                        if($filterData['data'] instanceof Centurion_Db_Table_Rowset_Abstract){
+                            $_tmpData = array();
+                            foreach($filterData['data'] as $row)
+                                $_tmpData[$row->pk] = (string) $row;
+
+                            asort($_tmpData);
+                            //Add before a joker to disable this filter
+                            $filterData['data'] = array('' => $this->_translate('All')) + $_tmpData;
                         }
                     }
 
@@ -225,6 +238,11 @@ class Admin_Form_Filter extends Centurion_Form
                 continue;
             }
             switch ($this->_filters[$key]['behavior']) {
+                case Centurion_Controller_CRUD::FILTER_BEHAVIOR_CALLBACK:
+                    $sqlSubFilter = array();
+                    call_user_func_array($this->_filters[$key]['callback'], array($subform->getValues(), &$sqlFilter));
+                    //TODO:
+                    break;
                 case Centurion_Controller_CRUD::FILTER_BEHAVIOR_BETWEEN:
                     $sqlSubFilter = array();
                     $lt = $subform->getElement('lt')->getValue();
@@ -238,12 +256,12 @@ class Admin_Form_Filter extends Centurion_Form
                         
                     if (trim($lt) !== '') {
                         $lt = new Zend_Date($lt, $format);
-                        $sqlSubFilter[$this->_filters[$key]['column'] . Centurion_Db_Table_Select::RULES_SEPARATOR . Centurion_Db_Table_Select::OPERATOR_LESS_EQUAL] = $lt->toString('yyyy-MM-dd HH:mm:ss');
+                        $sqlSubFilter[$this->_filters[$key]['column'] . Centurion_Db_Table_Select::RULES_SEPARATOR . Centurion_Db_Table_Select::OPERATOR_LESS_EQUAL] = $lt->toString(Centurion_Date::MYSQL_DATETIME);
                     }
                     
                     if (trim($gt) !== '') {
                         $gt = new Zend_Date($gt, $format);
-                        $sqlSubFilter[$this->_filters[$key]['column'] . Centurion_Db_Table_Select::RULES_SEPARATOR . Centurion_Db_Table_Select::OPERATOR_GREATER_EQUAL] = $gt->toString('yyyy-MM-dd HH:mm:ss');
+                        $sqlSubFilter[$this->_filters[$key]['column'] . Centurion_Db_Table_Select::RULES_SEPARATOR . Centurion_Db_Table_Select::OPERATOR_GREATER_EQUAL] = $gt->toString(Centurion_Date::MYSQL_DATETIME);
                     }
                     break;
                 default;

@@ -58,8 +58,9 @@ class Centurion_Config_Directory
             $iterator = new Centurion_Iterator_Directory($path);
             $tabFile = array();
             foreach ($iterator as $file) {
-                if ($file->isDot())
+                if ($file->isDot()) {
                     continue;
+                }
                 $tabFile[] = $file->getPathName();
             }
 
@@ -86,7 +87,6 @@ class Centurion_Config_Directory
                         case 'inc':
                             $result = self::_loadConfig($file);
                             $config = self::mergeArrays($config, $result);
-                            //$config = array_merge_recursive($config, $result);
                     }
                 }
 
@@ -112,7 +112,7 @@ class Centurion_Config_Directory
 
             return $config;
         }
-        throw new Exception('Path must be a directory', 500);
+        throw new Centurion_Exception('Path must be a directory', 500);
     }
 
 

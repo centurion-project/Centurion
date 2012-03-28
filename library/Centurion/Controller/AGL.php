@@ -457,7 +457,7 @@ class Centurion_Controller_AGL extends Centurion_Controller_Action
                             if ($value == '0000-00-00 00:00:00' || $value == null) {
                                 $value = '';
                             }else {
-                                $date = new Zend_Date($value, 'YYYY-MM-dd HH:mm:ss');
+                                $date = new Zend_Date($value, Centurion_Date::MYSQL_DATETIME);
                                 $value = $date->toString(Zend_Date::DATE_MEDIUM);
                             }
                         }

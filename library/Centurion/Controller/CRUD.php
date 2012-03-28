@@ -37,6 +37,11 @@ class Centurion_Controller_CRUD extends Centurion_Controller_AGL
      */
     protected $_form = null;
 
+    /**
+     * @var string The name of class to instantiate
+     */
+    protected $_formClassName = null;
+
     protected $_formViewScript;
 
     protected $_rowActions;
@@ -505,7 +510,7 @@ class Centurion_Controller_CRUD extends Centurion_Controller_AGL
     
     public function generateCsvAction($itemPerPage = 0, $page = 0)
     {
-    	Centurion_Traits_Common::checkTraitOverload($this, 'indexAction', array(), false);
+        Centurion_Traits_Common::checkTraitOverload($this, 'indexAction', array(), false);
 
         $this->_getParams();
 
@@ -520,32 +525,32 @@ class Centurion_Controller_CRUD extends Centurion_Controller_AGL
         $naturals = $modelTable->info(Centurion_Db_Table_Abstract::COLS);
         
         $tabKeyUnset = array();
-        foreach ($this->_displays as $key => $options) {	
-        	if (is_array($options) && $options['type'] !== self::COLS_ROW_COL)
-        		$tabKeyUnset[] =  $key;
-        	else
-				$headers[] = $options;
+        foreach ($this->_displays as $key => $options) {    
+            if (is_array($options) && $options['type'] !== self::COLS_ROW_COL)
+                $tabKeyUnset[] =  $key;
+            else
+                $headers[] = $options;
         }
         
         $select = $this->generateList();
         
         //unset useless columns
         foreach ($select as $key => $row) {
-        	unset($row['checkbox']);
-        	unset($row['row']);
-        	foreach ($tabKeyUnset as $keyUnset => $rowUnset)
-        	{
-        		unset($row[$rowUnset]);
-        		
-        	}
-        	$rowSet[] = $row;
+            unset($row['checkbox']);
+            unset($row['row']);
+            foreach ($tabKeyUnset as $keyUnset => $rowUnset)
+            {
+                unset($row[$rowUnset]);
+                
+            }
+            $rowSet[] = $row;
         }        
 
         //generate csv
-   		if (null !== $rowSet) {		
-	    	$this->getHelper('Csv')->direct($rowSet, $headers);
-	    	
-   		}
-    	
+       if (null !== $rowSet) {
+        $this->getHelper('Csv')->direct($rowSet, $headers);
+
+       }
+        
     }
 }

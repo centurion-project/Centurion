@@ -73,8 +73,15 @@ class Media_Model_DbTable_File extends Centurion_Db_Table_Abstract
 
     public static function getPx()
     {
-        if (null == self::$_px)
-            self::$_px = Centurion_Db::getSingleton('media/file')->findOneByfile_id('88888888');
+        if (null == self::$_px) {
+
+            $data = array();
+            $data['id'] = sha1(rand());
+            $data['local_filename'] = '../../public/layouts/backoffice/images/px.png';
+            $data['delete_original'] = 0;
+
+            list(self::$_px, ) = Centurion_Db::getSingleton('media/file')->getOrCreate($data);
+        }
         return self::$_px;
     }
 
@@ -196,14 +203,14 @@ class Media_Model_DbTable_File extends Centurion_Db_Table_Abstract
             $data['filesize'] = filesize($fullPath);
         }
 
-
         $row = $this->fetchRow(array('sha1=?' => $data['sha1'], 'filesize=?' => $data['filesize']));
         //We want to be sure
-        if ($row !== null && $data['sha1']== $row->sha1
-        && $data['filesize'] == $row->filesize) {
+        if ($row !== null && $data['sha1']== $row->sha1 && $data['filesize'] == $row->filesize) {
 
             //We reuse the same local filename
-            unlink(Centurion_Config_Manager::get('media.uploads_dir') . DIRECTORY_SEPARATOR . $data['local_filename']);
+            if ($data['local_filename'] !== $row->local_filename) {
+                unlink(Centurion_Config_Manager::get('media.uploads_dir') . DIRECTORY_SEPARATOR . $data['local_filename']);
+            }
 
             $data['file_id'] = $row->file_id;
             $data['local_filename'] = $row->local_filename;
@@ -287,7 +294,7 @@ class Media_Model_DbTable_File extends Centurion_Db_Table_Abstract
             $oldProxyTableClass = $currentFileRow->proxy_model;
         }
 
-        foreach($currentFileRow->duplicates as $duplicate) {
+        foreach ($currentFileRow->duplicates as $duplicate) {
             $duplicate->delete();
         }
 
