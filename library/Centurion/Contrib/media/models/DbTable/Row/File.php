@@ -176,29 +176,12 @@ class Media_Model_DbTable_Row_File extends Centurion_Db_Table_Row_Abstract
             // ignore these tables as it is only tags on media
             if(in_array($key, array('tag_files', 'duplicates'))) continue;
             $model = Centurion_Db::getSingletonByClassName($tableClassName);
-            $references = $this->getReferencesInTable($model);
+            $references = $this->getTable()->getReferencesInTable($model);
             foreach ($references as $key => $ref) {
                 $count += $model->select(true)->filter(array($key.'__id'=>$this->id))->count();
             }
         }
         return $count;
-    }
-
-    /**
-     * returns the references to our table in the given table
-     * @param $model the table in which to look for references
-     * @return a filtered reference map containing only the refs to media
-     */
-    public function getReferencesInTable(Centurion_Db_Table_Abstract $model)
-    {
-        $res = array();
-        $tableClassName = get_class($this->getTable());
-        foreach ($model->getReferenceMap() as $key => $reference) {
-            if($tableClassName === $reference['refTableClass']) {
-                $res[$key] = $reference;
-            }
-        }
-        return $res;
     }
 
 }
