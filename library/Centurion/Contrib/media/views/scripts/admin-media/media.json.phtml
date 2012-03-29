@@ -16,7 +16,7 @@ foreach ($this->result as $key => $result) {
         $cover = $this->row;
 
     if (isset($this->popup)) :
-        $editUrl = 'javascript:mySubmit(\'' . $this->GetCdnUrl($cover->getStaticUrl()) . '\', \''.$this->escape($cover->filename).'\', \'\')';
+        $editUrl = 'javascript:mySubmit(\'' . $cover->getStaticUrl() . '\', \''.$this->escape($cover->filename).'\', \'\')';
     else :
         $editUrl = $this->url(array('id' => $row['row']->id, 'action' => 'get', 'saving' => null));
     endif;
