@@ -32,7 +32,7 @@ class Media_AdminMediaController extends Centurion_Controller_CRUD
         $this->_helper->aclCheck();
         $this->_helper->layout->setLayout('admin');
 
-        $this->view->displayDuplicates = !$this->_getParam('duplicates', null);
+        $this->view->displayDuplicates = !$this->_getParam('duplicates', false);
 
         $this->_model = Centurion_Db::getSingleton('media/file');
         $this->_formClassName = 'Media_Form_Model_Admin_File2';
