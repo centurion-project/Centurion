@@ -156,14 +156,14 @@ class Centurion_Db_Table_SelectTest extends PHPUnit_Framework_TestCase
     
     public function testDependant()
     {
-        $select = Centurion_Db::getSingleton('auth/user')->select(true);
-        
-        $select->joinInner('user_profile', 'user_profile.id = 1', false);
-        
-        $select->filter(array('!profiles__id__isnull' => null));
-        
-        //TODO: test that is good
-        $this->markTestIncomplete();
+        $withRefTable = new Asset_Model_DbTable_WithRef();
+        $simpleTable = new Asset_Model_DbTable_Simple();
+
+        $select = $simpleTable->select(true);
+        $select->joinInner('test_with_ref', 'test_simple.id = test_with_ref.simple_id');
+        $select->filter(array('!with_refs__id__isnull' => null));
+
+        $this->assertCount(2, $select->getPart(Zend_Db_Select::FROM));
     }
     
     public function testJoinToSameTableWithDifferCondition()
