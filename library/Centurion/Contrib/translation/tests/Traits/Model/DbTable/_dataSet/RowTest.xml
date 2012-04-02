@@ -1,0 +1,301 @@
+<?xml version="1.0" encoding="utf-8"?>
+<dataset>
+    <table name="test_m_translation_first_model">
+        <column>id</column>
+        <column>language_id</column>
+        <column>title</column>
+        <column>content</column>
+        <column>second1_id</column>
+        <column>second2_id</column>
+        <column>is_active</column>
+        <row>
+            <value>1</value>
+            <value>1</value>
+            <value>First 1 FR</value>
+            <value>content FR</value>
+            <value>1</value>
+            <value>2</value>
+            <value>1</value>
+        </row>
+        <row>
+            <value>2</value>
+            <value>1</value>
+            <value>First 2 FR</value>
+            <value>content FR</value>
+            <value>2</value>
+            <value>NULL</value>
+            <value>0</value>
+        </row>
+        <row>
+            <value>3</value>
+            <value>1</value>
+            <value>First 3 FR</value>
+            <value>content 3 FR</value>
+            <value>6</value>
+            <value>7</value>
+            <value>1</value>
+        </row>
+        <row>
+            <value>6</value>
+            <value>1</value>
+            <value>First 6 FR</value>
+            <value>content 6 FR</value>
+            <value>3</value>
+            <value>7</value>
+            <value>1</value>
+        </row>
+    </table>
+    <table name="test_m_translation_first_model">
+        <column>id</column>
+        <column>original_id</column>
+        <column>language_id</column>
+        <column>title</column>
+        <column>second1_id</column>
+        <column>second2_id</column>
+        <column>is_active</column>
+        <row>
+            <value>4</value>
+            <value>1</value>
+            <value>2</value>
+            <value>First 1 EN</value>
+            <value>2</value>
+            <value>1</value>
+            <value>0</value>
+        </row>
+        <row>
+            <value>7</value>
+            <value>6</value>
+            <value>2</value>
+            <value>First 6 EN</value>
+            <value>2</value>
+            <value>1</value>
+            <value>0</value>
+        </row>
+    </table>
+    <table name="test_m_translation_first_model">
+        <column>id</column>
+        <column>original_id</column>
+        <column>language_id</column>
+        <column>title</column>
+        <column>content</column>
+        <column>second1_id</column>
+        <column>second2_id</column>
+        <column>is_active</column>
+        <row>
+            <value>5</value>
+            <value>2</value>
+            <value>2</value>
+            <value>First 2 EN</value>
+            <value></value>
+            <value>NULL</value>
+            <value>NULL</value>
+            <value>0</value>
+        </row>
+    </table>
+    <table name="test_m_translation_fourth_model">
+        <column>id</column>
+        <column>language_id</column>
+        <column>title</column>
+        <column>content</column>
+        <column>first_id</column>
+        <column>is_active</column>
+        <row>
+            <value>1</value>
+            <value>1</value>
+            <value>Fourth 1 FR</value>
+            <value>Content FR</value>
+            <value>1</value>
+            <value>0</value>
+        </row>
+        <row>
+            <value>2</value>
+            <value>2</value>
+            <value>Fourth 2 FR</value>
+            <value>Content FR</value>
+            <value>4</value>
+            <value>0</value>
+        </row>
+        <row>
+            <value>3</value>
+            <value>1</value>
+            <value>Fourth 3 FR</value>
+            <value>Content FR</value>
+            <value>1</value>
+            <value>0</value>
+        </row>
+        <row>
+            <value>4</value>
+            <value>1</value>
+            <value>Fourth 4 FR</value>
+            <value>Content FR</value>
+            <value>2</value>
+            <value>0</value>
+        </row>
+        <row>
+            <value>5</value>
+            <value>2</value>
+            <value>Fourth 5 FR</value>
+            <value>Content FR</value>
+            <value>3</value>
+            <value>0</value>
+        </row>
+        <row>
+            <value>6</value>
+            <value>1</value>
+            <value>Fourth 6 FR</value>
+            <value>Content FR</value>
+            <value>3</value>
+            <value>0</value>
+        </row>
+    </table>
+    <table name="test_m_translation_second_model">
+        <column>id</column>
+        <column>language_id</column>
+        <column>title</column>
+        <column>content</column>
+        <column>is_active</column>
+        <row>
+            <value>1</value>
+            <value>1</value>
+            <value>Second 1 - FR</value>
+            <value>Content FR</value>
+            <value>1</value>
+        </row>
+        <row>
+            <value>2</value>
+            <value>1</value>
+            <value>Second 2 - FR</value>
+            <value>Content FR</value>
+            <value>0</value>
+        </row>
+        <row>
+            <value>3</value>
+            <value>1</value>
+            <value>Second 3 - FR</value>
+            <value>Content FR</value>
+            <value>0</value>
+        </row>
+        <row>
+            <value>6</value>
+            <value>1</value>
+            <value>Second 6 - FR</value>
+            <value>Content FR</value>
+            <value>0</value>
+        </row>
+        <row>
+            <value>7</value>
+            <value>1</value>
+            <value>Second 7 - FR</value>
+            <value>Content FR</value>
+            <value>0</value>
+        </row>
+    </table>
+    <table name="test_m_translation_second_model">
+        <column>id</column>
+        <column>original_id</column>
+        <column>language_id</column>
+        <column>title</column>
+        <column>content</column>
+        <column>is_active</column>
+        <row>
+            <value>4</value>
+            <value>1</value>
+            <value>2</value>
+            <value>Second 1 - EN</value>
+            <value>Content EN</value>
+            <value>0</value>
+        </row>
+    </table>
+    <table name="test_m_translation_third_model">
+        <column>id</column>
+        <column>language_id</column>
+        <column>title</column>
+        <column>content</column>
+        <column>first_id</column>
+        <column>is_active</column>
+        <row>
+            <value>1</value>
+            <value>1</value>
+            <value>Third 1 FR</value>
+            <value>Content FR</value>
+            <value>2</value>
+            <value>0</value>
+        </row>
+        <row>
+            <value>2</value>
+            <value>1</value>
+            <value>Third 2 FR</value>
+            <value>Content FR</value>
+            <value>2</value>
+            <value>0</value>
+        </row>
+        <row>
+            <value>3</value>
+            <value>1</value>
+            <value>Third 3 FR</value>
+            <value>Content FR</value>
+            <value>2</value>
+            <value>0</value>
+        </row>
+        <row>
+            <value>5</value>
+            <value>1</value>
+            <value>Third 5 FR</value>
+            <value>Content FR</value>
+            <value>1</value>
+            <value>0</value>
+        </row>
+        <row>
+            <value>6</value>
+            <value>1</value>
+            <value>Third 6 FR</value>
+            <value>Content FR</value>
+            <value>1</value>
+            <value>0</value>
+        </row>
+        <row>
+            <value>7</value>
+            <value>1</value>
+            <value>Third 7 FR</value>
+            <value>Content FR</value>
+            <value>3</value>
+            <value>0</value>
+        </row>
+    </table>
+    <table name="test_m_translation_third_model">
+        <column>id</column>
+        <column>original_id</column>
+        <column>language_id</column>
+        <column>title</column>
+        <column>content</column>
+        <column>first_id</column>
+        <column>is_active</column>
+        <row>
+            <value>4</value>
+            <value>1</value>
+            <value>2</value>
+            <value>Third 2 FR</value>
+            <value>Content EN</value>
+            <value>4</value>
+            <value>0</value>
+        </row>
+    </table>
+    <table name="translation_language">
+        <column>id</column>
+        <column>locale</column>
+        <column>name</column>
+        <column>flag</column>
+        <row>
+            <value>1</value>
+            <value>fr</value>
+            <value>Français</value>
+            <value>layouts/backoffice/images/flags/fr.png</value>
+        </row>
+        <row>
+            <value>2</value>
+            <value>en</value>
+            <value>English</value>
+            <value>layouts/backoffice/images/flags/uk.png</value>
+        </row>
+    </table>
+</dataset>
