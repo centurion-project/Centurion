@@ -17,6 +17,7 @@ ini_set('memory_limit', '2048M');
 set_include_path(implode(PATH_SEPARATOR, array(
     realpath(dirname(__FILE__) . '/application'),
     realpath(dirname(__FILE__) . '/library'),
+    realpath(dirname(__FILE__) . '/support'),
     get_include_path(),
 )));
 
