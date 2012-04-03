@@ -29,7 +29,7 @@ class Centurion_Db_Table_SelectTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers Centurion_Db_Table_Select::isConditionEquals
+     * @covers Centurion_Db_Table_Select::_isConditionEquals
      */
     public function testIsConditionEqualsFunction()
     {
@@ -47,7 +47,7 @@ class Centurion_Db_Table_SelectTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers Centurion_Db_Table_Select::isAlreadyJoined
+     * @covers Centurion_Db_Table_Select::_isAlreadyJoined
      */
     public function testIsAlreadyJoinFunction()
     {
