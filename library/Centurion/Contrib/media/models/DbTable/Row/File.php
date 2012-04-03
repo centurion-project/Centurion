@@ -101,6 +101,11 @@ class Media_Model_DbTable_Row_File extends Centurion_Db_Table_Row_Abstract
         return self::$_options;
     }
 
+    /**
+     * @return string
+     * @todo : corriger, si un chemin relatif concat avec upload_dir
+     * @todo : utiliser cette fonction à la place d'upload_dir
+     */
     public function getFullLocalPath()
     {
         return self::getOptions('uploads_dir') . DIRECTORY_SEPARATOR . $this->local_filename;
