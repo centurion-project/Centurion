@@ -335,16 +335,14 @@ abstract class Centurion_Form_Model_Abstract extends Centurion_Form
 
             foreach ($this->getElements() as $key => $val) {
                 $class = $val->getAttrib('class');
-                $value = $val->getValue();
-                if (is_string($value) && '' !== trim($value)) {
-                    if (false !== strpos($class, 'field-datetimepicker')) {
-                        //In the case the field is empty, else Zend_Date is current time
-                        $posted_at = new Zend_Date($value, Centurion_Date::MYSQL_DATETIME);
-                        $val->setValue($posted_at->get($this->getDateFormat(true)));
-                    } else if (false !== strpos($class, 'field-datepicker')) {
-                        $posted_at = new Zend_Date($value, Centurion_Date::MYSQL_DATETIME);
-                        $val->setValue($posted_at->get($this->getDateFormat()));
-                    }
+                if (false !== strpos($class, 'field-datetimepicker') 
+                    && '' != $val->getValue()) { //In the case the field is empty, else Zend_Date is current time
+                    $posted_at = new Zend_Date($val->getValue(), 'YYYY-MM-dd HH:mm:ss');
+                    $val->setValue($posted_at->get($this->getDateFormat(true)));
+                } else if (false !== strpos($class, 'field-datepicker') 
+                    && '' != $val->getValue()) {
+                    $posted_at = new Zend_Date($val->getValue(), 'YYYY-MM-dd HH:mm:ss');
+                    $val->setValue($posted_at->get($this->getDateFormat()));
                 }
             }
         }
