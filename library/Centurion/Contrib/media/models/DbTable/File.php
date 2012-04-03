@@ -76,7 +76,7 @@ class Media_Model_DbTable_File extends Centurion_Db_Table_Abstract
         if (null == self::$_px) {
 
             $data = array();
-            $data['id'] = sha1(rand());
+            $data['id'] = '88888888';
             $data['local_filename'] = '../../public/layouts/backoffice/images/px.png';
             $data['delete_original'] = 0;
 
@@ -288,6 +288,8 @@ class Media_Model_DbTable_File extends Centurion_Db_Table_Abstract
 
     public function update(array $data, $where)
     {
+        $newProxyTableClass = null;
+
         $currentFileRow = $this->fetchRow($where);
 
         if (null !== $currentFileRow->proxy_model) {
@@ -297,6 +299,20 @@ class Media_Model_DbTable_File extends Centurion_Db_Table_Abstract
         foreach ($currentFileRow->duplicates as $duplicate) {
             $duplicate->delete();
         }
+
+        if (!isset($data['mime'])) {
+            //TODO: find a better way to get mime type with Zend.
+            $data['mime'] = $this->getMimeType($this->getFullPath($data['local_filename']));
+        }
+
+        if (!isset($data['filesize'])) {
+            $data['filesize'] = filesize($this->getFullPath($data['local_filename']));
+        }
+
+        if (!isset($data['filename'])) {
+            $data['filename'] = basename($this->getFullPath($data['local_filename']));
+        }
+
 
         foreach ($this->_dependentProxies as $key => $dependentProxy) {
             $proxyTable = Centurion_Db::getSingletonByClassName($dependentProxy);
@@ -313,9 +329,7 @@ class Media_Model_DbTable_File extends Centurion_Db_Table_Abstract
         }
 
         if (!isset($data['sha1'])) {
-            $data['sha1'] = sha1_file(Centurion_Config_Manager::get('media.uploads_dir')
-                                      . DIRECTORY_SEPARATOR
-                                      . $data['local_filename']);
+            $data['sha1'] = sha1_file($this->getFullPath($data['local_filename']));
         }
 
         if (isset($oldProxyTableClass) && $oldProxyTableClass != $newProxyTableClass) {
@@ -365,7 +379,7 @@ class Media_Model_DbTable_File extends Centurion_Db_Table_Abstract
             $select = $this->select(true);
         }
 
-        return $this->fetchAll($select->belong($object));
+        return $select->belong($object)->fetchAll();
     }
 
     public function getFileFor($fileId, $object, $select = null)
@@ -377,6 +391,6 @@ class Media_Model_DbTable_File extends Centurion_Db_Table_Abstract
         $select = $select->belong($object)
                          ->where('id = ?', $fileId);
 
-        return $this->fetchRow($select);
+        return $select->fetchRow();
     }
 }
