@@ -191,6 +191,7 @@ class Centurion_Db_Table_SelectTest extends PHPUnit_Framework_TestCase
     public function testNotFunctionWithSimpleTable()
     {
         $simpleTable = new Asset_Model_DbTable_Simple();
+        $simpleTable->delete(array(new Zend_Db_Expr('1')));
 
         $test1Row = $simpleTable->insert(array('title' => 'test1', 'retrieve' => true));
         $test2Row = $simpleTable->insert(array('title' => 'test2', 'retrieve' => true));
@@ -209,6 +210,7 @@ class Centurion_Db_Table_SelectTest extends PHPUnit_Framework_TestCase
     public function testNotFunctionWithMultiplePkTable()
     {
         $simpleTable = new Asset_Model_DbTable_MultiplePk();
+        $simpleTable->delete(array(new Zend_Db_Expr('1')));
 
         $test1Row = $simpleTable->insert(array('title' => 'test1', 'retrieve' => true));
         $test2Row = $simpleTable->insert(array('title' => 'test2', 'retrieve' => true));
@@ -227,6 +229,7 @@ class Centurion_Db_Table_SelectTest extends PHPUnit_Framework_TestCase
     public function testCountFunction()
     {
         $simpleTable = new Asset_Model_DbTable_MultiplePk();
+        $simpleTable->delete(array(new Zend_Db_Expr('1')));
 
         $simpleTable->insert(array('title' => 'test1'));
         $simpleTable->insert(array('title' => 'test2'));
