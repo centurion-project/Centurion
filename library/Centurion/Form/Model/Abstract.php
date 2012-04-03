@@ -807,6 +807,8 @@ abstract class Centurion_Form_Model_Abstract extends Centurion_Form
                 $objectsRelated = $element->getValue();
             } else if ($subForm = $this->getSubForm($key)) {
                 $objectsRelated = $subForm->getValue($key);
+            } else {
+                $objectsRelated = null;
             }
 
             if ($this->isExcluded($key) || null === $objectsRelated) {
