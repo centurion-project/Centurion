@@ -82,7 +82,13 @@ class Media_Model_DbTable_File extends Centurion_Db_Table_Abstract
 
             list(self::$_px, ) = Centurion_Db::getSingleton('media/file')->getOrCreate($data);
         }
+
         return self::$_px;
+    }
+
+    public static function setPx(Media_Model_DbTable_Row_File $px = null)
+    {
+        self::$_px = $px;
     }
 
     /**
@@ -185,6 +191,7 @@ class Media_Model_DbTable_File extends Centurion_Db_Table_Abstract
     public function insert(array $data)
     {
         $primary = $this->_primary;
+
         if (is_array($primary)) {
             $primary = $primary[1];
         }
@@ -208,8 +215,8 @@ class Media_Model_DbTable_File extends Centurion_Db_Table_Abstract
         if ($row !== null && $data['sha1']== $row->sha1 && $data['filesize'] == $row->filesize) {
 
             //We reuse the same local filename
-            if ($data['local_filename'] !== $row->local_filename) {
-                unlink(Centurion_Config_Manager::get('media.uploads_dir') . DIRECTORY_SEPARATOR . $data['local_filename']);
+            if ((!isset($data['delete_original']) || $data['delete_original'] == 1) && $data['local_filename'] !== $row->local_filename) {
+                unlink($this->getFullPath($data['local_filename']));
             }
 
             $data['file_id'] = $row->file_id;

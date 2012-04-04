@@ -23,7 +23,10 @@ class Media_Test_Model_DbTable_File extends PHPUnit_Framework_TestCase
             $this->fail('Function getStaticUrl should not raise an exception');
         }
 
-        //TODO: check that the file is 1px height and width
+        Media_Model_DbTable_File::setPx(null);
+
+        $row2 = $fileTable->getPx();
+        $this->assertEquals($row->id, $row2->id);
     }
 
     /**
