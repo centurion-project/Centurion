@@ -17,6 +17,9 @@ class HtmlController extends Centurion_Controller_Action
      */
     public function indexAction()
     {
+        $this->_helper->authCheck();
+        $this->_helper->aclCheck();
+
         $reflection = new ReflectionClass('HtmlController');
         $methods = $reflection->getMethods();
 
@@ -28,6 +31,8 @@ class HtmlController extends Centurion_Controller_Action
                 $htmlMethod[] = Centurion_Inflector::tableize(substr($method, 0, -6), '-');
             }
         }
+
+        ksort($htmlMethod);
 
         $this->view->methods = $htmlMethod;
     }
