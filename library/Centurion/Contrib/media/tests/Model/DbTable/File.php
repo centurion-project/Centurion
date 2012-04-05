@@ -48,6 +48,71 @@ class Media_Test_Model_DbTable_File extends PHPUnit_Framework_TestCase
         $this->assertEquals($imageInfoArray['mime'], $mediaRow->mime, 'Mime type doesn\'t match');
     }
 
+    protected function _getRelativePathFromTo($from, $to)
+    {
+        $from = realpath($from);
+        $to = realpath($to);
+
+        $relative = '';
+
+        $currentTab = preg_split('`[/\\\\]`', $from);
+        $toTab = preg_split('`[/\\\\]`', $to);
+
+        $separated = false;
+
+        foreach ($currentTab as $key => $val) {
+            if (isset($toTab[$key]) && $toTab[$key] !== $val) {
+                $separated = true;
+                $separatedAt = $key;
+            }
+            if ($separated) {
+                $relative .= '../';
+            }
+        }
+
+        $relative .= implode('/', array_slice($toTab, $separatedAt));
+
+        return $relative;
+    }
+
+    /**
+     * Test unit of test unit
+     */
+    public function testGetRelativePathFromTo()
+    {
+        $this->assertEquals('../user', $this->_getRelativePathFromTo('/home', '/user'));
+        $this->assertEquals('../../user', $this->_getRelativePathFromTo('/home/lchenay', '/user'));
+        $this->assertEquals('../oo/test', $this->_getRelativePathFromTo('/home/lchenay', '/home/oo/test'));
+    }
+
+
+    /**
+     * Test the update of an image
+     * @covers Media_Model_DbTable_File::insert
+     */
+    public function testInsertImageWithRelativePath()
+    {
+
+        $currentDir = realpath('.');
+        $img = APPLICATION_PATH . '/../library/Centurion/Contrib/media/tests/Support/images/centurion.png';
+
+        $file = $this->_getRelativePathFromTo($currentDir, $img);
+
+        $mediaRow = Centurion_Db::getSingleton('media/file')->createRow(array('local_filename' => $file));
+        $mediaRow->save();
+
+        $imageInfoArray = array(
+            'mime' => 'image/png',
+            'local_filename' => APPLICATION_PATH . '/../library/Centurion/Contrib/media/tests/Support/images/centurion.png',
+            'filename' => 'centurion.png',
+            'filesize' => '676'
+        );
+
+        $this->assertEquals($imageInfoArray['mime'], $mediaRow->mime, 'Mime type doesn\'t match');
+
+        $mediaRow->delete();
+    }
+
     /**
      * Test the update of an image
      * @covers Media_Model_DbTable_File::update

@@ -104,10 +104,14 @@ class Media_Model_DbTable_Row_File extends Centurion_Db_Table_Row_Abstract
     /**
      * @return string
      * @todo : corriger, si un chemin relatif concat avec upload_dir
-     * @todo : utiliser cette fonction à la place d'upload_dir
+     * @todo : utiliser cette fonction ï¿½ la place d'upload_dir
      */
     public function getFullLocalPath()
     {
+        if (file_exists($this->local_filename)) {
+            return $this->local_filename;
+        }
+
         return self::getOptions('uploads_dir') . DIRECTORY_SEPARATOR . $this->local_filename;
     }
 
@@ -115,7 +119,7 @@ class Media_Model_DbTable_Row_File extends Centurion_Db_Table_Row_Abstract
     {
         if ($this->delete_original == 1) {
             if ($this->file_id !== null && $this->getTable()->select(true)->where('file_id=?', $this->file_id)->count() == 1) {
-                unlink(Centurion_Config_Manager::get('media.uploads_dir') . DIRECTORY_SEPARATOR . $this->local_filename);
+                unlink($this->getFullLocalPath());
             }
         }
 
