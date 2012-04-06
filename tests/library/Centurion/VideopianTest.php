@@ -27,7 +27,16 @@ class Centurion_VideopianTest extends PHPUnit_Framework_TestCase
 
     public function testService($key, $url)
     {
-            $data = Centurion_Videopian::get($url);
+            try {
+                $data = Centurion_Videopian::get($url);
+            } catch (PHPUnit_Framework_Error_Warning $e) {
+                if (strpos($e->getMessage(), 'HTTP/1.0 404 Not Found')) {
+                    //TODO: this not appear. We should use mock object.
+                    $this->markTestSkipped('404 error can appear with Vimeo when too much request.');
+                } else {
+                    throw $e;
+                }
+            }
             $this->assertTrue($data instanceof stdClass);
             $this->assertEquals($key, $data->site);
             $this->assertEquals($url, $data->url);
