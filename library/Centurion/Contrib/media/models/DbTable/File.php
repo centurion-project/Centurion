@@ -26,6 +26,7 @@
  * @license     http://centurion-project.org/license/new-bsd     New BSD License
  * @author      Florent Messa <florent.messa@gmail.com>
  * @author      Mathias Desloges <m.desloges@gmail.com>
+ * @author      Laurent Chenay <lc@octaveoctave.com>
  */
 class Media_Model_DbTable_File extends Centurion_Db_Table_Abstract
 {
@@ -62,6 +63,19 @@ class Media_Model_DbTable_File extends Centurion_Db_Table_Abstract
     protected $_dependentTables = array(
         'users'         =>  'Auth_Model_DbTable_User',
         'duplicates'    =>  'Media_Model_DbTable_Duplicate',
+    );
+
+    protected $_manyDependentTables = array(
+        'tags'         => array(
+            'refTableClass'     => 'Media_Model_DbTable_Tag',
+            'intersectionTable' => 'Media_Model_DbTable_TagFile',
+            'reflocal'          => 'file',
+            'refforeign'        => 'tag',
+            'columns'           => array(
+                'local'     => 'file_id',
+                'foreign'   => 'tag_id'
+            )
+        )
     );
 
     protected static $_mediaOptions = null;

@@ -71,21 +71,31 @@ abstract class Media_Model_Adapter_Abstract
     
     public function getTemporaryKey($pk, $effect, $mktime = null)
     {
-        if (null === $mktime) {
+        //TODO: this function is time consuming by using Zend_Date
+
+        static $lifetimeValue = null;
+        static $lifetimeUnit = null;
+        static $now = null;
+
+        if (null == $lifetimeValue) {
             $lifetime = Centurion_Config_Manager::get('media.key_lifetime');
             list($lifetimeValue, $lifetimeUnit) = sscanf($lifetime, '%d%s');
-            
-            $mktime = new Zend_Date();
-            
-            switch ($lifetimeUnit) {
-                case 'j':
-                    $mktime->setHour(0);
-                case 'h':
-                    $mktime->setMinute(0);
-                case 'm':
-                default:
-                    $mktime->setSecond(0);
+        }
+        if (null === $mktime) {
+            if (null == $now) {
+                $now = new Zend_Date();
+
+                switch ($lifetimeUnit) {
+                    case 'j':
+                        $now->setHour(0);
+                    case 'h':
+                        $now->setMinute(0);
+                    case 'm':
+                    default:
+                        $now->setSecond(0);
+                }
             }
+            $mktime = $now;
         }
         
         if ($mktime instanceof Zend_Date) {

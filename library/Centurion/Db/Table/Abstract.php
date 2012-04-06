@@ -1115,4 +1115,21 @@ abstract class Centurion_Db_Table_Abstract extends Zend_Db_Table_Abstract implem
     {
         return null;
     }
+
+    /**
+     * returns the references to this table in the given table
+     * @param Centurion_Db_Table_Abstract $model the table in which to look for references
+     * @return a filtered reference map containing only the refs to media
+     */
+    public function getReferencesInTable(Centurion_Db_Table_Abstract $model)
+    {
+        $res = array();
+        $tableClassName = get_class($this);
+        foreach ($model->getReferenceMap() as $key => $reference) {
+            if($tableClassName === $reference['refTableClass']) {
+                $res[$key] = $reference;
+            }
+        }
+        return $res;
+    }
 }

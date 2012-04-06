@@ -324,9 +324,9 @@ class Centurion_Controller_AGL extends Centurion_Controller_Action
             $filter = $this->getFilter();
             if ($filter->isValid($this->_request->getParams())) {
                 $select->filter($filter->getSqlFilter());
-                
+                // TODO use getPrimary instead
                 if (!isset($this->_noUseGroupe))
-                    $select->group($select->getTable()->info('name') . '.id');
+                    $select->group($select->getTable()->info('name').'.id');
             }
         }
 

@@ -104,7 +104,7 @@ class Media_Model_DbTable_Row_File extends Centurion_Db_Table_Row_Abstract
     /**
      * @return string
      * @todo : corriger, si un chemin relatif concat avec upload_dir
-     * @todo : utiliser cette fonction � la place d'upload_dir
+     * @todo : utiliser cette fonction ? la place d'upload_dir
      */
     public function getFullLocalPath()
     {
@@ -117,13 +117,14 @@ class Media_Model_DbTable_Row_File extends Centurion_Db_Table_Row_Abstract
 
     public function delete()
     {
+        parent::delete();
+
         if ($this->delete_original == 1) {
             if ($this->file_id !== null && $this->getTable()->select(true)->where('file_id=?', $this->file_id)->count() == 1) {
                 unlink($this->getFullLocalPath());
             }
         }
 
-        parent::delete();
     }
 
     public function getRelativePath($effects = null, $extra = false, $realPath = false)
@@ -171,4 +172,26 @@ class Media_Model_DbTable_Row_File extends Centurion_Db_Table_Row_Abstract
     {
         return Media_Model_DbTable_File::getMediaAdapter()->getTemporaryKey($this->pk, $effect, $mktime);
     }
+
+    /**
+     * Counts how many times this media is used throughout the application
+     * @fixme uses of media in rte fields is not taken into account
+     */
+    public function countTimesUsed()
+    {
+        $dependentTables = $this->getTable()->getDependentTables();
+        $count = 0;
+        foreach ($dependentTables as $key => $tableClassName) {
+            // @todo move this ignorelist elsewhere
+            // ignore these tables as it is only tags on media
+            if(in_array($key, array('tag_files', 'duplicates'))) continue;
+            $model = Centurion_Db::getSingletonByClassName($tableClassName);
+            $references = $this->getTable()->getReferencesInTable($model);
+            foreach ($references as $key => $ref) {
+                $count += $model->select(true)->filter(array($key.'__id'=>$this->id))->count();
+            }
+        }
+        return $count;
+    }
+
 }

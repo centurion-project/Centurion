@@ -1,0 +1,62 @@
+<?php
+
+$json = array();
+$head = array();
+
+$json['header'] = $head;
+$json['rows'] = array();
+
+foreach ($this->result as $key => $result) {
+    $this->row = $result['row'];
+    $infos = isset($result['infos']) ? $result['infos'] : null;  
+
+    if (isset($this->coverName))
+        $cover = $this->row->{'get'.$this->coverName.'OrPx'}();
+    else
+        $cover = $this->row;
+
+    if (isset($this->popup)) :
+        $editUrl = 'javascript:mySubmit(\'' . $cover->getStaticUrl() . '\', \''.$this->escape($cover->filename).'\', \'\')';
+    else :
+        $editUrl = $this->url(array('id' => $row['row']->id, 'action' => 'get', 'saving' => null));
+    endif;
+
+    $tab = array();
+    $thumb = '<div style="background: url(\''.$cover->getStaticUrl(array('cropcenterresize' => array('width' => 174, 'height' => 94))).'\'); width: 174px; height: 94px;" class="picture"></div>';
+    if($this->popup) {
+        $thumb = '<a href="'.$editUrl.'">' . $thumb . '</a>';
+    }
+    $tab[] = $thumb;
+    $name = '<a href="' .  $editUrl . '" class="edit">' . $this->smartTextCrop($this->row->filename, 20, true). '</a>';
+    if(!$this->popup) {
+        if(!$this->displayDuplicates || !isset($row['duplicates']) || $row['duplicates'] < 2) {
+            $name = '<input type="checkbox" value="' . $this->row->id . '" name="rowId[]">' . $name;
+        }
+    }
+    $tab[] = $name;
+    
+    if($infos) {
+        if($this->displayDuplicates && isset($row['duplicates']) && $row['duplicates'] > 1) {
+            $infos = '<a href="'.$this->url(array('duplicates'=>$row['sha1'], 'page'=>null)).'">'.$this->translate('%s duplicates', $row['duplicates']).'</a>';
+        }
+        else {
+            $infos = $result['infos'];
+        }
+    }
+    $tab[] = $infos;
+
+    if(!$this->displayDuplicates || !isset($row['duplicates']) || $row['duplicates'] < 2) {
+        $tab[] = $this->partial($this->_selectScript(array(sprintf('%s/_actions.phtml', $this->controller),
+                                         'grid/_actions.phtml')), $this);
+    }
+    $json['rows'][] = $tab;
+}
+
+$json['pager'] = unserialize($this->paginationControl($this->paginator,
+                                            'Sliding',
+                                            'grid/pagination.json.phtml'));
+
+$json['filter'] = $this->url(array());
+$json['debug'] = $this->debug;
+
+echo $this->json($json);

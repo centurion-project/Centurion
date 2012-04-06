@@ -53,6 +53,7 @@ DATAS GRID */
 .medias .hover {                background:#e5ecf9; }
 .medias .select {               background:#ffc; }
 .medias .col-title {            margin-bottom:5px; color:#06c; font-size:12px; }
+.medias .col-infos {            margin-bottom:5px; font-size:12px; }
 .medias ul.actions {            position:absolute; bottom:8px; right:10px; }
 
 ul.actions li .tree-context {   width:100px; }
@@ -302,4 +303,5 @@ a.disabled:hover ins {          }
 @media screen and (-webkit-min-device-pixel-ratio:0) {
     .pages ul li .cells { display: block; margin-top:-29px; }
 }
+
 
