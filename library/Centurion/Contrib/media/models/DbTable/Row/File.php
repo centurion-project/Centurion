@@ -228,7 +228,6 @@ class Media_Model_DbTable_Row_File extends Centurion_Db_Table_Row_Abstract
     {
         if ($this->delete_original == '1') {
             if ($this->file_id !== null && $this->getTable()->select(true)->where('file_id=?', $this->file_id)->count() == 1) {
-                throw new Exception();
                 unlink($this->getFullLocalPath());
             }
         }
