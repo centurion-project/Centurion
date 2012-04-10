@@ -382,11 +382,13 @@ class Centurion_Inflector
      *
      * @param string $text
      * @return string The camelized text
+     * @TODO: this function is never used, and seems not be usefull
      */
     public static function camelize($text)
     {
       return self::pregtr($text, array('#/(.?)#e' => "'::'.strtoupper('\\1')", '/(^|_|-)+(.)/e' => "strtoupper('\\2')"));
     }
+
 
     public static function sortArrayByArray(array $toSort, array $sortByValuesAsKeys)
     {
@@ -526,9 +528,16 @@ class Centurion_Inflector
     {
         return base64_decode($str);
     }
-    
-    public static function roundUpTo($number, $increments) { 
-        $increments = 1 / $increments; 
-        return (ceil($number * $increments) / $increments); 
-    } 
+
+    public static function roundUpTo($number, $increments) {
+        return (ceil($number / $increments) * $increments);
+    }
+
+    public static function roundTo($number, $increments) {
+        return (round($number / $increments) * $increments);
+    }
+
+    public static function roundDowTo($number, $increments) {
+        return (floor($number / $increments) * $increments);
+    }
 }
