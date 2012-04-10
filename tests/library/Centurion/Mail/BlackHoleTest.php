@@ -2,6 +2,9 @@
 
 require_once dirname(__FILE__) . '/../../../../tests/TestHelper.php';
 
+/**
+ * @covers Centurion_Mail_Transport_Blackhole
+ */
 class Centurion_Signal_BlackHoleTest extends PHPUnit_Framework_TestCase
 {
     public function testSendMail()
