@@ -35,7 +35,7 @@ class Media_Test_Model_DbTable_File extends PHPUnit_Framework_TestCase
      */
     public function testInsertImage()
     {
-        $mediaRow = Centurion_Db::getSingleton('media/file')->createRow(array('local_filename' => APPLICATION_PATH . '/../library/Centurion/Contrib/media/tests/Support/images/centurion.png'));
+        $mediaRow = Centurion_Db::getSingleton('media/file')->createRow(array('local_filename' => APPLICATION_PATH . '/../library/Centurion/Contrib/media/tests/Support/images/centurion.png', 'delete_original' => 0));
         $mediaRow->save();
 
         $imageInfoArray = array(
@@ -48,41 +48,29 @@ class Media_Test_Model_DbTable_File extends PHPUnit_Framework_TestCase
         $this->assertEquals($imageInfoArray['mime'], $mediaRow->mime, 'Mime type doesn\'t match');
     }
 
-    protected function _getRelativePathFromTo($from, $to)
-    {
-        $from = realpath($from);
-        $to = realpath($to);
-
-        $relative = '';
-
-        $currentTab = preg_split('`[/\\\\]`', $from);
-        $toTab = preg_split('`[/\\\\]`', $to);
-
-        $separated = false;
-
-        foreach ($currentTab as $key => $val) {
-            if (isset($toTab[$key]) && $toTab[$key] !== $val) {
-                $separated = true;
-                $separatedAt = $key;
-            }
-            if ($separated) {
-                $relative .= '../';
-            }
-        }
-
-        $relative .= implode('/', array_slice($toTab, $separatedAt));
-
-        return $relative;
-    }
-
     /**
      * Test unit of test unit
      */
     public function testGetRelativePathFromTo()
     {
-        $this->assertEquals('../user', $this->_getRelativePathFromTo('/home', '/user'));
-        $this->assertEquals('../../user', $this->_getRelativePathFromTo('/home/lchenay', '/user'));
-        $this->assertEquals('../oo/test', $this->_getRelativePathFromTo('/home/lchenay', '/home/oo/test'));
+        $fileTable  = new Media_Model_DbTable_File();
+
+        $row = $fileTable->createRow();
+
+        $os = 'linux';
+        if (preg_match('`Window`i', $_SERVER['OS'])) {
+            $os = 'windows';
+        }
+        if ('linux' == $os) {
+            $this->assertEquals('../user', $row->getRelativePathFromTo('/home', '/user'));
+            $this->assertEquals('../../user', $row->getRelativePathFromTo('/home/lchenay', '/user'));
+            $this->assertEquals('../oo/test', $row->getRelativePathFromTo('/home/lchenay', '/home/oo/test'));
+        } else {
+            $this->assertEquals('..\user', $row->getRelativePathFromTo('c:\home', 'c:\user', false));
+            $this->assertEquals('..\..\user', $row->getRelativePathFromTo('c:\home\lchenay', 'c:\user', false));
+            $this->assertEquals('..\oo\test', $row->getRelativePathFromTo('c:\home\lchenay', 'c:\home\oo\test', false));
+            $this->assertEquals('..\library\Centurion\Contrib\media\tests\Support\images\centurion.png', $row->getRelativePathFromTo('C:\UwAmp\www\Centurion\tests', 'C:\UwAmp\www\Centurion/library/Centurion/Contrib/media/tests/Support/images/centurion.png', false));
+        }
     }
 
 
@@ -92,13 +80,19 @@ class Media_Test_Model_DbTable_File extends PHPUnit_Framework_TestCase
      */
     public function testInsertImageWithRelativePath()
     {
+        $table = Centurion_Db::getSingleton('media/file');
 
         $currentDir = realpath('.');
-        $img = APPLICATION_PATH . '/../library/Centurion/Contrib/media/tests/Support/images/centurion.png';
+        $img = realpath(APPLICATION_PATH . '/../library/Centurion/Contrib/media/tests/Support/images/centurion.png');
 
-        $file = $this->_getRelativePathFromTo($currentDir, $img);
+        if (!file_exists($img)) {
+            $this->fail('Original image is missing for test');
+        }
 
-        $mediaRow = Centurion_Db::getSingleton('media/file')->createRow(array('local_filename' => $file));
+        $row = $table->createRow();
+        $file = $row->getRelativePathFromTo($currentDir, $img);
+
+        $mediaRow = $table->createRow(array('local_filename' => $file, 'delete_original' => 0));
         $mediaRow->save();
 
         $imageInfoArray = array(
@@ -119,7 +113,7 @@ class Media_Test_Model_DbTable_File extends PHPUnit_Framework_TestCase
      */
     public function testUpdateImage()
     {
-        $mediaRow = Centurion_Db::getSingleton('media/file')->createRow(array('local_filename' => APPLICATION_PATH . '/../library/Centurion/Contrib/media/tests/Support/images/centurion.png'));
+        $mediaRow = Centurion_Db::getSingleton('media/file')->createRow(array('local_filename' => APPLICATION_PATH . '/../library/Centurion/Contrib/media/tests/Support/images/centurion.png', 'delete_original' => 0));
         $mediaRow->save();
 
         $newMediaRow = clone $mediaRow;
@@ -128,6 +122,40 @@ class Media_Test_Model_DbTable_File extends PHPUnit_Framework_TestCase
 
         $this->assertEquals(filesize(APPLICATION_PATH . '/../library/Centurion/Contrib/media/tests/Support/images/tank_centurion.jpg'), $newMediaRow->filesize);
         $this->assertEquals('tank_centurion.jpg', $newMediaRow->filename);
-        $this->assertEquals('image/jpg', $newMediaRow->mime);
+
+        if ('image/jpg' !== $newMediaRow->mime && 'image/jpeg' !== $newMediaRow->mime) {
+            $this->fail('Failed in mime type detection.');
+        }
+    }
+
+
+    public function testMultipleSameImage()
+    {
+        $mediaRow = Centurion_Db::getSingleton('media/file')->createRow(array('local_filename' => APPLICATION_PATH . '/../library/Centurion/Contrib/media/tests/Support/images/centurion.png', 'delete_original' => 0));
+        $mediaRow->save();
+
+        $mediaRow2 = Centurion_Db::getSingleton('media/file')->createRow(array('local_filename' => APPLICATION_PATH . '/../library/Centurion/Contrib/media/tests/Support/images/centurion.png', 'delete_original' => 0));
+        $mediaRow2->save();
+
+        $this->assertNotEquals($mediaRow->id, $mediaRow2->id);
+        $this->assertEquals($mediaRow->file_id, $mediaRow2->file_id);
+        $this->assertEquals($mediaRow->filesize, $mediaRow2->filesize);
+
+        $this->assertEquals($mediaRow->local_filename, $mediaRow2->local_filename);
+        $this->assertEquals($mediaRow->mime, $mediaRow2->mime);
+
+        $this->assertEquals($mediaRow->sha1, $mediaRow2->sha1);
+
+        $mediaRow2->local_filename = APPLICATION_PATH . '/../library/Centurion/Contrib/media/tests/Support/images/tank_centurion.jpg';
+        $mediaRow2->save();
+
+        $this->assertNotEquals($mediaRow->id, $mediaRow2->id);
+        $this->assertNotEquals($mediaRow->file_id, $mediaRow2->file_id);
+        $this->assertNotEquals($mediaRow->filesize, $mediaRow2->filesize);
+
+        $this->assertNotEquals($mediaRow->local_filename, $mediaRow2->local_filename);
+        $this->assertNotEquals($mediaRow->mime, $mediaRow2->mime);
+
+        $this->assertNotEquals($mediaRow->sha1, $mediaRow2->sha1);
     }
 }

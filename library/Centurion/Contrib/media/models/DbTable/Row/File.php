@@ -74,6 +74,115 @@ class Media_Model_DbTable_Row_File extends Centurion_Db_Table_Row_Abstract
         return $this->is('videos');
     }
 
+    public function getFullPath($path = null)
+    {
+        if ($path == null) {
+            $path = $this->local_filename;
+        }
+
+        if (!is_file($path)) {
+            $path = Centurion_Config_Manager::get('media.uploads_dir')
+                . DIRECTORY_SEPARATOR
+                . $path;
+        }
+
+        return $path;
+    }
+
+    protected function _populateData()
+    {
+        if (null == $this->mime) {
+            //TODO: find a better way to get mime type with Zend.
+            $this->mime = $this->getMimeType($this->getFullPath($this->local_filename));
+        }
+
+        if (null == $this->filesize) {
+            $this->filesize = filesize($this->getFullPath($this->local_filename));
+        }
+
+        if (null == $this->filename) {
+            $this->filename = basename($this->getFullPath($this->local_filename));
+        }
+
+        if (null == $this->sha1) {
+            $this->sha1 = sha1_file($this->getFullPath($this->local_filename));
+        }
+
+        $row = $this->getTable()->fetchRow(array('sha1=?' => $this->sha1, 'filesize=?' => $this->filesize));
+        //We want to be sure
+        if ($row !== null && $this->sha1== $row->sha1 && $this->filesize == $row->filesize) {
+            //We reuse the same local filename
+            if (((null === $this->delete_original) || ($this->delete_original == 1)) && ((null === $row->delete_original) || ($row->delete_original == 1)) && ($this->local_filename !== $row->local_filename)) {
+                unlink($this->getFullPath($this->local_filename));
+            }
+
+            $this->file_id = $row->file_id;
+            $this->local_filename = $row->local_filename;
+            $this->mime = $row->mime;
+            $this->filesize = $row->filesize;
+            $this->proxy_model = $row->proxy_model;
+            $this->proxy_pk = $row->proxy_pk;
+            $this->belong_model = $row->belong_model;
+            $this->belong_pk = $row->belong_pk;
+        }
+
+        if (null == $this->file_id) {
+            $this->file_id = sha1(rand());
+        }
+    }
+
+    public function _insert()
+    {
+        if (null == $this->id) {
+            $this->id = md5(Centurion_Inflector::uniq(uniqid()));
+        }
+
+        $this->_populateData();
+    }
+
+    public function _update()
+    {
+        if ($this->_cleanData['local_filename'] !== $this->_data['local_filename']) {
+            $this->file_id = null;
+            $this->filename = null;
+            $this->sha1 = null;
+            $this->mime = null;
+            $this->filesize = null;
+        }
+
+        $this->_populateData();
+    }
+
+    public function getRelativePathFromTo($from, $to, $forceRealPath = true)
+    {
+        if ($forceRealPath) {
+            $from = realpath($from);
+            $to = realpath($to);
+        }
+
+        $relative = '';
+
+        $currentTab = preg_split('`[/\\\\]`', $from);
+        $toTab = preg_split('`[/\\\\]`', $to);
+
+        $separated = false;
+        $separatedAt = 1;
+
+        foreach ($currentTab as $key => $val) {
+            if (isset($toTab[$key]) && $toTab[$key] !== $val) {
+                $separated = true;
+                $separatedAt = $key;
+            }
+            if ($separated) {
+                $relative .= '..' . DIRECTORY_SEPARATOR;
+            }
+        }
+
+        $relative .= implode(DIRECTORY_SEPARATOR, array_slice($toTab, $separatedAt));
+
+        return $relative;
+    }
+
     protected function _getProxy($model, $pk)
     {
         if (null !== $model) {
@@ -117,8 +226,9 @@ class Media_Model_DbTable_Row_File extends Centurion_Db_Table_Row_Abstract
 
     public function delete()
     {
-        if ($this->delete_original == 1) {
+        if ($this->delete_original == '1') {
             if ($this->file_id !== null && $this->getTable()->select(true)->where('file_id=?', $this->file_id)->count() == 1) {
+                throw new Exception();
                 unlink($this->getFullLocalPath());
             }
         }
@@ -133,6 +243,61 @@ class Media_Model_DbTable_Row_File extends Centurion_Db_Table_Row_Abstract
         }
 
         return Centurion_Inflector::urlEncode(pack("H*" , $this->file_id)) . '/_' . ((null !== $effects) ? $effects:'') . '.centurion';
+    }
+
+    /**
+     * @param $value
+     * @param null $file
+     * @return bool
+     */
+    public function getMimeType($value, $file = null)
+    {
+        if ($file === null) {
+            $file = array(
+                'type' => null,
+                'name' => $value
+            );
+        }
+
+        // Is file readable ?
+        //$1 'Zend/Loader.php';
+        if (!Zend_Loader::isReadable($value)) {
+            return $this->_throw($file, self::NOT_READABLE);
+        }
+
+        $validate = new Zend_Validate_File_MimeType('');
+
+        $mimefile = $validate->getMagicFile();
+        if (class_exists('finfo', false)) {
+            $const = defined('FILEINFO_MIME_TYPE') ? FILEINFO_MIME_TYPE : FILEINFO_MIME;
+            if (!empty($mimefile) && empty($finfo)) {
+                $finfo = @finfo_open($const, $mimefile);
+            }
+
+            if (empty($finfo)) {
+                $finfo = @finfo_open($const);
+            }
+
+            $type = null;
+            if (!empty($finfo)) {
+                $type = finfo_file($finfo, $value);
+            }
+        }
+
+        if (empty($type) &&
+            (function_exists('mime_content_type') && ini_get('mime_magic.magicfile'))) {
+            $type = mime_content_type($value);
+        }
+
+        if (empty($type) && $this->_headerCheck) {
+            $type = $file['type'];
+        }
+
+        if (empty($type)) {
+            return $this->_throw($file, self::NOT_DETECTED);
+        }
+
+        return $type;
     }
 
     public function getSeoUrl($effects = null, $extra = false, $realPath = false)
