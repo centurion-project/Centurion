@@ -373,4 +373,10 @@ button {                        padding: .3em 1em; display: inline-block; positi
 .ui-slider-vertical .ui-slider-range-min {  bottom: 0; }
 .ui-slider-vertical .ui-slider-range-max {  top: 0; }
 
-
+/* Dialog
+------------------------------------------- */ 
+.ui-dialog {                                position: absolute; overflow:hidden;
+                                            border:solid 1px #d6d6d6; -webkit-border-radius:5px; -moz-border-radius:5px;
+                                            -o-border-radius:5px; border-radius:5px;}
+.ui-dialog-titlebar {                       padding-bottom:10px; position:relative; font:bold 15px/20px Arial, sans-serif; color:#FF2F05;}
+.ui-dialog-titlebar-close {                 position:absolute; right:0; top:0;}
