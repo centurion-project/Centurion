@@ -116,6 +116,10 @@ EOS;
         if (is_array($value)) {
             $this->_longitude = $value['coord_long'];
             $this->_latitude = $value['coord_lat'];
+        } else if (is_string($value)) {
+            $tab = explode(',', $value);
+            $this->_longitude = trim($tab[0]);
+            $this->_latitude = trim($tab[1]);
         }
     }
 
