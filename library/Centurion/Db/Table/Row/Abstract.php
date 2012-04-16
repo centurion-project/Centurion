@@ -123,7 +123,7 @@ abstract class Centurion_Db_Table_Row_Abstract extends Zend_Db_Table_Row_Abstrac
 
         $this->_modifiedFields[$columnName] = true;
 
-        // @todo implement get for trait
+        // @todo implement set for trait
 
     }
 
@@ -973,7 +973,7 @@ abstract class Centurion_Db_Table_Row_Abstract extends Zend_Db_Table_Row_Abstrac
     /**
      * Retrieve the primary key value.
      *
-     * @return int
+     * @return array|string|int
      */
     public function getPrimaryKey()
     {
