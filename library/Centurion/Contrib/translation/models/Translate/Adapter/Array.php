@@ -87,18 +87,6 @@ class Translation_Model_Translate_Adapter_Array extends Zend_Translate_Adapter_A
         
         if (count($result) == 2) {
             list($messageId, $tags) = $result;
-            
-            $uidId = $this->getUidId($messageId);
-            
-            $tags = explode(',', $tags);
-            foreach ($tags as $tag) {
-                $tag = trim($tag);
-                $tagId = $this->getTagId($tag);
-                
-                $this->_tagUidTable->getOrCreate(array('uid_id' => $uidId, 'tag_id' => $tagId));
-            }
-        } else {
-            $uidId = $this->getUidId($messageId);
         }
         
         if (!Zend_Locale::isLocale($locale, true, false)) {
@@ -165,6 +153,18 @@ class Translation_Model_Translate_Adapter_Array extends Zend_Translate_Adapter_A
         }
 
         //TODO: log unexistant message
+
+        $uidId = $this->getUidId($messageId);
+
+        if (isset($tags)) {
+            $tags = explode(',', $tags);
+            foreach ($tags as $tag) {
+                $tag = trim($tag);
+                $tagId = $this->getTagId($tag);
+
+                $this->_tagUidTable->getOrCreate(array('uid_id' => $uidId, 'tag_id' => $tagId));
+            }
+        }
         
         $this->_log($messageId, $locale);
         // use rerouting when enabled
