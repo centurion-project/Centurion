@@ -25,6 +25,7 @@
  * @copyright   Copyright (c) 2008-2011 Octave & Octave (http://www.octaveoctave.com)
  * @license     http://centurion-project.org/license/new-bsd     New BSD License
  * @author      Florent Messa <florent.messa@gmail.com>
+ * @TODO: this is not a form validator. It's a global validator.
  */
 class Auth_Form_Validator_Login extends Zend_Validate_Abstract
 {
@@ -113,6 +114,7 @@ class Auth_Form_Validator_Login extends Zend_Validate_Abstract
      *
      * @param  mixed $value
      * @return boolean
+     * @TODO: check that required parameter are set
      */
     public function isValid($value, $context = null)
     {
