@@ -8,6 +8,10 @@ class Translation_Controller_Action_Helper_ManageLanguageParam extends Zend_Cont
             $local = new Zend_Locale();
             $requestedLocale = $local->getLanguage();
         }
+
+        if (is_array($requestedLocale)) {
+            $requestedLocale = current($requestedLocale);
+        }
         
         $requestedLocale = strtolower($requestedLocale);
 
