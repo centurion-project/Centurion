@@ -213,7 +213,7 @@ class Media_Model_DbTable_Row_File extends Centurion_Db_Table_Row_Abstract
     /**
      * @return string
      * @todo : corriger, si un chemin relatif concat avec upload_dir
-     * @todo : utiliser cette fonction � la place d'upload_dir
+     * @todo : utiliser cette fonction à la place d'upload_dir
      */
     public function getFullLocalPath()
     {

@@ -395,7 +395,7 @@ class Centurion_Controller_CRUD extends Centurion_Controller_AGL
 
         $form = $this->_getForm();
         if (!$form->hasInstance()) {
-                throw new Zend_Controller_Dispatcher_Exception(sprintf('Invalide id specified'));
+                throw new Zend_Controller_Dispatcher_Exception(sprintf('Invalid id specified'));
             }
 
         $this->_postGet();

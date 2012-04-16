@@ -75,6 +75,7 @@ class Media_ImageController extends Centurion_Controller_Action
                                                        $effectPath),
                             sprintf("key '%s' for file '%s' is not valid or expired", $key, $fileRow->pk));
 
+        // TODO : modifier le file exist sur le bon chemin (cf getFullpath)
         if (!file_exists($media['uploads_dir']
                             . DIRECTORY_SEPARATOR
                             . $fileRow->local_filename)) {
