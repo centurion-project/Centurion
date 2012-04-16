@@ -10,6 +10,8 @@ class Translation_Traits_Form_Model extends Centurion_Traits_Form_Model_Abstract
         Centurion_Signal::factory('on_populate_with_instance')->connect(array($this, 'populateWithInstance'), $this->_form);
         Centurion_Signal::factory('pre_populate')->connect(array($this, 'prePopulate'), $this->_form);
         Centurion_Signal::factory('on_form_get_toolbar')->connect(array($this, 'onFormGetToolbar'), $this->_form);
+        $this->addExclude('original_id');
+        $this->addExclude('language_id');
     }
 
     /**
