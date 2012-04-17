@@ -63,7 +63,10 @@ class Admin_View_Helper_GridForm extends Zend_View_Helper_Abstract
                                                 ->setLegend($label);
         return $form;
     }
-    
+
+    /**
+     * @return $this
+     */
     public function gridForm()
     {
         return $this;

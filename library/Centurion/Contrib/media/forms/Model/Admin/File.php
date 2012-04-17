@@ -31,6 +31,7 @@ class Media_Form_Model_Admin_File extends Media_Form_Model_File
         $this->addElement($this->_filename);
 
         $this->removeElement('_XSRF');
+        parent::init();
     }
 
     public function __call($name, $args)
@@ -47,6 +48,10 @@ class Media_Form_Model_Admin_File extends Media_Form_Model_File
         return $this->_extension;
     }
 
+    /**
+     * @param string $extension
+     * @return $this
+     */
     public function setExtension($extension)
     {
         $this->_extension = $extension;
@@ -55,6 +60,10 @@ class Media_Form_Model_Admin_File extends Media_Form_Model_File
         return $this;
     }
 
+    /**
+     * @param string $extension
+     * @return $this
+     */
     public function addExtension($extension)
     {
         $this->_extension .= ','.$extension;
@@ -106,7 +115,7 @@ class Media_Form_Model_Admin_File extends Media_Form_Model_File
 
     public function getValues($suppressArrayNotation = false)
     {
-        if ($this->hasInstance()) {
+        if ($this->hasInstance() && null !== $this->getElement(sprintf('filename_delete_%s', $this->getName()))) {
             if (!$this->getElement(sprintf('filename_delete_%s', $this->getName()))->isChecked()) {
                 $this->getInstance()->delete();
                 $this->setInstance(null);

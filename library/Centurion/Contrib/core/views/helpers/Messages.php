@@ -28,6 +28,10 @@
  */
 class Centurion_View_Helper_Messages extends Zend_View_Helper_Abstract
 {
+    /**
+     * @param null $level
+     * @return $this
+     */
     public function messages($level = null)
     {
         if (null !== $level) {
@@ -62,6 +66,11 @@ class Centurion_View_Helper_Messages extends Zend_View_Helper_Abstract
         return $render;
     }
 
+    /**
+     * @param $level
+     * @param $message
+     * @return $this
+     */
     public function addMessage($level, $message)
     {
         Zend_Controller_Action_HelperBroker::getStaticHelper('messages')->addMessage($level, $message);

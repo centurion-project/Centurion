@@ -28,6 +28,14 @@
  */
 class Centurion_View_Helper_Truncate extends Zend_View_Helper_Abstract
 {
+    /**
+     * @param null $string
+     * @param int $start
+     * @param int $length
+     * @param string $prefix
+     * @param string $postfix
+     * @return $this|string
+     */
     public function truncate($string = null, $start = 0, $length = 100, $prefix = '...', $postfix = '...')
     {
         if (!func_num_args()) {
