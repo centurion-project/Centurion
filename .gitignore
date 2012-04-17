@@ -58,3 +58,5 @@ application/configs/local.ini
 
 /tests/library/Centurion/Image/Adapter/_files/build/*
 /data/cache/config.php
+
+*.done

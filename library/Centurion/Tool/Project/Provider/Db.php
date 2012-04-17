@@ -37,6 +37,7 @@ require_once 'Centurion/Import/Pdo/Mysql.php';
  * @copyright   Copyright (c) 2008-2011 Octave & Octave (http://www.octaveoctave.com)
  * @license     http://centurion-project.org/license/new-bsd     New BSD License
  * @author      Florent Messa <florent.messa@gmail.com>
+ * @author      Laurent Chenay <lc@centurion-project.org>
  */
 class Centurion_Tool_Project_Provider_Db extends Centurion_Tool_Project_Provider_Abstract
     implements Zend_Tool_Framework_Provider_Pretendable
@@ -46,7 +47,199 @@ class Centurion_Tool_Project_Provider_Db extends Centurion_Tool_Project_Provider
     const DEFAULT_TABLE_PREFIX = '';
     
     protected $_dbImport = null;
-    
+
+    public function bootstrap($env)
+    {
+        putenv('RUN_CLI_MODE=true');
+        define('RUN_CLI_MODE', true);
+
+        defined('APPLICATION_PATH')
+            || define('APPLICATION_PATH', realpath(dirname(__FILE__) . '/../../../../../application'));
+
+        // Define application environment
+        defined('APPLICATION_ENV')
+            || define('APPLICATION_ENV', (getenv('APPLICATION_ENV') ? getenv('APPLICATION_ENV') : $env));
+
+        // bootstrap include_path and constants
+        require realpath(APPLICATION_PATH . '/../library/library.php');
+
+        /** Zend_Application */
+        require_once 'Zend/Application.php';
+        require_once 'Centurion/Application.php';
+
+        require_once 'Zend/Loader/Autoloader.php';
+        $autoloader = Zend_Loader_Autoloader::getInstance()
+            ->registerNamespace('Centurion_')
+            ->setDefaultAutoloader(create_function('$class',
+            "include str_replace('_', '/', \$class) . '.php';"
+        ));
+        $classFileIncCache = realpath(APPLICATION_PATH . '/../data/cache').'/pluginLoaderCache.tmp';
+        if (file_exists($classFileIncCache)) {
+            $fp = fopen($classFileIncCache, 'r');
+            flock($fp, LOCK_SH);
+            $data = file_get_contents($classFileIncCache);
+            flock($fp, LOCK_UN);
+            fclose($fp);
+            $data = @unserialize($data);
+
+            if ($data !== false)
+                Centurion_Loader_PluginLoader::setStaticCachePlugin($data);
+        }
+
+        Centurion_Loader_PluginLoader::setIncludeFileCache($classFileIncCache);
+
+        // Create application, bootstrap, and run
+        $this->_application = new Centurion_Application(
+            APPLICATION_ENV,
+            APPLICATION_PATH . '/configs/'
+        );
+
+        $this->_application->bootstrap('db');
+        $this->_application->bootstrap('FrontController');
+        $this->_application->bootstrap('contrib');
+    }
+
+    /**
+     * @param $env
+     * @param bool $acceptAll
+     * @param bool $ignoreLaunched
+     * @throws Exception
+     * @throws Centurion_Application_Resource_Exception
+     *
+     * @todo: rajouter la gestion des php
+     * @todo: refractoring
+     */
+    public function update($env, $acceptAll = false, $ignoreLaunched = true)
+    {
+        if ($acceptAll === 'true') {
+            $acceptAll = true;
+        }
+        if ($ignoreLaunched === 'true') {
+            $ignoreLaunched = true;
+        }
+        if ($acceptAll === 'false') {
+            $acceptAll = false;
+        }
+        if ($ignoreLaunched === 'false') {
+            $ignoreLaunched = false;
+        }
+
+        $this->bootstrap($env);
+
+        $application = $this->_application;
+        $bootstrap = $application->getBootstrap();
+        $front = $bootstrap->getResource('FrontController');
+
+        $modules = $front->getControllerDirectory();
+
+        $default = $front->getDefaultModule();
+
+        $options = $bootstrap->getOption('resources');
+        $options = $options['modules'];
+
+        if (is_array($options) && !empty($options[0])) {
+
+            $diffs = array_diff($options, array_keys($modules));
+
+            if (count($diffs)) {
+                throw new Centurion_Application_Resource_Exception(sprintf("The modules %s is not found in your registry (%s)",
+                    implode(', ', $diffs),
+                    implode(PATH_SEPARATOR, $modules)));
+            }
+
+            foreach ($modules as $key => $module) {
+                if (!in_array($key, $options) && $key !== $default) {
+                    unset($modules[$key]);
+                    $front->removeControllerDirectory($key);
+                }
+            }
+
+            $modules = Centurion_Inflector::sortArrayByArray($modules, array_values($options));
+        }
+
+        $db = Zend_Db_Table::getDefaultAdapter();
+
+        foreach ($modules as $module => $moduleDirectory) {
+            $modulePath = dirname($moduleDirectory);
+
+            $dataPath = $modulePath . DIRECTORY_SEPARATOR . 'data' . DIRECTORY_SEPARATOR;
+            if (is_dir($dataPath)) {
+                echo 'Open ' . $dataPath . "\n";
+                $files = new DirectoryIterator($dataPath);
+
+                foreach ($files as $file) {
+                    if ($file->isDot()) {
+                        continue;
+                    }
+
+                    if (Centurion_Inflector::extension($file) !== '.sql') {
+                        continue;
+                    }
+
+                    $choice = null;
+
+                    if (file_exists($file->getPathname() . '.done')) {
+                        if ($ignoreLaunched) {
+                            continue;
+                        }
+                        if (!$acceptAll) {
+                            echo sprintf('The file %s seems to be already executed. Do you want to launch it?' . "\n", $file->getPathname());
+                        }
+                    }
+
+                    if (!$acceptAll) {
+                        echo sprintf('Find a new file file %s. Do you want to launch it?' . "\n", $file->getPathname());
+                    } else {
+                        $choice = '1';
+                    }
+
+                    if (null == $choice) {
+                        do {
+                            echo '1) Execute' . "\n";
+                            echo '2) Ignore' . "\n";
+                            echo '3) Mark it without execute it' . "\n";
+                            echo '? ';
+                            $choice = trim(fgets(STDIN));
+                        } while(!in_array($choice, array('1', '2', '3')));
+                    }
+
+                    if ($choice == '2') {
+                        echo "\n\n";
+                        continue;
+                    }
+
+                    if ($choice == '1') {
+                        try {
+                            $db->beginTransaction();
+                            $query = '';
+                            foreach (new SplFileObject($dataPath . $file) as $line) {
+                                $query .= $line;
+                                if (substr(rtrim($query), -1) == ';') {
+                                    $statement = $db->query($query);
+                                    $statement->closeCursor();
+                                    unset($statement);
+                                    $query = '';
+                                }
+                            }
+
+                            $db->commit();
+
+                        } catch(Exception $e) {
+                            $db->rollback();
+                            throw $e;
+                        }
+                    }
+
+                    touch($file->getPathname() . '.done');
+                    echo "\n\n";
+                }
+            }
+        }
+
+        Centurion_Loader_PluginLoader::clean();
+        Centurion_Signal::factory('clean_cache')->send($this);
+    }
+
     /**
      * Inspect db for Zend_Db adapter.
      * Connect to a database and generate models.
@@ -153,16 +346,17 @@ class Centurion_Tool_Project_Provider_Db extends Centurion_Tool_Project_Provider
      * Retrieve import adapter.
      *
      * @param string $environment 
-     * @return void
+     * @return Zend_Db_Adapter_Abstract
      */
     protected function _getDbImport($environment = self::DEFAULT_ENVIRONMENT)
     {
         if (null === $this->_dbImport) {
             if (!$this->_loadedProfile)
                 $this->_loadProfile(self::NO_PROFILE_THROW_EXCEPTION);
-            
-            $config = new Zend_Config_Ini($this->_loadedProfile->search('applicationConfigFile')->getPath(), $environment);
-            $dbAdapter = Zend_Db::factory($config->resources->db);
+            define('APPLICATION_PATH', $this->_loadedProfile->search('applicationDirectory')->getPath());
+
+            $config = Centurion_Config_Directory::loadConfig(dirname($this->_loadedProfile->search('applicationConfigFile')->getPath()), $environment);
+            $dbAdapter = Zend_Db::factory(new Zend_Config($config['resources']['db']));
             $this->_dbImport = Centurion_Import::factory($dbAdapter);
         }
         
