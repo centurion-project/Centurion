@@ -1543,7 +1543,11 @@ abstract class Centurion_Db_Table_Row_Abstract extends Zend_Db_Table_Row_Abstrac
         }
         return $fields;
     }
-    
+
+    /**
+     * @todo add some cache
+     * @return int|string
+     */
     public function getContentTypeId()
     {
         return Centurion_Db::getSingleton('core/contentType')->getContentTypeIdOf($this);
