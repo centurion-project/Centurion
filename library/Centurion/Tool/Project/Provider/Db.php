@@ -163,12 +163,22 @@ class Centurion_Tool_Project_Provider_Db extends Centurion_Tool_Project_Provider
             $modulePath = dirname($moduleDirectory);
 
             $dataPath = $modulePath . DIRECTORY_SEPARATOR . 'data' . DIRECTORY_SEPARATOR;
+            echo $dataPath;
             if (is_dir($dataPath)) {
                 echo 'Open ' . $dataPath . "\n";
-                $files = new DirectoryIterator($dataPath);
+                $files = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($dataPath, FilesystemIterator::SKIP_DOTS | FilesystemIterator::KEY_AS_FILENAME));
+
+                $files = iterator_to_array($files);
+
+                ksort($files);
+                $files = array_merge(array('schema.sql' => null, 'data.sql' => null), $files);
 
                 foreach ($files as $file) {
-                    if ($file->isDot()) {
+                    if (null == $file) {
+                        continue;
+                    }
+
+                    if ($file->isDir()) {
                         continue;
                     }
 
@@ -209,10 +219,12 @@ class Centurion_Tool_Project_Provider_Db extends Centurion_Tool_Project_Provider
                     }
 
                     if ($choice == '1') {
+                        echo sprintf('Exec the file %s' . "\n", $file->getPathname());
+
                         try {
                             $db->beginTransaction();
                             $query = '';
-                            foreach (new SplFileObject($dataPath . $file) as $line) {
+                            foreach (new SplFileObject($file->getPathname()) as $line) {
                                 $query .= $line;
                                 if (substr(rtrim($query), -1) == ';') {
                                     $statement = $db->query($query);
