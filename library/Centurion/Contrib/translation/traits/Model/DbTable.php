@@ -93,7 +93,7 @@ class Translation_Traits_Model_DbTable extends Core_Traits_Version_Model_DbTable
                 'onUpdate' => Zend_Db_Table_Abstract::CASCADE,
             );
 
-        Centurion_Signal::factory('on_select_joinInner')->connect(array($this, 'onJoinInner'), $this->_model);
+        Centurion_Signal::factory('on_dbTable_select')->connect(array($this, 'onSelect'), $this->_model);
     }
 
     public function getLocalizedColsPrefix()
@@ -139,28 +139,7 @@ class Translation_Traits_Model_DbTable extends Core_Traits_Version_Model_DbTable
         
         
         $currentLanguage = Translation_Model_DbTable_Language::getCurrentLanguageInfo();
-        
-        /*
-        $currentLocale = Zend_Registry::get('Zend_Translate')->getLocale();
-        $session = new Zend_Session_Namespace('translation_current');
 
-        if (!isset($session->language) || $session->language['locale'] != $currentLocale) {
-            try {
-                $languageRow = Centurion_Db::getSingleton('translation/language')->get(array('locale' => $currentLocale));
-            } catch (Centurion_Db_Table_Row_Exception_DoesNotExist $e) {
-                $languageRow = Translation_Traits_Common::getDefaultLanguage();
-            }
-
-            $session->language = $languageRow->toArray();
-        }
-        */
-
-//        if ($this->_model->ifNotExistsGetDefault()) {
-//            if ($session->language['locale'] == Centurion_Config_Manager::get('translation.default_language', false)) {
-//                $select->filter(array('language_id' => $session->language['id']));
-//                return;
-//            }
-//        }
 
         $dba = $this->getAdapter();
 
@@ -168,22 +147,30 @@ class Translation_Traits_Model_DbTable extends Core_Traits_Version_Model_DbTable
         $childCols = array();
 
         $spec = $this->getTranslationSpec();
-        //foreach ($this->_modelInfo[Centurion_Db_Table_Abstract::COLS] as $col) {
-        foreach ($spec[Translation_Traits_Model_DbTable::TRANSLATED_FIELDS] as $col) {
+
+        //Generate translated fields for this table
+        $_translatedFields = array_merge(
+            $spec[Translation_Traits_Model_DbTable::TRANSLATED_FIELDS],
+            $this->_model->info(Centurion_Db_Table_Abstract::PRIMARY), //Add localized id
+            array(
+                Translation_Traits_Model_DbTable::ORIGINAL_FIELD,
+                Translation_Traits_Model_DbTable::LANGUAGE_FIELD
+            ) //To return the language of the localized row
+        );
+
+        foreach ($_translatedFields as $col) {
             array_push($childCols, sprintf('%s.%s AS %s%s', $childName, $col, $this->_localizedColsPrefix, $col));
             array_push($originalCols, sprintf('%s.%s', $this->_modelInfo[Centurion_Db_Table_Abstract::NAME], $col));
         }
 
-        if (!array_key_exists($this->_modelInfo[Centurion_Db_Table_Abstract::NAME], $select->getPart(Zend_Db_Select::FROM)))
+        if (!array_key_exists($this->_modelInfo[Centurion_Db_Table_Abstract::NAME], $select->getPart(Zend_Db_Select::FROM))){
             $select->from($this->_modelInfo[Centurion_Db_Table_Abstract::NAME], new Zend_Db_Expr(implode(', ', $originalCols)));
+        }
 
         $select->where(sprintf('%s.original_id IS NULL', $this->_modelInfo[Centurion_Db_Table_Abstract::NAME]));
 
-//        if ($this->_model->ifNotExistsGetDefault())
-            $method = 'joinLeft';
-//        else
-//            $method = 'joinInner';
-            
+        $method = 'joinLeft';
+
         if (in_array($childName, $select->getPart(Centurion_Db_Table_Select::FROM))) {
             echo '<pre>';
             $e = new Exception();
@@ -197,14 +184,8 @@ class Translation_Traits_Model_DbTable extends Core_Traits_Version_Model_DbTable
                              new Zend_Db_Expr(implode(', ', $childCols)));
                              
         }catch (Exception $e) {
-//            var_dump(array_key_exists($childName, $select->getPart(Centurion_Db_Table_Select::FROM)));
-//            var_dump($select->getPart(Centurion_Db_Table_Select::FROM));
-            echo '<pre>';
-            echo $e->getMessage();
-            echo "\n";
-            echo $e->getTraceAsString();
-            echo $select->__toString()."\n";
-            die();
+            error_log($e->getMessage().PHP_EOL.$e->getTraceAsString().PHP_EOL.$this->__toString());
+            throw $e;
         }
         if (!$this->_model->ifNotExistsGetDefault()) {
             $select->where(new Zend_Db_Expr(sprintf($childName . '.language_id = %u OR %s.language_id = %u', $currentLanguage['id'], $this->_modelInfo[Centurion_Db_Table_Abstract::NAME], $currentLanguage['id'])));
@@ -212,12 +193,19 @@ class Translation_Traits_Model_DbTable extends Core_Traits_Version_Model_DbTable
     }
 
     /**
-     * add filters to the default select query
-     * @see Centurion/Contrib/core/traits/Version/Model/Core_Traits_Version_Model_DbTable::onSelect()
+     * Add signal to support translation in sql query
      */
-    public function onSelect($signal, $sender, $select, $applyDefaultFilters)
-    {
+    public function onSelect($signal, $sender, $select, $applyDefaultFilters){
+        Centurion_Signal::factory('on_select_joinInner')->connect(array($this, 'onJoinInner'), $select);
 
+        //Call the method to add the relation for the translation because the signal on_dbTable_select is send
+        //after $select->from() if select object is built with the from part.
+        $fromParts = $select->getPart('from');
+        if (count($fromParts)) {
+            $from = current($fromParts);
+
+            $this->onJoinInner(null, null, $select, $from['tableName']);
+        }
     }
 
 }
