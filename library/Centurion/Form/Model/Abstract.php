@@ -818,13 +818,10 @@ abstract class Centurion_Form_Model_Abstract extends Centurion_Form
             $i = 0;
             foreach ($objectsRelated as $objectRelated) {
                 if (!empty($objectRelated)) {
-
-                    foreach ((array) $refLocalArray['columns'] as $key => $columnName) {
-                        $getOrCreateArgsArray[$columnName] = $this->_instance->{$reColumnsfLocalArray[$key]};
-                    }
-                    $getOrCreateArgsArray[$refForeignArray['columns']] = $objectRelated;
-
-                        list($intersectionRow, $created) = $intersectionTable->getOrCreate($getOrCreateArgsArray);
+                    list($intersectionRow, $created) = $intersectionTable->getOrCreate(array(
+                        $manyDependentTable['columns']['local']    =>  $this->_instance->id,
+                        $manyDependentTable['columns']['foreign']  =>  $objectRelated
+                    ));
 
                     if (isset($intersectionRow->order)) {
                         $intersectionRow->order = $i++;
@@ -842,11 +839,8 @@ abstract class Centurion_Form_Model_Abstract extends Centurion_Form
             if (count($restrincts))
                 $where .= sprintf(' AND (%s)', implode(' AND ', $restrincts));
 
-            $select = $intersectionTable->select(true);
-            if('' !== trim($where)) {
-                $select->where($where);
-            }
-            $rowset = $intersectionTable->fetchAll($select);
+            $rowset = $intersectionTable->fetchAll($intersectionTable->select(true)
+                                                                     ->where($where));
 
             foreach ($rowset as $key => $row) {
                 $row->delete();
