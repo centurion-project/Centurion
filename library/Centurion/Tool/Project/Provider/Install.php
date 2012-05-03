@@ -348,6 +348,8 @@ class Centurion_Tool_Project_Provider_Install extends Centurion_Tool_Project_Pro
             '/data/cache/tags',
             '/public/files',
             '/public/cached',
+        	'/public/status',
+        	'/public/.'        	
         );
         
         foreach ($dirs as $dir) {
@@ -385,82 +387,163 @@ class Centurion_Tool_Project_Provider_Install extends Centurion_Tool_Project_Pro
                     
                     $perms = fileperms($dir);
                     
-                    if (!($perms & 0x0020)) {
-                        echo '2.2.3.4 FATAL apache can\'t read in ' . $dir . "\n";
-                        
-                        $perms = $perms | 0x0020;
-                        
-                        if (chmod($dir, $perms)) {
-                            echo '2.2.3.4.1 => I fixed it' . "\n";
-                        } else {
-                            echo '2.2.3.4.1 => I can\'t fixed it' . "\n";
-                        }
-                    }
-                    if (!($perms & 0x0010)) {
-                        echo '2.2.3.5 FATAL apache can\'t write in ' . $dir . "\n";
-                        
-                        $perms = $perms | 0x0010;
-                        
-                        if (chmod($dir, $perms)) {
-                            echo '2.2.3.5.1 => I fixed it' . "\n";
-                        } else {
-                            echo '2.2.3.5.1 => I can\'t fixed it' . "\n";
-                        }
-                    }
-                    if (!(($perms & 0x0008))) {
-                        echo '2.2.3.6 FATAL apache can\'t execute in ' . $dir . "\n";
-                        
-                        $perms = $perms | 0x0008;
-                        
-                        if (chmod($dir, $perms)) {
-                            echo '2.2.3.6.1 => I fixed it' . "\n";
-                        } else {
-                            echo '2.2.3.6.1 => I can\'t fixed it' . "\n";
-                        }
-                    }
-                    
-                    if ($perms & 0x0004) {
-                        echo '2.2.3.1 Warning other can read in ' . $dir . "\n";
-                        
-                        $perms = $perms & ~0x0004;
-                        
-                        if (chmod($dir, $perms)) {
-                            echo '2.2.3.1.1 => I fixed it' . "\n";
-                        } else {
-                            echo '2.2.3.1.1 => I can\'t fixed it' . "\n";
-                        }
-                    }
-                    if ($perms & 0x0002) {
-                        echo '2.2.3.2 Warning other can write in ' . $dir . "\n";
-                        
-                        $perms = $perms & ~0x0002;
-                        
-                        if (chmod($dir, $perms)) {
-                            echo '2.2.3.2.1 => I fixed it' . "\n";
-                        } else {
-                            echo '2.2.3.2.1 => I can\'t fixed it' . "\n";
-                        }
-                    }
-                    
-                    if (($perms & 0x0001)) {
-                        echo '2.2.3.3 FATAL other can execute in ' . $dir . "\n";
-                        
-                        $perms = $perms & ~0x0001;
-                        
-                        if (chmod($dir, $perms)) {
-                            echo '2.2.3.3.1 => I fixed it' . "\n";
-                        } else {
-                            echo '2.2.3.3.1 => I can\'t fixed it' . "\n";
-                        }
-                    }
+                    // fix perms for 
+                   	$this->_osLinuxFixPerms($dir, $perms);                    
                 }
             }
         }
+        
+        $pathFiles = array(
+        	'/public/status/*',
+        	'/public/index.php',
+        	'/public/index.php_next',
+        );
+        foreach ($pathFiles as $pathFile) {
+        	$nodes = explode("/", $pathFile);
+        	$leaf = array_pop($nodes);
+        	$dir = APPLICATION_PATH . '/..' .implode("/", $nodes);
+        	
+        	if( "*"===$leaf && is_dir($dir) ){        		
+        		if ($dh = opendir($dir)) {
+        			while (($file = readdir($dh)) !== false) {        				
+        				
+        				$file = $dir . '/' . $file;
+        				if ($os === 'linux') {
+        					if (function_exists('posix_getgrgid')) {
+        						$groupInfo = posix_getgrgid(filegroup($file));
+        				
+        						if ($groupInfo['name'] !== $apacheGroup) {
+        							echo '2.2.2 Group of file ' . $file . ' is not apache\'s group' . "\n";
+        				
+        							if (chgrp($file, $apacheGroup)) {
+        								echo '2.2.2.1 => I fixed it, now it\'s : ' . $apacheGroup . "\n\n";
+        							} else {
+        								echo '2.2.2.2 => Can\'t fix it. Don\'t have permission to make a chown.' . "\n\n";
+        							}
+        						}
+        					}
+        				
+        					$perms = fileperms($file);
+        				
+		        			// fix specific Centurion's perms for file
+        					$this->_osLinuxFixPerms($file, $perms);
+        				}
+        				
+        			}
+        			closedir($dh);
+        		}
+        	}else {
+        		$file = APPLICATION_PATH . '/..' .$pathFile;
+        		if ($os === 'linux') {
+        			if (function_exists('posix_getgrgid')) {
+        				$groupInfo = posix_getgrgid(filegroup($file));
+        		
+        				if ($groupInfo['name'] !== $apacheGroup) {
+        					echo '2.2.2 Group of file ' . $file . ' is not apache\'s group' . "\n";
+        		
+        					if (chgrp($file, $apacheGroup)) {
+        						echo '2.2.2.1 => I fixed it, now it\'s : ' . $apacheGroup . "\n\n";
+        					} else {
+        						echo '2.2.2.2 => Can\'t fix it. Don\'t have permission to make a chown.' . "\n\n";
+        					}
+        				}
+        			}
+        		
+        			$perms = fileperms($file);
+        		
+        			// fix specific Centurion's perms for file
+        			$this->_osLinuxFixPerms($file, $perms);
+        		}
+        	}
+        	
+        }
+        
         
         
         //TODO: check Db
         //TODO: check chmod
     }
+    
+    
+    /**
+     * 
+     * Enter description here ...
+     * @param unknown_type $dir
+     * @param unknown_type $perms
+     */
+    private function _osLinuxFixPerms($path, $perms){
+    	 
+    	if (!($perms & 0x0020)) {
+    		echo '2.2.3.4 FATAL apache can\'t read in ' . $path . "\n";
+    		 
+    		$perms = $perms | 0x0020;
+    		 
+    		if (chmod($path, $perms)) {
+    			echo '2.2.3.4.1 => I fixed it' . "\n";
+    		} else {
+    			echo '2.2.3.4.1 => I can\'t fixed it' . "\n";
+    		}
+    	}
+    	if (!($perms & 0x0010)) {
+    		echo '2.2.3.5 FATAL apache can\'t write in ' . $path . "\n";
+    		 
+    		$perms = $perms | 0x0010;
+    		 
+    		if (chmod($path, $perms)) {
+    			echo '2.2.3.5.1 => I fixed it' . "\n";
+    		} else {
+    			echo '2.2.3.5.1 => I can\'t fixed it' . "\n";
+    		}
+    	}
+    	if (!(($perms & 0x0008))) {
+    		echo '2.2.3.6 FATAL apache can\'t execute in ' . $path . "\n";
+    		 
+    		$perms = $perms | 0x0008;
+    		 
+    		if (chmod($path, $perms)) {
+    			echo '2.2.3.6.1 => I fixed it' . "\n";
+    		} else {
+    			echo '2.2.3.6.1 => I can\'t fixed it' . "\n";
+    		}
+    	}
+    	 
+    	if ($perms & 0x0004) {
+    		echo '2.2.3.1 Warning other can read in ' . $path . "\n";
+    		 
+    		$perms = $perms & ~0x0004;
+    		 
+    		if (chmod($path, $perms)) {
+    			echo '2.2.3.1.1 => I fixed it' . "\n";
+    		} else {
+    			echo '2.2.3.1.1 => I can\'t fixed it' . "\n";
+    		}
+    	}
+    	if ($perms & 0x0002) {
+    		echo '2.2.3.2 Warning other can write in ' . $path . "\n";
+    		 
+    		$perms = $perms & ~0x0002;
+    		 
+    		if (chmod($path, $perms)) {
+    			echo '2.2.3.2.1 => I fixed it' . "\n";
+    		} else {
+    			echo '2.2.3.2.1 => I can\'t fixed it' . "\n";
+    		}
+    	}
+    	 
+    	if (($perms & 0x0001)) {
+    		echo '2.2.3.3 FATAL other can execute in ' . $path . "\n";
+    		 
+    		$perms = $perms & ~0x0001;
+    		 
+    		if (chmod($path, $perms)) {
+    			echo '2.2.3.3.1 => I fixed it' . "\n";
+    		} else {
+    			echo '2.2.3.3.1 => I can\'t fixed it' . "\n";
+    		}
+    	}
+    }
+    
+    
     
     /**
      * 

@@ -7,7 +7,7 @@ if (isset($_GET['removeMe'])) {
     rename('../index.php_next', '../index.php');
 
     include_once '../../library/Centurion/File/System.php';
-    Centurion_File_System::rmdir('.');
+    Centurion_File_System::rmdir(__DIR__);
     header('Location: ../index/installation-complete');
     die();
 }
