@@ -74,8 +74,8 @@ p.field-description {           margin:0; padding:5px; font:italic normal 11px/n
 
 .form-border-top {              border-top:solid 1px #eee; }
 .form-header
-.image-preview {                box-shadow: 0px 0px 15px #bbb }
-
+.image-preview {                -moz-box-shadow: 0px 0px 15px #bbb; -webkit-box-shadow:0px 0px 15px #bbb ; box-shadow: 0px 0px 15px #bbb ;
+                                max-height: 400px; max-width:100%; display:block; margin: 0 auto; }
 
 /* warning */
 .form-main .form-group
