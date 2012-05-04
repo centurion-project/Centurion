@@ -78,4 +78,20 @@ class Media_Form_Model_Admin_File2 extends Media_Form_Model_Admin_File
         }
     }
 
+    public function _onPopulateWithInstance()
+    {
+        $instance = $this->getInstance();
+        $info = new Centurion_Form_Element_Info(array(
+            'disableTranslator' => true,
+            'name'  => 'thumbnail',
+            'label' => null,
+            'value' => '<img class="image-preview" src="'.$instance->getStaticUrl().'" />',
+            'escape' => false
+        ), 'thumbnail');
+        $info->setAttrib('large', true);
+        $this->addElement($info, 'thumbnail');
+
+        $this->removeElement($this->getFilename()->getName());
+    }
+
 }
