@@ -414,7 +414,7 @@ abstract class Centurion_Form_Model_Abstract extends Centurion_Form
      * Save the form and attached model.
      *
      * @todo implement multiple database
-     * @return Centurion_Db_Table_Abstract
+     * @return Centurion_Db_Table_Row_Abstract
      */
     public function save($adapter = null)
     {
