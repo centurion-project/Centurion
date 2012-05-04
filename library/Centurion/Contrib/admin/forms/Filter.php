@@ -112,16 +112,11 @@ class Admin_Form_Filter extends Centurion_Form
                     $element = $this->createElement($checkboxType, $key, array('label' => $label));
 
                     if (!isset($filterData['data'])) {
-<<<<<<< HEAD
-=======
-                        if(!$this->_table) break;
->>>>>>> fj/feature-mediacenter
                         $manyDependentTables = $this->_table->info('manyDependentTables');
                         if (isset($manyDependentTables[$key])) {
                             $refRowSet = Centurion_Db::getSingletonByClassName($manyDependentTables[$key]['refTableClass'])->fetchAll();
                             $filterData['data'] = array();
                             foreach ($refRowSet as $refRow) {
-<<<<<<< HEAD
                                 //TODO: this doesn't work with multiple primary key
                                 $filterData['data'][$refRow->pk] = $refRow->__toString();
                             }
@@ -140,11 +135,6 @@ class Admin_Form_Filter extends Centurion_Form
                             asort($_tmpData);
                             //Add before a joker to disable this filter
                             $filterData['data'] = array('' => $this->_translate('All')) + $_tmpData;
-=======
-                                $filterData['data'][$refRow->id] = $refRow->__toString();
-                            }
-                            asort($filterData['data']);
->>>>>>> fj/feature-mediacenter
                         }
                     }
 
