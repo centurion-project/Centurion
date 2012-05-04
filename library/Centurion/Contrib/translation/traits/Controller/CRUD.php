@@ -18,6 +18,7 @@ class Translation_Traits_Controller_CRUD extends Translation_Traits_Controller
                     'label' => $this->view->translate('Missing translation'),
                     'type' => Centurion_Controller_CRUD::COLS_ROW_FUNCTION,
                     'function' => 'getMissingTranslation',
+                    'sort' => false
             );
             $this->_displays = $displays;
         } catch (Exception $e) {
@@ -65,9 +66,11 @@ class Translation_Traits_Controller_CRUD extends Translation_Traits_Controller
     public function preDispatch()
     {
         $languageTable = Centurion_Db::getSingleton('translation/language');
+        $languageName = array_flip(Zend_Locale_Data_Translation::$languageTranslation);
+        
         $languagesArray = array();
         foreach ($languageTable->fetchAll() as $lang) {
-            $languagesArray[$lang->pk] = $lang->locale;
+            $languagesArray[$lang->pk] = $languageName[$lang->locale];
         }
 
         try {

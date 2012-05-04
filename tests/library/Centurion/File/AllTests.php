@@ -16,7 +16,7 @@ class Centurion_File_AllTests
     public static function suite ()
     {
         $suite = new PHPUnit_Framework_TestSuite('Centurion file system');
-        //$suite->addTestSuite('Centurion_File_System');
+        $suite->addTestSuite('Centurion_File_SystemTest');
         return $suite;
     }
 }

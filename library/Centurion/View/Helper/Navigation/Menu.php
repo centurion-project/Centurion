@@ -28,6 +28,8 @@
  */
 class Centurion_View_Helper_Navigation_Menu extends Zend_View_Helper_Navigation_Menu
 {
+    protected $_separator = null;
+
     /**
      * Returns an HTML string containing an 'a' element for the given page if
      * the page's href is not empty, and a 'span' element if it is empty
@@ -163,11 +165,11 @@ class Centurion_View_Helper_Navigation_Menu extends Zend_View_Helper_Navigation_
                 $html .= $myIndent . '    </li>' . self::EOL;
             } else {
                 // close previous li tag
-                $html .= $myIndent . '    </li>' . self::EOL;
+                $html .= $myIndent . $this->getSeparator() . '    </li>' . self::EOL;
             }
 
             // render li tag and page
-            $liClass = $page->isActive() ? ' class="active"' : '';
+            $liClass = $page->isActive(true) ? ' class="active"' : '';
             $html .= $myIndent . '    <li' . $liClass . '>' . self::EOL
                    . $myIndent . '        ' . $this->htmlify($page) . self::EOL;
 
@@ -186,5 +188,16 @@ class Centurion_View_Helper_Navigation_Menu extends Zend_View_Helper_Navigation_
         }
 
         return $html;
+    }
+
+    public function setSeparator($separator = null)
+    {
+        $this->_separator = $separator;
+        return $this;
+    }
+
+    public function getSeparator()
+    {
+        return $this->_separator;
     }
 }

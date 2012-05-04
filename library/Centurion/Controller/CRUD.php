@@ -37,11 +37,14 @@ class Centurion_Controller_CRUD extends Centurion_Controller_AGL
      */
     protected $_form = null;
 
+    /**
+     * @var string The name of class to instantiate
+     */
+    protected $_formClassName = null;
+
     protected $_formViewScript;
 
     protected $_rowActions;
-
-    protected $_dateFormat = null;
 
     protected $_cacheTagName = array();
 
@@ -207,7 +210,9 @@ class Centurion_Controller_CRUD extends Centurion_Controller_AGL
                 throw new Centurion_Controller_Action_Exception("Empty or invalid property _formClassName");
 
             $this->_form = new $this->_formClassName(array('method' => Centurion_Form::METHOD_POST));
-
+            if(method_exists($this->_form, 'setDateFormat')){ //For form whom not inherits of Centurion_Form_Model
+                $this->_form->setDateFormat($this->_dateFormatIso, $this->_timeFormatIso);
+            }
             $this->_form->cleanForm();
             $action = $this->_helper->url->url(array_merge($this->_extraParam,
                                                            array('controller' => $this->_request->getControllerName(),
@@ -414,6 +419,16 @@ class Centurion_Controller_CRUD extends Centurion_Controller_AGL
     {
         $action = $this->_getParam('event', 'index');
 
+        if (!method_exists($this, $action . 'Action')) {
+            $this->_forward('index');
+        }
+
+        $permission = sprintf('%s_%s_%s', $this->getRequest()->getModuleName(),
+            $this->getRequest()->getControllerName(),
+            strtolower($action));
+
+        $this->_helper->aclCheck($permission);
+
 //        if (!$this->_helper->getHelper('ticket')->isValid()) {
 //            return $this->_forward('index', null, null, array('errors' => array($this->view->translate('Invalid ticket'))));
 //        }
@@ -425,17 +440,7 @@ class Centurion_Controller_CRUD extends Centurion_Controller_AGL
             $rowset[] = $this->_getModel()->findOneById($id);
         }
 
-        $permission = sprintf('%s_%s_%s', $this->getRequest()->getModuleName(),
-                                              $this->getRequest()->getControllerName(),
-                                              strtolower($action));
-
-        $this->_helper->aclCheck($permission);
-
-        if (method_exists($this, $action . 'Action')) {
-            $this->{$action . 'Action'}($rowset);
-        } else {
-            $this->_forward('index');
-        }
+        $this->{$action . 'Action'}($rowset);
     }
 
     protected function _cleanCache()
@@ -517,7 +522,7 @@ class Centurion_Controller_CRUD extends Centurion_Controller_AGL
     
     public function generateCsvAction($itemPerPage = 0, $page = 0)
     {
-    	Centurion_Traits_Common::checkTraitOverload($this, 'indexAction', array(), false);
+        Centurion_Traits_Common::checkTraitOverload($this, 'indexAction', array(), false);
 
         $this->_getParams();
 
@@ -532,32 +537,32 @@ class Centurion_Controller_CRUD extends Centurion_Controller_AGL
         $naturals = $modelTable->info(Centurion_Db_Table_Abstract::COLS);
         
         $tabKeyUnset = array();
-        foreach ($this->_displays as $key => $options) {	
-        	if (is_array($options) && $options['type'] !== self::COLS_ROW_COL)
-        		$tabKeyUnset[] =  $key;
-        	else
-				$headers[] = $options;
+        foreach ($this->_displays as $key => $options) {    
+            if (is_array($options) && $options['type'] !== self::COLS_ROW_COL)
+                $tabKeyUnset[] =  $key;
+            else
+                $headers[] = $options;
         }
         
         $select = $this->generateList();
         
         //unset useless columns
         foreach ($select as $key => $row) {
-        	unset($row['checkbox']);
-        	unset($row['row']);
-        	foreach ($tabKeyUnset as $keyUnset => $rowUnset)
-        	{
-        		unset($row[$rowUnset]);
-        		
-        	}
-        	$rowSet[] = $row;
+            unset($row['checkbox']);
+            unset($row['row']);
+            foreach ($tabKeyUnset as $keyUnset => $rowUnset)
+            {
+                unset($row[$rowUnset]);
+                
+            }
+            $rowSet[] = $row;
         }        
 
         //generate csv
-   		if (null !== $rowSet) {		
-	    	$this->getHelper('Csv')->direct($rowSet, $headers);
-	    	
-   		}
-    	
+       if (null !== $rowSet) {
+        $this->getHelper('Csv')->direct($rowSet, $headers);
+
+       }
+        
     }
 }

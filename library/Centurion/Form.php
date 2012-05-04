@@ -558,7 +558,9 @@ class Centurion_Form extends Zend_Form implements Centurion_Traits_Traitsable
         $this->_order[$name] = $this->_displayGroups[$name]->getOrder();
         $this->_orderUpdated = true;
 
-        $this->_displayGroups[$name]->setDecorators($this->defaultDisplayGroupDecorators);
+        if (!isset($options['decorators'])) {
+            $this->_displayGroups[$name]->setDecorators($this->defaultDisplayGroupDecorators);
+        }
 
         return $this;
     }
@@ -738,7 +740,7 @@ class Centurion_Form extends Zend_Form implements Centurion_Traits_Traitsable
     public function render(Zend_View_Interface $view = null)
     {
         if (null == $this->getElement('formId'))
-            $this->addELement('hidden', 'formId', array('value' => $this->getFormId()));
+            $this->addElement('hidden', 'formId', array('value' => $this->getFormId()));
         
         if ($this->_clear) {
             $this->renderError();

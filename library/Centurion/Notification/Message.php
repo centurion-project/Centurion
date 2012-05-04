@@ -1,14 +1,13 @@
 <?php
 class Centurion_Notification_Message
 {
-
     const INFO = 'info';
     const WARNING = 'warning';
     const ERROR = 'info';
     
-    protected $_code;
+    protected $_code = null;
     
-    protected $_type;
+    protected $_type = null;
     
     protected $_message;
     
@@ -18,6 +17,8 @@ class Centurion_Notification_Message
         
         if (null !== $code)
             $this->_code = $message;
+
+        $this->type = $type;
     }
     
     public function getMessage()

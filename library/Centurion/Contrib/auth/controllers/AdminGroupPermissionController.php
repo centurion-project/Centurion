@@ -2,7 +2,7 @@
 
 class Auth_AdminGroupPermissionController extends Centurion_Controller_Action
 {
-    public function init()
+    public function preDispatch()
     {
         $this->_helper->authCheck();
         $this->_helper->aclCheck();

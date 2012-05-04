@@ -26,7 +26,7 @@
  * @license     http://centurion-project.org/license/new-bsd     New BSD License
  * @author      Florent Messa <florent.messa@gmail.com>
  */
-class Centurion_Controller_Action_Helper_Csv extends Zend_Controller_Action_Helper_Abstract
+class Centurion_Controller_Action_Helper_Csv extends Centurion_Controller_Action_Helper_Extract
 {
     const DEFAULT_FILENAME = 'export.csv';
     const DEFAULT_DELIMITER = ';';
@@ -43,31 +43,39 @@ class Centurion_Controller_Action_Helper_Csv extends Zend_Controller_Action_Help
         'encoding'       =>  self::DEFAULT_ENCODING
     );
 
+
     /**
      * Convert a rowset to a CSV view.
      *
      * @param Centurion_Db_Table_Rowset_Abstract|array $rowset
      * @param array $columns Header of the file
      * @param string $options Override default options
+     * @param boolean $noSend : To return the file name rather than sending it to the client
      */
-    public function direct($rowset, array $columns, $options = array(), $header = null)
+    public function direct($rowset, array $columns, $options = array(), $header = null, $sendToBrowser = true)
     {
         if (!$rowset instanceof Centurion_Db_Table_Rowset_Abstract && !is_array($rowset)) {
             throw new Centurion_Exception('First parameter must be a Centurion valid rowset or an array');
         }
 
         $options = array_merge(self::$options, $options);
-        $handler = tmpfile();
+        $handler = null;
+        $tmpName = null;
+
+        //To create a temp file
+        $tmpName = tempnam(sys_get_temp_dir(), 'csv-export_' . md5(rand()) . '.csv');
+        $handler = fopen($tmpName, 'w');
+
         if (null !== $header) {
             fputcsv($handler, $this->_convertFields($header, $options['encoding']), $options['delimiter']);
         }
 
         $keys = array_keys($columns);
         fputcsv($handler, $this->_convertFields(array_values($columns), $options['encoding']), $options['delimiter']);
-        foreach ($rowset as $key => $row) {
+        foreach ($rowset as $row) {
             $fields = array();
             if ($row instanceof Centurion_Db_Table_Row_Abstract) {
-                foreach ($keys as $key => $value) {
+                foreach ($keys as $value) {
                     $fields[] = $row->{$value};
                 }
             } else {
@@ -79,6 +87,11 @@ class Centurion_Controller_Action_Helper_Csv extends Zend_Controller_Action_Help
             fputcsv($handler, $fields, $options['delimiter']);
         }
 
+        if (!$sendToBrowser){
+            fclose($handler);
+            return $tmpName;
+        }
+
         $this->getActionController()->getHelper('layout')->disableLayout();
         $this->getActionController()->getHelper('viewRenderer')->setNoRender(true);
 
@@ -86,29 +99,15 @@ class Centurion_Controller_Action_Helper_Csv extends Zend_Controller_Action_Help
 
         fseek($handler, 0);
 
-        $this->getResponse()->setHeader('Content-disposition', sprintf('attachment; filename=%s', $options['filename']))
-                            ->setHeader('Content-Type', sprintf('application/force-download; charset=%s', $options['encoding']))
-                            ->setHeader('Content-Transfer-Encoding', 'application/octet-stream\n')
-                            ->setHeader('Content-Length', $size)
-                            ->setHeader('Pragma', 'no-cache')
-                            ->setHeader('Cache-Control', 'must-revalidate, post-check=0, pre-check=0, public')
-                            ->setHeader('Expires', '0')
+        $this->getResponse()->setHeader('Content-disposition', sprintf('attachment; filename=%s', $options['filename']), true)
+                            ->setHeader('Content-Type', sprintf('application/force-download; charset=%s', $options['encoding']), true)
+                            ->setHeader('Content-Transfer-Encoding', 'application/octet-stream\n', true)
+                            ->setHeader('Content-Length', $size, true)
+                            ->setHeader('Pragma', 'no-cache', true)
+                            ->setHeader('Cache-Control', 'must-revalidate, post-check=0, pre-check=0, public', true)
+                            ->setHeader('Expires', '0', true)
                             ->sendHeaders();
         fpassthru($handler);
         fclose($handler);
-    }
-
-    protected function _convertEncoding($string, $encoding)
-    {
-        return mb_convert_encoding($string, $encoding, 'UTF-8');
-    }
-
-    protected function _convertFields(array $fields, $encoding)
-    {
-        foreach ($fields as $key => &$value) {
-            $value = $this->_convertEncoding($value, $encoding);
-        }
-
-        return $fields;
     }
 }

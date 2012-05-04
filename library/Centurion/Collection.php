@@ -23,6 +23,7 @@
  * @copyright   Copyright (c) 2008-2011 Octave & Octave (http://www.octaveoctave.com)
  * @license     http://centurion-project.org/license/new-bsd     New BSD License
  * @author      Florent Messa <florent.messa@gmail.com>
+ * @author      Laurent Chenay <lchenay@@gmail.com>
  */
 class Centurion_Collection extends Centurion_Access implements Countable, IteratorAggregate
 {
@@ -31,13 +32,20 @@ class Centurion_Collection extends Centurion_Access implements Countable, Iterat
      *
      * @var array
      */
-    protected $_data = null;
+    protected $_data = array();
 
+    /**
+     * @param array $data
+     */
     public function __construct($data = array())
     {
         $this->setData($data);
     }
 
+    /**
+     * @param array $data
+     * @return Centurion_Collection
+     */
     public function setData(array $data)
     {
         $this->_data = $data;
@@ -45,11 +53,17 @@ class Centurion_Collection extends Centurion_Access implements Countable, Iterat
         return $this;
     }
 
+    /**
+     * @return int
+     */
     public function count()
     {
         return count($this->_data);
     }
 
+    /**
+     * @return ArrayIterator
+     */
     public function getIterator()
     {
         return new ArrayIterator($this->_data);
@@ -67,6 +81,7 @@ class Centurion_Collection extends Centurion_Access implements Countable, Iterat
 
     /**
      * Get the first record in the collection.
+     * @return mixed
      */
     public function getFirst()
     {
@@ -75,6 +90,7 @@ class Centurion_Collection extends Centurion_Access implements Countable, Iterat
 
     /**
      * Get the last record in the collection.
+     * @return mixed
      */
     public function getLast()
     {
@@ -83,14 +99,16 @@ class Centurion_Collection extends Centurion_Access implements Countable, Iterat
 
     /**
      * Get the last record in the collection.
+     * @return mixed
      */
     public function end()
     {
-        return end($this->_data);
+        return $this->getLast();
     }
 
     /**
      * Get the current key.
+     * @return mixed
      */
     public function key()
     {
@@ -108,12 +126,20 @@ class Centurion_Collection extends Centurion_Access implements Countable, Iterat
         return isset($this->_data[$key]);
     }
 
+    /**
+     * @param mixed $value
+     * @return Centurion_Collection
+     */
     public function push($value)
     {
         array_push($this->_data, $value);
         return $this;
     }
 
+    /**
+     * @param mixed $value
+     * @return Centurion_Collection
+     */
     public function unshift($value)
     {
         array_unshift($this->_data, $value);
@@ -167,6 +193,7 @@ class Centurion_Collection extends Centurion_Access implements Countable, Iterat
     public function remove($key)
     {
         if (isset($this->{$key})) {
+            //TODO: check if it's really necessary
             if (is_object($this->_data[$key]) && (method_exists($this->_data[$key], '__destruct'))) {
                 $this->_data[$key]->__destruct();
             }

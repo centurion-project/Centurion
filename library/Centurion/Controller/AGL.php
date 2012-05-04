@@ -141,7 +141,8 @@ class Centurion_Controller_AGL extends Centurion_Controller_Action
      * array(
      *  'key' => array(
      *          'label' => 'label already translated',
-     *          'sort'  => 'col'|array('object', 'callback function to sort'),
+     *          'sort'  => 'col'|array('object', 'callback function to sort'), (if unset, the key will be used as col)
+     *          'sortable' => 'true|false', (if unset true will be used as value)
      *          'type'  => self::COLS_ROW_COL,
      *          'column'=> 'my_column',
      *          'filters' => array(
@@ -171,10 +172,20 @@ class Centurion_Controller_AGL extends Centurion_Controller_Action
     
     protected $_showCheckbox = false;
 
+    protected $_dateFormat = null;
+    protected $_dateFormatIso = null;
+    protected $_timeFormatIso = null;
+
     public function __construct(Zend_Controller_Request_Abstract $request, Zend_Controller_Response_Abstract $response, array $invokeArgs = array())
     {
-        $isoFormat = Zend_Locale_Data::getContent(null, 'date', array('gregorian', 'short'));
-        $this->_dateFormat = Centurion_Locale_Format::convertIsoToDatepickerFormat($isoFormat);
+        if (null == $this->_dateFormat) {
+            $this->_dateFormatIso = Zend_Locale_Data::getContent(null, 'date', array('gregorian', 'short'));
+            $this->_dateFormat = Centurion_Locale_Format::convertIsoToDatepickerFormat($this->_dateFormatIso);
+        } else {
+            $this->_dateFormatIso = Centurion_Locale_Format::convertDatepickerToIsoFormat($this->_dateFormat);
+        }
+        
+        $this->_timeFormatIso = Zend_Locale_Data::getContent(null, 'time', array('gregorian', 'short'));
 
         parent::__construct($request, $response, $invokeArgs);
         
@@ -288,7 +299,7 @@ class Centurion_Controller_AGL extends Centurion_Controller_Action
                 if (is_array($options) && isset($options['sort']) && is_array($options['sort'])) {
                     // call function to sort COLS_CALLBACK
                     call_user_func($options['sort'], $select, $this->_order);
-                } else if ($options['sort'] instanceof Zend_Db_Expr) {
+                } else if (is_array($options) && isset($options['sort']) && $options['sort'] instanceof Zend_Db_Expr) {
                      $select->order(new Zend_Db_Expr($options['sort'] . ' ' . $this->_order));
                 } else {
                     if (is_string($options) || !isset($options['column'])) {
@@ -313,13 +324,19 @@ class Centurion_Controller_AGL extends Centurion_Controller_Action
             $filter = $this->getFilter();
             if ($filter->isValid($this->_request->getParams())) {
                 $select->filter($filter->getSqlFilter());
-                
+                // TODO use getPrimary instead
                 if (!isset($this->_noUseGroupe))
-                    $select->group($select->getTable()->info('name') . '.id');
+                    $select->group($select->getTable()->info('name').'.id');
             }
         }
 
         return $this->_select;
+    }
+
+    public function resetFilter()
+    {
+        $session = new Zend_Session_Namespace(sprintf('crud_%s_%s', $this->_request->getModuleName(), $this->_request->getControllerName()));
+        $session->unsetAll();
     }
 
     protected function _preGenerateList()
@@ -440,7 +457,7 @@ class Centurion_Controller_AGL extends Centurion_Controller_Action
                             if ($value == '0000-00-00 00:00:00' || $value == null) {
                                 $value = '';
                             }else {
-                                $date = new Zend_Date($value, 'YYYY-MM-dd HH:mm:ss');
+                                $date = new Zend_Date($value, Centurion_Date::MYSQL_DATETIME);
                                 $value = $date->toString(Zend_Date::DATE_MEDIUM);
                             }
                         }

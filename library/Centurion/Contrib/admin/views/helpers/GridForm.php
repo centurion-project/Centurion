@@ -22,8 +22,9 @@ class Admin_View_Helper_GridForm extends Zend_View_Helper_Abstract
             self::$_firstTime = false;
         }
 
-        if (!isset($data['elements']) || empty($data['elements']))
+        if (!isset($data['elements']) || empty($data['elements'])) {
             throw new Centurion_Exception('No element provided');
+        }
 
         $data['elements'] = (array) $data['elements'];
 
@@ -74,18 +75,20 @@ class Admin_View_Helper_GridForm extends Zend_View_Helper_Abstract
             $form->addInDisplayGroup($data['elements'] , $class, array('class' => 'form-'.substr($class, 1)));
             
             foreach ($data['elements'] as $key => $element) {
-                $element = $form->getElement($element);
-                $element->setLabel(null);
-                $element->removeDecorator('label');
+                if (null !== ($element = $form->getElement($element))) {
+                    $element->setLabel(null);
+                    $element->removeDecorator('label');
+                }
             }
 
             return true;
         }
         
-        if (!isset($data['label']))
+        if (!isset($data['label'])) {
             $name = uniqid();
-        else
+        } else {
             $name = Centurion_Inflector::slugify($data['label']);
+        }
         $name = $name . '_group';
         $form->addDisplayGroup($data['elements'], $name, array('class' => 'form-group'));
         $displayGroup = $form->getDisplayGroup($name);
@@ -100,28 +103,5 @@ class Admin_View_Helper_GridForm extends Zend_View_Helper_Abstract
         }
 
         $form->addInDisplayGroup(array($name), $class, array('class' => 'form-'.substr($class, 1)));
-                
-    }
-
-    public function makeOnOff(Centurion_Form $form)
-    {
-        if (null !== ($displayGroups = $form->getDisplayGroup('_aside'))) {
-            foreach ($form->getDisplayGroup('_aside') as $displayGroup) {
-                foreach ($displayGroup->getElements() as $name => $element) {
-                    if (!strncmp($element->getName(), 'is_', 3) || !strncmp($element->getName(), 'can_be_', 7)) {
-                        $onLabel = $this->view->translate('On');
-                        $offLabel = $this->view->translate('Off');
-
-                        $value = $element->getValue();
-
-                        $element = new Zend_Form_Element_Select(array('disableTranslator' => true, 'name' => $name, 'class' => 'field-switcher', 'label' => $element->getLabel(), 'decorators' => $form->defaultElementDecorators));
-                        $element->addMultiOption('1', $onLabel);
-                        $element->addMultiOption('0', $offLabel);
-                        $element->setValue($value);
-                        $displayGroup->addElement($element);
-                    }
-                }
-            }
-        }
     }
 }

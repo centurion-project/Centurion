@@ -33,7 +33,7 @@ class Centurion_Form_Model_Validator_AlreadyTaken extends Zend_Validate_Abstract
     /**
      * Model DbTable.
      *
-     * @var Centurion_Db_Table_Abstract
+     * @var string|Centurion_Db_Table_Abstract
      */
     protected $_model = null;
     
@@ -61,6 +61,7 @@ class Centurion_Form_Model_Validator_AlreadyTaken extends Zend_Validate_Abstract
      * @param  mixed $value
      * @param  mixed $context
      * @return boolean
+     * @TODO use exists db and not get to avoid a real query
      */
     public function isValid($value, $context = null)
     {

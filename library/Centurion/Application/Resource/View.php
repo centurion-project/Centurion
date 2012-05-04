@@ -36,9 +36,13 @@ class Centurion_Application_Resource_View extends Zend_Application_Resource_View
     public function getView()
     {
         if (null === $this->_view) {
-            $this->_view = new Centurion_View($this->getOptions());
+            $options = $this->getOptions();
+            $this->_view = new Centurion_View($options);
+
+            if(isset($options['doctype'])) {
+                $this->_view->doctype()->setDoctype(strtoupper($options['doctype']));
+            }
         }
-        
         return $this->_view;
     }
 }

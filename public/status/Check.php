@@ -54,30 +54,43 @@ class Check {
 
     protected function _checkApache()
     {
-        if (version_compare(PHP_VERSION, '5.3.0') >= 0) {
-            $this->_apacheVersion = strstr($_SERVER['SERVER_SOFTWARE'], ' ', true);
-        } else {
-            $this->_apacheVersion = substr($_SERVER['SERVER_SOFTWARE'], 0, strpos($_SERVER['SERVER_SOFTWARE'], ' '));
-        }
 
-        $this->_apacheVersion = substr(strstr($this->_apacheVersion, '/'), 1);
+        $this->_apacheVersion = $_SERVER['SERVER_SOFTWARE'];
 
-        if (version_compare($this->_apacheVersion, '2.') >= 0) {
+        if ($this->_apacheVersion == 'Apache') {
             $this->_checklist[] = array(
                 'code' => 1,
-                'canBeBetter' => false,
-                'isNotSecure' => false,
-                'text' => 'Apache version is <strong>'  . $this->_apacheVersion . '</strong>',
-                'alt' => '',
-            );
-        } else {
-            $this->_checklist[] = array(
-                'code' => 0,
                 'canBeBetter' => true,
                 'isNotSecure' => false,
-                'text' => 'Apache version is <strong>'  . $this->_apacheVersion . '</strong>',
-                'alt' => '',
+                'text' => 'Apache version is <strong>unknown</strong>!',
+                'alt' => 'Apache version is <strong>unknown</strong>. Please verify manually that your are above 2.0',
             );
+        } else {
+            if (false !== ($pose = strpos($this->_apacheVersion, ' '))) {
+                $this->_apacheVersion = substr($this->_apacheVersion, 0, $pose);
+            }
+
+            if (false !== ($pose = strpos($this->_apacheVersion, '/'))) {
+                $this->_apacheVersion = substr($this->_apacheVersion, $pose + 1);
+            }
+
+            if (version_compare($this->_apacheVersion, '2.') >= 0) {
+                $this->_checklist[] = array(
+                    'code' => 1,
+                    'canBeBetter' => false,
+                    'isNotSecure' => false,
+                    'text' => 'Apache version is <strong>'  . $this->_apacheVersion . '</strong>',
+                    'alt' => '',
+                );
+            } else {
+                $this->_checklist[] = array(
+                    'code' => 0,
+                    'canBeBetter' => true,
+                    'isNotSecure' => false,
+                    'text' => 'Apache version is <strong>'  . $this->_apacheVersion . '</strong>',
+                    'alt' => '',
+                );
+            }
         }
     }
 
@@ -367,11 +380,41 @@ class Check {
         }
     }
 
+    public function _checkRedirect()
+    {
+        $url = 'http://' . $_SERVER['SERVER_NAME'];
+        if ($_SERVER['SERVER_PORT'] !== 80) {
+            $url .= ':' . $_SERVER['SERVER_PORT'];
+        }
+
+        $url .= str_replace('/status', '/test_redirect', $_SERVER['REQUEST_URI']);
+
+        $url .= '?noredirect=true';
+
+        $fp = @file_get_contents($url);
+
+        if ($fp === 'Mod_Rewrite works!') {
+            $this->_checklist[] = array(
+                'code' => 1,
+                'canBeBetter' => false,
+                'isNotSecure' => true,
+                'text' => 'The rewrite works',
+                'alt'  => '',
+            );
+        } else {
+            $this->_checklist[] = array(
+                'code' => 1,
+                'canBeBetter' => true,
+                'isNotSecure' => true,
+                'text' => 'Your mod_rewrite seems to not worked. <a href="' . $url . '" target="_blank">Click here</a> to check',
+                'alt' => 'Click on the link above. If it\'s not worked check mod_rewrite is enabled, or that the directive AllowOverride All is set to the application root.',
+            );
+        }
+    }
+
     protected function _checkDocumentRoot()
     {
-        $pos = strrpos($_SERVER['DOCUMENT_ROOT'], '/public');
-        
-        if ($pos == false || substr($_SERVER['DOCUMENT_ROOT'], $pos) !== '/public') {
+        if (!preg_match('`(/|\\\)public(/|\\\)?$`', $_SERVER['DOCUMENT_ROOT'])) {
             $this->_checklist[] = array(
                 'code' => -1,
                 'canBeBetter' => true,
@@ -413,6 +456,8 @@ class Check {
         $this->_checkPhpExtensions();
         $this->_checkHtaccess();
         $this->_checkApplicationEnv();
+
+        $this->_checkRedirect();
 
         $this->_checkDbConnect();
         $this->_checkDbTable();

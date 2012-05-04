@@ -27,6 +27,7 @@
  * @author      Florent Messa <florent.messa@gmail.com>
  * @author      Laurent Chenay <lc@octaveoctave.com>
  * @todo        declare columns which represent model and primary key in our model.
+ * @todo        Move it to a trait
  */
 class Centurion_Db_Table_Row_Proxy extends Centurion_Db_Table_Row_Abstract
 {

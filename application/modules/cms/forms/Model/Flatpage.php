@@ -1,6 +1,6 @@
 <?php
 
-class Cms_Form_Model_Flatpage extends Centurion_Form_Model_Abstract //implements Translation_Traits_Form_Model_Interface
+class Cms_Form_Model_Flatpage extends Centurion_Form_Model_Abstract implements Translation_Traits_Form_Model_Interface
 {
     public function __construct($options = array(), Centurion_Db_Table_Row_Abstract $instance = null)
     {
@@ -86,30 +86,8 @@ class Cms_Form_Model_Flatpage extends Centurion_Form_Model_Abstract //implements
         if ($instance !== null) {
             if ($instance->isVisible())
                 $this->addElement('info', 'link_front', array('escape' => false, 'label' => 'Show it in front', 'value' => '<a href="' . $instance->permalink . '">Show</a>'));
-
-            if (null !== $this->getElement('published_at') && $instance !== null) {
-                // Format publish_date : YYYY-MM-dd HH:mm:ss > MM/dd/yyyy
-                $to = Zend_Locale_Data::getContent(null, 'datetime', array('gregorian', 'short'));
-                $posted_at = new Zend_Date($this->getElement('published_at')->getValue(), 'YYYY-MM-dd HH:mm:ss');
-                $this->getElement('published_at')->setValue($posted_at->get($to));
-            }
         }
         return $this;
-    }
-
-    public function saveInstance($values = null)
-    {
-        if ($values === null) {
-            $values = $this->getValues();
-        }
-
-        $from = Zend_Locale_Data::getContent(null, 'datetime', array('gregorian', 'short'));
-        // Format publish_date : MM/dd/yyyy > YYYY-MM-dd HH:mm:ss
-        $posted_at              = new Zend_Date($values['published_at'], $from);
-        $values['published_at'] = $posted_at->get('YYYY-MM-dd HH:mm:ss');
-
-        $instance = parent::saveInstance($values);
-        return $instance;
     }
 
     protected function _onPopulateWithInstance($instance = null)

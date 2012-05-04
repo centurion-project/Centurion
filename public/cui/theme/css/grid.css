@@ -15,8 +15,7 @@ DATAS GRID */
 .datas tr.hover td {            background-color:#e5ecf9; }
 .datas tr.select td {           background-color:#ffc; }
 
-.datas th {                     margin:0; padding:7px 10px; text-align:left; font-weight:bold;
-                                background:url(../images/cell-separator.png) no-repeat left; }
+.datas th {                     margin:0; padding:7px 10px; text-align:left; font-weight:bold;}
 							
 .datas th a {                   margin:0; padding:0 16px 0 0; text-decoration:none; color:#5b5b5b; position:relative; zoom:1; }
 .datas th a:hover {             text-decoration:none; color:#5b5b5b; }
@@ -54,6 +53,7 @@ DATAS GRID */
 .medias .hover {                background:#e5ecf9; }
 .medias .select {               background:#ffc; }
 .medias .col-title {            margin-bottom:5px; color:#06c; font-size:12px; }
+.medias .col-infos {            margin-bottom:5px; font-size:12px; }
 .medias ul.actions {            position:absolute; bottom:8px; right:10px; }
 
 ul.actions li .tree-context {   width:100px; }
@@ -303,4 +303,5 @@ a.disabled:hover ins {          }
 @media screen and (-webkit-min-device-pixel-ratio:0) {
     .pages ul li .cells { display: block; margin-top:-29px; }
 }
+
 

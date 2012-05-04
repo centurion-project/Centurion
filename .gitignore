@@ -10,20 +10,22 @@
 /data/cache/output/*
 /data/cache/page/*
 /data/cache/tags/*
-/data/sessions/*
-
+/data/cache/config/*
 
 !/data/cache/class/.gitkeep
 !/data/cache/core/.gitkeep
 !/data/cache/output/.gitkeep
 !/data/cache/page/.gitkeep
 !/data/cache/tags/.gitkeep
+!/data/cache/config/.gitkeep
 
 /data/uploads/*
 /data/logs/*
 /data/indexes/*
 /data/build/*
 /data/locales/*
+/data/temp/*
+/data/sessions/*
 
 !/data/build/.gitkeep
 !/data/uploads/.gitkeep
@@ -34,6 +36,7 @@
 !/data/locales/translation.csv
 !/data/locales/csv/*
 !/data/sessions/.gitkeep
+!/data/temp/.gitkeep
 
 /public/files/*
 /public/cached/*

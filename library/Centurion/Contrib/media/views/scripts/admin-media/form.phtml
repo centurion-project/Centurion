@@ -1,0 +1,13 @@
+<?php
+
+$this->gridForm()->addHeader($this->form, array(
+    'elements'          => array($this->form->getFilename()->getName(), 'thumbnail')
+));
+
+$this->gridForm()->addMain($this->form, array(
+    'label'             => $this->translate('Tags'),
+    'elements'          => array('tags', 'newtags')
+));
+
+echo $this->partial('grid/_form.phtml', $this);
+

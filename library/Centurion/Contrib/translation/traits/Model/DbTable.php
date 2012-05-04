@@ -93,7 +93,7 @@ class Translation_Traits_Model_DbTable extends Core_Traits_Version_Model_DbTable
                 'onUpdate' => Zend_Db_Table_Abstract::CASCADE,
             );
 
-        Centurion_Signal::factory('on_select_joinInner')->connect(array($this, 'onJoinInner'));
+        Centurion_Signal::factory('on_select_joinInner')->connect(array($this, 'onJoinInner'), $this->_model);
     }
 
     public function getLocalizedColsPrefix()
@@ -167,7 +167,7 @@ class Translation_Traits_Model_DbTable extends Core_Traits_Version_Model_DbTable
         $originalCols = array();
         $childCols = array();
 
-        $spec = $this->getTranlationSpec();
+        $spec = $this->getTranslationSpec();
         //foreach ($this->_modelInfo[Centurion_Db_Table_Abstract::COLS] as $col) {
         foreach ($spec[Translation_Traits_Model_DbTable::TRANSLATED_FIELDS] as $col) {
             array_push($childCols, sprintf('%s.%s AS %s%s', $childName, $col, $this->_localizedColsPrefix, $col));

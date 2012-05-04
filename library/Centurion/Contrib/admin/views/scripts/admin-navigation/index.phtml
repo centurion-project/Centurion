@@ -27,7 +27,7 @@ $urls = array();
         foreach ($this->types as $type => $config):
 
            $extraParam = array();
-           $extraParam['_next'] = $this->url(array('action' => 'add-proxy', 'proxy_pk' => '___pk___', 'proxy_model' => '___model___'));
+           $extraParam['_next'] = urlencode($this->url(array('action' => 'add-proxy', 'proxy_pk' => '___pk___', 'proxy_model' => '___model___')));
            $url = $this->url(array_merge($config['urlNew'], $extraParam));
            $urls[] = '\'' . $type .'\' : "' . addslashes($url) . '"';
         endforeach;

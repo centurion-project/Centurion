@@ -3,12 +3,12 @@
     $this->headMeta()->appendHttpEquiv('Content-Type', 'text/html; charset=UTF-8')
                      ->appendHttpEquiv('Content-Language', 'fr-FR');
     $this->headLink()->headLink(array('rel' => 'favicon' , 'href' => '/images/favicon.ico'), 'PREPEND');
-    $this->headScript()->prependFile('/layouts/backoffice/js/all.js');
-    $this->headScript()->prependFile('/cui/jquery.CUI.js');
-    $this->headScript()->prependFile('/cui/libs/jquery.js');
-    $this->headScript()->prependFile('/cui/plugins/tinymce/tiny_mce_popup.js');
+    $this->headScript()->prependFile($baseUrl.'/layouts/backoffice/js/all.js');
+    $this->headScript()->prependFile($baseUrl.'/cui/jquery.CUI.js');
+    $this->headScript()->prependFile($baseUrl.'/cui/libs/jquery.js');
+    $this->headScript()->prependFile($baseUrl.'/cui/plugins/tinymce/tiny_mce_popup.js');
 
-    $this->headLink()->appendStylesheet('/layouts/backoffice/styles.css');
+    $this->headLink()->appendStylesheet($baseUrl.'/layouts/backoffice/styles.css');
 ?>
 <?php echo $this->doctype('HTML5') ?>
 <html>

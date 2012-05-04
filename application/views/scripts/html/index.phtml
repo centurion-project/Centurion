@@ -1,0 +1,7 @@
+<ul>
+<?php
+foreach ($this->methods as $method) :
+    echo '<li><a href="' . $this->url(array('action' => $method)) . '">'.$method.'</a></li>';
+endforeach;
+?>
+</ul>

@@ -26,6 +26,13 @@
  */
 class Centurion_Date extends Zend_Date
 {
+    /**
+     * MySQL DATETIME, DATE, TIME format
+     */
+    const MYSQL_DATETIME = 'yyyy-MM-dd HH:mm:ss';
+    const MYSQL_DATE = 'yyyy-MM-dd';
+    const MYSQL_TIME = 'HH:mm:ss';
+
     public static function getLocalizedToken($token, $locale)
     {
         return self::_getLocalizedToken($token, $locale);

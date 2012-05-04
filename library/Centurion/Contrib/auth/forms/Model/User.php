@@ -33,7 +33,7 @@ class Auth_Form_Model_User extends Centurion_Form_Model_Abstract
      *
      * @var array
      */
-    protected $_exclude = array('created_at', 'last_login', 'updated_at', 'algorithm', 'salt', 'first_name', 'last_name');
+    protected $_exclude = array('id', 'created_at', 'last_login', 'updated_at', 'algorithm', 'salt', 'first_name', 'last_name');
 
     /**
      * Constructor

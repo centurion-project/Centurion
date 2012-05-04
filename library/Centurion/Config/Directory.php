@@ -35,51 +35,62 @@ class Centurion_Config_Directory
 
     public static function mergeArrays($Arr1, $Arr2)
     {
-      foreach($Arr2 as $key => $value) {
-          if (is_string($key)) {
-            if (array_key_exists($key, $Arr1) && is_array($value)) {
-              $Arr1[$key] = self::mergeArrays($Arr1[$key], $Arr2[$key]);
+        foreach($Arr2 as $key => $value) {
+            if (is_string($key)) {
+                if (array_key_exists($key, $Arr1) && is_array($value)) {
+                    $Arr1[$key] = self::mergeArrays($Arr1[$key], $Arr2[$key]);
+                } else {
+                    $Arr1[$key] = $value;
+                }
             } else {
-              $Arr1[$key] = $value;
+                $Arr1[] = $value;
             }
-          } else {
-              $Arr1[] = $value;
-          }
-    
-      }
+        }
     
       return $Arr1;
-    
     }
+
     public static function loadConfig($path, $environment, $recursivelyLoadModuleConfig = false)
     {
         self::$_environment = $environment;
 
         if (is_string($path) && is_dir($path)) {
-            $config = array();
-
             $iterator = new Centurion_Iterator_Directory($path);
             $tabFile = array();
             foreach ($iterator as $file) {
-                if ($file->isDot())
+                if ($file->isDot()) {
                     continue;
-                $tabFile[$file->getPathName()] = $file->getPathName();
-            }
-            
-            ksort($tabFile);
-
-            foreach($tabFile as $key => $file) {
-                $suffix = strtolower(pathinfo($file, PATHINFO_EXTENSION));
-
-                switch ($suffix) {
-                    case 'ini':
-                    case 'xml':
-                    case 'php':
-                    case 'inc':
-                        $result = self::_loadConfig($file);
-                        $config = self::mergeArrays($config, $result);
-                        //$config = array_merge_recursive($config, $result);
                 }
+                $tabFile[] = $file->getPathName();
+            }
+
+            if (0 == count($tabFile)) {
+                return array();
+            }
+
+            sort($tabFile);
+
+            $backendOptions = array('cache_dir' => APPLICATION_PATH . '/../data/cache/config/' );
+            $frontendOptions = array('master_files' => array_values($tabFile), 'automatic_serialization' => true);
+            $cacheConfig = Zend_Cache::factory('File', 'File', $frontendOptions, $backendOptions);
+
+            if (!($config = $cacheConfig->load(md5(implode('|', $tabFile))))) {
+                $config = array();
+
+                foreach($tabFile as $file) {
+                    $suffix = strtolower(pathinfo($file, PATHINFO_EXTENSION));
+
+                    switch ($suffix) {
+                        case 'ini':
+                        case 'xml':
+                        case 'php':
+                        case 'inc':
+                            $result = self::_loadConfig($file);
+                            $config = self::mergeArrays($config, $result);
+                    }
+                }
+
+                $cacheConfig->save($config);
             }
 
             if ($recursivelyLoadModuleConfig && isset($config['resources']) && isset($config['resources']['modules'])) {
@@ -101,14 +112,29 @@ class Centurion_Config_Directory
 
             return $config;
         }
-        throw new Exception('Path must be a directory', 500);
+        throw new Centurion_Exception('Path must be a directory', 500);
+    }
+
+
+    protected static function _loadConfigCached($file)
+    {
+        $backendOptions = array('cache_dir' => APPLICATION_PATH . '/../data/cache/config/' );
+        $frontendOptions = array('master_file' => $file, 'automatic_serialization' => true);
+
+        $cacheConfig = Zend_Cache::factory('File', 'File', $frontendOptions, $backendOptions);
+
+        if (!($config = $cacheConfig->load(md5($file)))) {
+            $config = self::_loadConfig($file);
+            $cacheConfig->save($config);
+        }
+
+        return $config;
     }
 
     /**
      * @see Zend_Application->_loadConfig();
      */
-    protected static function _loadConfig($file)
-    {
+    protected static function _loadConfig($file) {
         $environment = self::$_environment;
         $suffix      = strtolower(pathinfo($file, PATHINFO_EXTENSION));
 

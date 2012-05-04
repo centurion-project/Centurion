@@ -75,6 +75,13 @@ class Media_Form_Model_Admin_File extends Media_Form_Model_File
 
     public function isValid($data)
     {
+        // this is how we check if something went wrong while uploading
+        // i.e. post_max_size was exceeded
+        if (!isset($_FILES[$this->getFilename()->getName()])) {
+            $this->getFilename()->addError('There was a problem uploading this file. Check max size allowed');
+            return false;
+        }
+
         $isValid = parent::isValid($data);
 
         if ($isValid && $this->_filename->receive()) {
@@ -83,7 +90,7 @@ class Media_Form_Model_Admin_File extends Media_Form_Model_File
             }
         }
 
-        if (!$this->_filename->receive()) {
+        if ($isValid && !$this->_filename->receive()) {
             $messages = $this->_filename->getMessages();
             if (count($messages) == 1 && isset($messages[Zend_Validate_File_Upload::NO_FILE])) {
                 if ($this->hasInstance() && $this->getElement(sprintf('filename_delete_%s', $this->getName()))

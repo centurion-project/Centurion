@@ -1,0 +1,15 @@
+<?php
+foreach ($this->modules as $moduleName => $controllerList):
+?>
+    <h1><?php echo $moduleName; ?></h1>
+    <ul>
+        <?php foreach ($controllerList as $controllerName) : ?>
+            <li>
+                <a href="<?php echo $this->url(array('controller' => $controllerName, 'action' => 'index', 'module' => $moduleName)); ?>"><?php echo $moduleName; ?>/<?php echo $controllerName; ?></a>
+            </li>
+        <?php endforeach; ?>
+    </ul>
+    <br />
+<?php
+endforeach;
+?>

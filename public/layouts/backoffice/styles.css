@@ -162,6 +162,9 @@ section header.sh .tab01 {  margin-top:-10px;  border:none; background:none; }
 section header.sh 
 .ui-button-big {            position:absolute; right:7px; top:40px; z-index:2; }
 section header.sh 
+.ui-button-big.ui-button-back {
+                            position:relative; z-index:2; }
+section header.sh 
 .ui-button-big .ui-button { min-width:228px; _width:228px; -webkit-border-radius: 3px; -moz-border-radius: 3px; border-radius: 3px;  }
 section.tpl-form 
 .ui-button-big {            position:absolute; top:3px; left:690px;  }
@@ -218,6 +221,7 @@ form.form-highlight
 legend {                    margin:0; padding:10px; font:bold 15px/20px Arial, sans-serif; color:#ff2f05; }
 form.form-highlight
 #autocomplete {             width:250px; margin:5px 0;}
+
 
 
 

@@ -81,7 +81,7 @@ class Centurion_ZFDebug_Controller_Plugin_Debug_Plugin_Time extends Zend_Control
         $html .= 'Controller: ' . round(($this->_timer['postDispatch']-$this->_timer['preDispatch']),2) .' ms<br />';
         if (isset($this->_timer['user']) && count($this->_timer['user'])) {
             foreach ($this->_timer['user'] as $name => $time) {
-                $html .= ''.$name.': '. round($time,2).' ms<br>';
+                $html .= ''.$name.': '. round($time,2).' ms<br />';
             }
         }
 

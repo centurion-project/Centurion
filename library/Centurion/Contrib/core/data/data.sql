@@ -11,7 +11,7 @@ SET foreign_key_checks = 0;
 
 
 INSERT INTO `centurion_navigation` (`id`, `label`, `module`, `controller`, `action`, `params`, `permission`, `route`, `uri`, `order`, `is_visible`, `is_in_menu`, `class`, `mptt_lft`, `mptt_rgt`, `mptt_level`, `mptt_tree_id`, `mptt_parent_id`, `proxy_model`, `proxy_pk`, `can_be_deleted`, `original_id`, `language_id`) VALUES
-(1, 'Users', 'user', 'admin-profile', NULL, NULL, NULL, 'default', NULL, 1, 1, 1, 'sqdsdqsdqsd', 18, 27, 1, 5, 12, NULL, NULL, 1, NULL, NULL),
+(1, 'Users', 'auth', 'admin-user', NULL, NULL, NULL, 'default', NULL, 1, 1, 1, 'sqdsdqsdqsd', 18, 27, 1, 5, 12, NULL, NULL, 1, NULL, NULL),
 (2, 'Manage group permissions', 'auth', 'admin-group-permission', NULL, NULL, NULL, 'default', NULL, 3, 1, 1, NULL, 19, 20, 2, 5, 1, NULL, NULL, 1, NULL, NULL),
 (3, 'Pages', 'admin', 'admin-navigation', NULL, NULL, NULL, NULL, NULL, 2, 1, 1, NULL, 34, 39, 1, 5, 12, NULL, NULL, 1, NULL, NULL),
 (4, 'Settings', 'user', 'admin-profile', NULL, NULL, NULL, 'default', NULL, 3, 1, 1, NULL, 40, 49, 1, 5, 12, NULL, NULL, 1, NULL, NULL),

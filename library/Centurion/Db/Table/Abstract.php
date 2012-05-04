@@ -365,7 +365,11 @@ abstract class Centurion_Db_Table_Abstract extends Zend_Db_Table_Abstract implem
         Centurion_Signal::factory('pre_insert')->send($this, $data);
 
         if (in_array(self::CREATED_AT_COL, $this->_getCols()) && empty($data[self::CREATED_AT_COL])) {
-            $data[self::CREATED_AT_COL] = Zend_Date::now()->toString('yyyy-MM-dd HH:mm:ss');
+            $data[self::CREATED_AT_COL] = Zend_Date::now()->toString(Centurion_Date::MYSQL_DATETIME);
+        }
+
+        if (in_array(self::UPDATED_AT_COL, $this->_getCols()) && empty($data[self::UPDATED_AT_COL])) {
+            $data[self::UPDATED_AT_COL] = Zend_Date::now()->toString(Centurion_Date::MYSQL_DATETIME);
         }
 
         $retrieveRowOnInsert = false;
@@ -412,7 +416,7 @@ abstract class Centurion_Db_Table_Abstract extends Zend_Db_Table_Abstract implem
         Centurion_Signal::factory('pre_update')->send($this, array($data, $where));
 
         if (in_array(self::UPDATED_AT_COL, $this->_getCols()) && empty($data[self::UPDATED_AT_COL])) {
-            $data[self::UPDATED_AT_COL] = Zend_Date::now()->toString('yyyy-MM-dd HH:mm:ss');
+            $data[self::UPDATED_AT_COL] = Zend_Date::now()->toString(Centurion_Date::MYSQL_DATETIME);
         }
 
         $count = parent::update($data, $where);
@@ -476,6 +480,9 @@ abstract class Centurion_Db_Table_Abstract extends Zend_Db_Table_Abstract implem
     {
         $lcMethod = strtolower($method);
 
+        /**
+         * @deprecated : to much time consuming wihtout real gain. use $this->findOneBy('id', 1) instead of $this->findOneById(1); Preserve also autocompletion.
+         */
         if (substr($lcMethod, 0, 6) == 'findby') {
             $by = substr($method, 6, strlen($method));
             $method = '_findBy';
@@ -494,8 +501,9 @@ abstract class Centurion_Db_Table_Abstract extends Zend_Db_Table_Abstract implem
 
         list($found, $retVal) = Centurion_Traits_Common::checkTraitOverload($this, $method, $args);
 
-        if ($found)
+        if ($found) {
             return $retVal;
+        }
 
         throw new Centurion_Db_Table_Exception(sprintf("method %s does not exist", $method));
     }
@@ -503,10 +511,12 @@ abstract class Centurion_Db_Table_Abstract extends Zend_Db_Table_Abstract implem
     /**
      * Generates a string representation of this object, inspired by Doctrine_Table.
      *
+     * @TODO: this method should be refactored
      * @return Centurion_Db_Table_Select
      */
     protected function _buildFindByWhere($by, $values)
     {
+        $values = (array) $values;
         $ands = array();
         $e = explode('And', $by);
         $i = 0;
@@ -621,7 +631,7 @@ abstract class Centurion_Db_Table_Abstract extends Zend_Db_Table_Abstract implem
 
     public function getCacheTag()
     {
-    	return sprintf('__%s', $this->info(Centurion_Db_Table_Abstract::NAME));
+        return sprintf('__%s', $this->info(Centurion_Db_Table_Abstract::NAME));
     }
     
     /**
@@ -787,11 +797,16 @@ abstract class Centurion_Db_Table_Abstract extends Zend_Db_Table_Abstract implem
 
                             $type = $this->_metadata[$col]['DATA_TYPE'];
                             $where[] = $this->_db->quoteInto(
-				sprintf('%s.%s = ?', $this->_db->quoteIdentifier($this->_name), $this->_db->quoteIdentifier($col, true)),
-                                $primaryKey[$refCol], $type);
+                                    sprintf('%s.%s = ?', $this->_db->quoteIdentifier($this->_name), $this->_db->quoteIdentifier($col, true)),
+                                    $primaryKey[$refCol], $type
+                            );
                         }
 
-                        foreach ($this->fetchAll(implode('AND', $where)) as $row) {
+            /*
+            * Fix : Suround, in the implode, AND with withspaces because if the relation is build with several key            
+            * the implode returned : "myKey=XANDmySecondKey=Y" instead of "myKey=X AND mySecondKey=Y"
+            */
+                        foreach ($this->fetchAll(implode(' AND ', $where)) as $row) { 
                             $rowsAffected += $row->delete();
                         }
 
@@ -916,7 +931,7 @@ abstract class Centurion_Db_Table_Abstract extends Zend_Db_Table_Abstract implem
     {
         $select = $this->getCountsSelect($groupby, $filter, $order, $limit);
 
-        return $select->fetchAll();
+        return $select->count();
     }
 
     /**
@@ -1003,13 +1018,22 @@ abstract class Centurion_Db_Table_Abstract extends Zend_Db_Table_Abstract implem
         return $this;
     }
 
+
+    /**
+     * @deprecated use public function findOneBy instead
+     */
+    protected function _findOneBy($fieldName, $values)
+    {
+        return $this->findOneBy($fieldName, $values);
+    }
+
     /**
      * Find a row with a formatted field name.
      *
      * @param   string    $fieldName    Formatted field name
      * @param   array     $values       Values
      */
-    protected function _findOneBy($fieldName, $values)
+    public function findOneBy($fieldName, $values)
     {
         return $this->fetchRow($this->_buildFindByWhere($fieldName, $values));
     }
@@ -1020,9 +1044,17 @@ abstract class Centurion_Db_Table_Abstract extends Zend_Db_Table_Abstract implem
      * @param   string    $fieldName    Formatted field name
      * @param   array     $values       Values
      */
-    protected function _findBy($fieldName, $values)
+    public function findBy($fieldName, $values)
     {
         return $this->fetchAll($this->_buildFindByWhere($fieldName, $values));
+    }
+
+    /**
+     * @deprecated use public function findBy instead
+     */
+    protected function _findBy($fieldName, $values)
+    {
+        return $this->findBy($fieldName, $values);
     }
 
     /**
@@ -1041,6 +1073,16 @@ abstract class Centurion_Db_Table_Abstract extends Zend_Db_Table_Abstract implem
     }
 
     /**
+     * Proxy function to test _genRefRuleName
+     * @see Centurion_Db_Table_TableTest
+     * @param string $base
+     * @return string
+     */
+    public function testGenRefRuleName($base)
+    {
+        return $this->_genRefRuleName($base);
+    }
+    /**
      * generate a new name for a reference rule (guarantee name uniqness)
      * @param string $base desired name for the rule if it is already taken a suffix will be added
      */
@@ -1049,9 +1091,19 @@ abstract class Centurion_Db_Table_Abstract extends Zend_Db_Table_Abstract implem
         if ('' == trim($base))
             $base = uniqid();
 
-        $refMapRule = $base; $i = 1;
-        $existingRefRules = array_keys(array_merge($this->getReferenceMap(), $this->getDependentTables(), $this->getManyDependentTables()));
-        while (in_array($refMapRule, $existingRefRules)) {
+        $refMapRule = $base;
+        $i = 1;
+        
+        $existingRefRules = array();
+        $mergeAllRefs = array_merge($this->getReferenceMap(), $this->getDependentTables(), $this->getManyDependentTables());
+        
+        foreach ($mergeAllRefs as $key => $val) {
+             if (!is_int($key)) {
+                 $existingRefRules[$key] = true;
+             }
+        }
+        
+        while (isset($existingRefRules[$refMapRule])) {
             $refMapRule = sprintf('%s_%u', $base, $i);
             $i++;
         }
@@ -1061,6 +1113,23 @@ abstract class Centurion_Db_Table_Abstract extends Zend_Db_Table_Abstract implem
     
     public function getTestCondition()
     {
-    	return null;
+        return null;
+    }
+
+    /**
+     * returns the references to this table in the given table
+     * @param Centurion_Db_Table_Abstract $model the table in which to look for references
+     * @return a filtered reference map containing only the refs to media
+     */
+    public function getReferencesInTable(Centurion_Db_Table_Abstract $model)
+    {
+        $res = array();
+        $tableClassName = get_class($this);
+        foreach ($model->getReferenceMap() as $key => $reference) {
+            if($tableClassName === $reference['refTableClass']) {
+                $res[$key] = $reference;
+            }
+        }
+        return $res;
     }
 }

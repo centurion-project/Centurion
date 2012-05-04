@@ -7,6 +7,9 @@ class Translation_Test_Models_TagUidTest extends Centurion_Test_DbTable
     
     public function setUp()
     {
+        global $application;
+        $application->bootstrap('db');
+
         $this->setTable('translation/tagUid');
         
         $this->addColumns(

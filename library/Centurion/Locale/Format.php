@@ -2,6 +2,10 @@
 
 class Centurion_Locale_Format extends Zend_Locale_Format
 {
+    /**
+     * @see http://docs.jquery.com/UI/Datepicker/$.datepicker.formatDate 
+     * @var array[string]string
+     */
     static $formatIsoToDatepicker = array(
             'dd' => 'dd',
             'd'  => 'd',
@@ -11,7 +15,7 @@ class Centurion_Locale_Format extends Zend_Locale_Format
             'o'  => 'D',
             'mm' => 'MM',
             'm'  => 'M',
-            'MM' => 'MMMMM',
+            'MM' => 'MMMM',
             'M'  => 'MMM',
             'yy' => 'yyyy',
             'y'  => 'yy',
@@ -33,21 +37,13 @@ class Centurion_Locale_Format extends Zend_Locale_Format
 
         $convert = array_flip($convert);
         asort($convert);
-
-
-        $value = str_replace(array_keys($convert), array_values($convert), $format);
-
-        $values = str_split($format);
-        foreach ($values as $key => $value) {
-            if (isset($convert[$value]) === true) {
-                $values[$key] = $convert[$value];
-            }
-        }
-
-        return join($values);
+        
+        return strtr($format, $convert);
     }
 
-    // Format déjà localisé
+    /**
+     * Format déjà localisé
+     */ 
     public static function convertIsoToDatepickerFormat($format)
     {
         if ($format === null) {
@@ -57,7 +53,7 @@ class Centurion_Locale_Format extends Zend_Locale_Format
         $convert = array_flip(self::$formatIsoToDatepicker);
         arsort($convert);
 
-        $value = str_replace(array_keys($convert), array_values($convert), $format);
+        $value = strtr($format, $convert);
 
         return $value;
     }
@@ -72,7 +68,7 @@ class Centurion_Locale_Format extends Zend_Locale_Format
         $convert = self::$formatIsoToDatepicker;
         arsort($convert);
 
-        $value = str_replace(array_keys($convert), array_values($convert), $format);
+        $value = strtr($format, $convert);
 
         return $value;
     }

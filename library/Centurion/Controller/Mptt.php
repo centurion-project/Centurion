@@ -203,7 +203,8 @@ class Centurion_Controller_Mptt extends Centurion_Controller_Action
 //                $row->save();
                 break;
             default:
-                $this->forward404(sprintf('Type %s is unknown', $type));
+                $row->moveTo();
+                //$this->forward404(sprintf('Type %s is unknown', $type));
         }
     }
 

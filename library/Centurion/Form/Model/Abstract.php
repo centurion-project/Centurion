@@ -62,6 +62,8 @@ abstract class Centurion_Form_Model_Abstract extends Centurion_Form
      * @var array
      */
     protected $_columnTypes = array(
+        'bit'           =>  'onOff',
+        'boolean'       =>  'onOff',
         'integer'       =>  'text',
         'int'           =>  'text',
         'smallint'      =>  'text',
@@ -72,10 +74,10 @@ abstract class Centurion_Form_Model_Abstract extends Centurion_Form
         'string'        =>  'text',
         'varchar'       =>  'text',
         'char'          =>  'text',
-        'boolean'       =>  'checkbox',
-        'timestamp'     =>  'datepicker',
+        'timestamp'     =>  'dateTimePicker',
+        'datetime'      =>  'dateTimePicker',
         'time'          =>  'text',
-        'date'          =>  'text',
+        'date'          =>  'datePicker',
         'enum'          =>  'select',
         'text'          =>  'textarea',
         'mediumtext'    =>  'textarea',
@@ -146,6 +148,18 @@ abstract class Centurion_Form_Model_Abstract extends Centurion_Form
     protected $_values = null;
 
     /**
+     * The time format used by datepicker 
+     * @var string
+     */
+    protected $_dateFormat = null;
+    
+    /**
+     * The time format used by datetimepicker
+     * @var string
+     */
+    protected $_timeFormat = null;
+    
+    /**
      * Constructor
      *
      * @param   array|Zend_Config           $options    Options
@@ -176,8 +190,9 @@ abstract class Centurion_Form_Model_Abstract extends Centurion_Form
 
         $this->addElements($this->_columnToElements());
 
-        if (!defined('PHPUNIT') || PHPUNIT == false)
+        if (!defined('PHPUNIT') || PHPUNIT == false) {
             $this->addElement('Hash', '_XSRF', array('salt' => $this->getAttrib('id')));
+        }
 
         // Extensions...
         $this->init();
@@ -205,7 +220,7 @@ abstract class Centurion_Form_Model_Abstract extends Centurion_Form
     /**
      * Retrieve instance of model form.
      *
-     * @return Centurion_Db_Table_Abstract
+     * @return Centurion_Db_Table_Row_Abstract
      */
     public function getInstance()
     {
@@ -317,8 +332,23 @@ abstract class Centurion_Form_Model_Abstract extends Centurion_Form
             $this->setSubInstance()
                  ->_populateManyDependentTables($instance)
                  ->_onPopulateWithInstance();
-        }
 
+            foreach ($this->getElements() as $key => $val) {
+                $class = $val->getAttrib('class');
+                if (false !== strpos($class, 'field-datetimepicker') 
+                    && '' != $val->getValue()) { //In the case the field is empty, else Zend_Date is current time
+                    $posted_at = new Zend_Date($val->getValue(), 'YYYY-MM-dd HH:mm:ss');
+                    $val->setValue($posted_at->get($this->getDateFormat(true)));
+                } else if (false !== strpos($class, 'field-datepicker') 
+                    && '' != $val->getValue()) {
+                    $posted_at = new Zend_Date($val->getValue(), 'YYYY-MM-dd HH:mm:ss');
+                    $val->setValue($posted_at->get($this->getDateFormat()));
+                }
+            }
+        }
+        
+        Centurion_Traits_Common::checkTraitOverload($this, 'setInstance', array($instance), false);
+        
         return $this;
     }
 
@@ -418,7 +448,7 @@ abstract class Centurion_Form_Model_Abstract extends Centurion_Form
             $this->_isNew = true;
             $this->_instance = $this->getModel()->createRow();
         } else {
-        	$this->_instance->setReadOnly(false);
+            $this->_instance->setReadOnly(false);
         }
 
 
@@ -678,6 +708,15 @@ abstract class Centurion_Form_Model_Abstract extends Centurion_Form
         return $subForms;
     }
 
+    
+    /**
+     * 
+     * @param unknown_type $values
+     */
+    public function processValues($values)
+    {
+        return $this->_processValues($values);
+    }
     /**
      * Process values attached to the form.
      *
@@ -696,6 +735,18 @@ abstract class Centurion_Form_Model_Abstract extends Centurion_Form
                     unset($values[$key]);
                 } else {
                     $values[$key] = $ret;
+                }
+            }
+
+            $element = $this->getElement($key);
+            if (null !== $element) {
+                $class = $element->getAttrib('class');
+                if (false !== strpos($class, 'field-datetimepicker')) {
+                    $posted_at = new Zend_Date($value, $this->getDateFormat(true));
+                    $values[$key] = $posted_at->get(Centurion_Date::MYSQL_DATETIME);
+                } else if (false !== strpos($class, 'field-datepicker')) {
+                    $posted_at = new Zend_Date($value, $this->getDateFormat());
+                    $values[$key] = $posted_at->get(Centurion_Date::MYSQL_DATETIME);
                 }
             }
         }
@@ -749,7 +800,14 @@ abstract class Centurion_Form_Model_Abstract extends Centurion_Form
         $manyDependentTables = $this->getModel()->info(Centurion_Db_Table_Abstract::MANY_DEPENDENT_TABLES);
 
         foreach ($manyDependentTables as $key => $manyDependentTable) {
-            $objectsRelated = $this->getValue($key);
+            
+            if ($element = $this->getElement($key)) {
+                $objectsRelated = $element->getValue();
+            } else if ($subForm = $this->getSubForm($key)) {
+                $objectsRelated = $subForm->getValue($key);
+            } else {
+                $objectsRelated = null;
+            }
 
             if ($this->isExcluded($key) || null === $objectsRelated) {
                 continue;
@@ -818,8 +876,8 @@ abstract class Centurion_Form_Model_Abstract extends Centurion_Form
 
             if ($columnDetails['IDENTITY']) {
                 $config = array('hidden', array());
-            } elseif (substr($columnName, 0, 2) == 'is' || substr($columnName, 0, 6) == 'can_be') {
-                $config = array('checkbox', array());
+            } elseif (substr($columnName, 0, 2) == 'is' || substr($columnName, 0, 6) == 'can_be' || substr($columnName, 0, 3) == 'has') {
+                $config = array('onOff', array());
             } elseif (substr($columnName, 0, -3) == 'pwd' || $columnName == 'password') {
                 $config = array('password', array());
             } elseif (preg_match('/^enum/i', $columnDetails['DATA_TYPE'])) {
@@ -846,14 +904,12 @@ abstract class Centurion_Form_Model_Abstract extends Centurion_Form
                         )
                     );
                 } else {
+                    $relatedTable = Centurion_Db::getSingletonByClassName($reference);                    
+                    $options = $this->_buildOptions($relatedTable, $columnName, (true === $columnDetails['NULLABLE']));                    
                     $config = array(
                         'select',
                         array(
-                            'multioptions' => $this->_buildOptions(
-                                Centurion_Db::getSingletonByClassName($reference),
-                                $columnName,
-                                true === $columnDetails['NULLABLE']
-                            )
+                            'multioptions' => $options
                         )
                     );
                 }
@@ -868,12 +924,13 @@ abstract class Centurion_Form_Model_Abstract extends Centurion_Form
                     $config[1]['validators'] = array(array(
                         'validator' =>  $this->_columnValidators[$datatype],
                     ));
-                    if ($this->_columnValidators[$datatype] == 'stringLength') {
+                    if ($this->_columnValidators[$datatype] == 'StringLength') {
                         $config[1]['validators'][0]['options'] = array(0, $columnDetails['LENGTH']);
                     }
                 }
-                if (array_key_exists($datatype, $this->_columnFilters))
+                if (array_key_exists($datatype, $this->_columnFilters)) {
                     $config[1]['filters'] = $this->_columnFilters[$datatype];
+                }
             }
 
             $config[1] = array_merge($config[1], array(
@@ -900,14 +957,19 @@ abstract class Centurion_Form_Model_Abstract extends Centurion_Form
 
             //TODO: remove this Media_Model_DbTable_File reference from core
             if ($manyDependentTable['refTableClass'] !== 'Media_Model_DbTable_File') {
+                $table = Centurion_Db::getSingletonByClassName($manyDependentTable['refTableClass']);
                 $options['multioptions'] = $this->_buildOptions(
-                        Centurion_Db::getSingletonByClassName($manyDependentTable['refTableClass']),
+                        $table,
                         $key,
                         false,
                         true
                     );
 
                 $options['multioptions'][null] = '';
+
+                if ($table->hasColumn('order')) {
+                    $options['class'] = 'sortable';
+                }
 
                 $elementName = 'multiselect';
             } else {
@@ -924,12 +986,16 @@ abstract class Centurion_Form_Model_Abstract extends Centurion_Form
     }
 
     protected function _buildOptions($table, $key, $nullable = false)
-    {        
-        if (isset($this->_select[$key])) {
+    {
+        if (method_exists($table, 'buildOptions')) {            return $table->buildOptions($nullable);        }        if (isset($this->_select[$key])) {
             if ($this->_select[$key] instanceof Centurion_Db_Table_Select) {
                 $rowset = $table->fetchAll($this->_select[$key]);
-            } else if (is_array($this->_select[$key])) {
+            } else if (is_array($this->_select[$key]) && is_callable($this->_select[$key])) {
                 $rowset = call_user_func_array($this->_select[$key], array($table->fetchAll($table->select(true))));
+            } else if (is_array($this->_select[$key])) {
+                $rowset = $table->select(true)
+                    ->filter($this->_select[$key])
+                    ->fetchAll();
             }
         } else {
             Centurion_Db_Table_Abstract::setFiltersStatus(true);
@@ -993,6 +1059,17 @@ abstract class Centurion_Form_Model_Abstract extends Centurion_Form
     protected function _postGenerate()
     {
         Centurion_Signal::factory('post_generate')->send($this);
+
+        //Add a validator on dates elements to prevent user mistakes
+        foreach ($this->getElements() as $key => $val) {
+            $class = $val->getAttrib('class');
+            if (false !== strpos($class, 'field-datetimepicker')) {
+                $val->addValidator('Date', false, array('format' => $this->getDateFormat(true)));
+
+            } else if (false !== strpos($class, 'field-datepicker')) {
+                $val->addValidator('Date', false, array('format' => $this->getDateFormat()));
+            }
+        }
     }
 
     /**
@@ -1000,9 +1077,28 @@ abstract class Centurion_Form_Model_Abstract extends Centurion_Form
      */
     protected function _postSave($isNew = false)
     {
+        Centurion_Traits_Common::checkTraitOverload($this, '_postSave', array($isNew), false);
     }
 
     protected function _preSave()
     {
+        Centurion_Traits_Common::checkTraitOverload($this, '_preSave', array(), false);
+    }
+
+    public function setDateFormat($dateFormat, $timeFormat = null)
+    {
+        $this->_dateFormat = $dateFormat;
+        $this->_timeFormat = $timeFormat;
+    }
+
+    public function getDateFormat($withTimeFormat = false)
+    {
+        $return = $this->_dateFormat;
+        
+        if ($withTimeFormat && $this->_timeFormat !== null) {
+            $return .= ' ' . $this->_timeFormat; 
+        }
+        
+        return $return; 
     }
 }

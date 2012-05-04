@@ -121,7 +121,7 @@ abstract class Centurion_Controller_Action extends Zend_Controller_Action implem
 
     public function __get($name)
     {
-        throw new Centurion_Exception('not implemented yet');
+        throw new Centurion_Controller_Action_Exception(sprintf('Undefined property %s', $name));
     }
 
     public function __set($name, $value)
@@ -138,6 +138,7 @@ abstract class Centurion_Controller_Action extends Zend_Controller_Action implem
         } catch (Exception $e) {
             return false;
         }
+        return true;
     }
 
     public function __call($method, $args)

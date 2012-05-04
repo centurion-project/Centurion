@@ -449,6 +449,27 @@
                 .insertAfter(base.$el);  
             base.multiselect.updateCount();
 
+
+            //Sortable List
+            
+            if (base.options.multiselectSortable == true) {
+                base.multiselect.onSortingEls = function (event, ui) {
+                    var $sortedLi = $(ui.item.get(0)), 
+                        $sortedEl = $(ui.item.get(0).children, ui),
+                        $optionEl = base.$el.find('option[value='+$sortedEl.attr('rel')+']'),
+                        position = $sortedLi.index();
+                        
+                    $optionElBefore = base.$el.find('option:selected').eq(position);
+                    $optionElBefore.before($optionEl);
+                }
+                if ($.browser.msie && $.browser.version.substr(0,1)<7) { /*NocompatibleIE6*/ }
+                else {
+                    $( "ul.selectedList" ).sortable({
+                        stop: base.multiselect.onSortingEls
+                    });   
+                } 
+            }
+
             // events
             $(output).find('li a').bind('click', function() { 
                 if($(this).parent().parent().hasClass('availableList')) {
@@ -635,7 +656,7 @@
     };
      
     $.CUI.Form.defaultOptions = {
-        
+        multiselectSortable:false
     };
 
 
@@ -680,6 +701,11 @@
                 break;
                 case 'switcher':
                 case 'multiselect':
+                    if(options.multiselectSortable == true) { 
+                        (new $.CUI.Include('jquery-ui', options.basePath));
+                    }
+                    (new $.CUI.Form(this, plugin, options));
+                break;
                 case 'fieldset':
                 case 'letterLimit':
                 case 'file':
