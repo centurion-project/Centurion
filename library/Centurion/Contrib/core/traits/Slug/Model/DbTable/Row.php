@@ -18,11 +18,21 @@ class Core_Traits_Slug_Model_DbTable_Row extends Centurion_Traits_Model_DbTable_
         $slugifiedParts = array();
         if (count(array_intersect($this->_row->getModifiedFields(), (array) $slugParts)) || $this->isNew()) {
             foreach ((array) $slugParts as $part) {
-                $slugifiedParts[] = Centurion_Inflector::slugify($this->_row->{$part});
+                $partValue = $this->_row->{$part};
+                if (null == $partValue) {
+                    continue;
+                }
+                // Slugify each value of selected columns
+                $slugifiedParts[] = Centurion_Inflector::slugify($partValue);
             }
 
             $slug = implode('-', $slugifiedParts);
 
+            if (null == $slug) {
+                $slug = '-';
+            }
+
+            // Get the current slug of the row ($currentSlug = null if the row is new)
             $currentSlug = $this->_row->slug;
             if ($separatorPos = strpos($this->_row->slug, '_')) {
                 $currentSlug = substr($currentSlug, 0, $separatorPos);
