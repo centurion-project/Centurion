@@ -1,14 +1,39 @@
 <?php
+/**
+ * Centurion
+ *
+ * LICENSE
+ *
+ * This source file is subject to the new BSD license that is bundled
+ * with this package in the file LICENSE.txt.
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@centurion-project.org so we can send you a copy immediately.
+ *
+ * @category    Centurion
+ * @copyright   Copyright (c) 2008-2011 Octave & Octave (http://www.octaveoctave.com)
+ * @license     http://centurion-project.org/license/new-bsd     New BSD License
+ * @version    $Id$
+ */
 
+/**
+ *
+ * @category    Centurion
+ * @copyright   Copyright (c) 2008-2011 Octave & Octave (http://www.octaveoctave.com)
+ * @license     http://centurion-project.org/license/new-bsd     New BSD License
+ * @author      Laurent Chenay <lc@octaveoctave.com>
+ */
 class Centurion_Matrice
 {
     protected $_data = array();
     protected $_connection = array();
     
     /**
-     * 
-     * @param int $a
-     * @param int $b
+     *
+     * Return true if $a and $b are directly connected in this way
+     *
+     * @param int|string $a
+     * @param int|string $b
      * return bool
      */
     public function isConnected($a, $b)
@@ -20,14 +45,17 @@ class Centurion_Matrice
         if (!isset($this->_connection[$a][$b])) {
             return false;
         }
+
         return true;
     }
     
     /**
-     * 
-     * @param unknown_type $a
-     * @param unknown_type $b
-     * @param unknown_type $oneWay
+     *
+     * Connect $a with $b. If $twoWay is true, also connect $b with $a
+     *
+     * @param int|string $a
+     * @param int|string $b
+     * @param bool $oneWay
      */
     public function connect($a, $b, $twoWay = false)
     {
@@ -47,10 +75,12 @@ class Centurion_Matrice
     }
     
     /**
-     * 
-     * @param unknown_type $a
-     * @param unknown_type $b
-     * @param unknown_type $oneWay
+     *
+     * Remove the connection between $a and $b. If $twoWay is true, also remove connection between $b and $a.
+     *
+     * @param int|string $a
+     * @param int|string $b
+     * @param bool $oneWay
      */
     public function removeConnection($a, $b, $twoWay = false) {
         if (isset($this->_connection[$a])) {
@@ -65,17 +95,31 @@ class Centurion_Matrice
             $this->removeConnection($b, $a);
         }
     }
-    
+
+    /**
+     * Return all node connected to $a
+     * @param int|string $a
+     * @return array
+     */
     public function getConnections($a) {
         if (!isset($this->_data[$a]))
             return array();
         return $this->_data[$a];
     }
-    
-    public function findPath($a, $b, $maxLevel = 3) {
+
+    /**
+     *
+     * Find the path between $a and $b, with a max deep of $maxLevel
+     *
+     * @param int|string $a
+     * @param int|string $b
+     * @param int $maxLevel
+     * @return array
+     */
+    public function findPath($a, $b, $maxLevel = 3, $findAllPathOfFirstDeep = true) {
         $visited = array();
         
-        $toVisite = array(
+        $toVisit = array(
                 array($a, array())
                 );
         
@@ -88,31 +132,37 @@ class Centurion_Matrice
         
         $currentLevel = 0;
         
-        while (count($toVisite) > 0) {
+        while (count($toVisit) > 0) {
             $nextToVisit = array();
             $currentLevel++;
-            foreach ($toVisite as $data) {
+            foreach ($toVisit as $data) {
+                $visited[$data[0]] = true;
                 $nodes = $this->getConnections($data[0]);
                 $data[1][] = $data[0];
                 
                 if (isset($nodes[$b])) {
-                    $found = true;
                     $data[1][] = $b;
                     $paths[] = $data[1];
+
+                    if ($findAllPathOfFirstDeep) {
+                        //We not break here, because we want all the path of the minimum deep
+                        $found = true;
+                    } else {
+                        break;
+                    }
                 }
                 
                 if (!$found) {
                     foreach ($nodes as $node) {
                         if (!isset($visited[$node])) {
                             $nextToVisit[] = array($node, $data[1]);
-                            $visited[$node] = true;
                         }
                     } 
                 }
             }
             
             if (!$found && $currentLevel < $maxLevel) {
-                $toVisite = $nextToVisit;
+                $toVisit = $nextToVisit;
             } else {
                 break;
             }

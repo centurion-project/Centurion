@@ -37,8 +37,8 @@ class Core_Traits_Slug_Model_DbTable_Row extends Centurion_Traits_Model_DbTable_
 
             // Get the current slug of the row ($currentSlug = null if the row is new)
             $currentSlug = $this->_row->slug;
-
-            /**
+            
+	    /**
              * Get the original slug
              *
              * Explanation : If a slug is already taken by another row, the generated slug is {expected_slug}_#

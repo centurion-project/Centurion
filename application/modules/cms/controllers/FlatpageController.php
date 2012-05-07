@@ -9,7 +9,9 @@ class Cms_FlatpageController extends Centurion_Controller_Action
                                                                             'is_published'          =>  1,
                                                                             'published_at__lt'      =>  new Zend_Db_Expr('NOW()')));
         Centurion_Db_Table_Abstract::restoreFiltersStatus();
-        
+
+        Centurion_Signal::factory('pre_display_rte')->send($this, array($flatpageRow));
+
         Centurion_Cache_TagManager::addTag($flatpageRow);
         
         $navRow = Centurion_Db::getSingleton('core/navigation')->findOneByProxy($flatpageRow);
@@ -17,7 +19,7 @@ class Cms_FlatpageController extends Centurion_Controller_Action
             $navigation = $this->view->navigation()->getContainer();
             $this->view->currentNavigation = $navigation->findOneById($navRow->id);
         }
-        
+
         return $this->renderToResponse($flatpageRow->flatpage_template->view_script, array('flatpageRow' => $flatpageRow));
     }
 
@@ -26,6 +28,9 @@ class Cms_FlatpageController extends Centurion_Controller_Action
         $flatpageRow = $this->_helper->getObjectOr404('cms/flatpage', array('id'                    =>  $this->_getParam('id'),
                                                                             'is_published'          =>  1,
                                                                             'published_at__lt'      =>  new Zend_Db_Expr('NOW()')));
+
+        Centurion_Signal::factory('pre_display_rte')->send($flatpageRow, array($flatpageRow));
+
         Centurion_Cache_TagManager::addTag($flatpageRow);
         return $this->renderToResponse($flatpageRow->flatpage_template->view_script, array('currentFlatpageRow' => $flatpageRow));
     }

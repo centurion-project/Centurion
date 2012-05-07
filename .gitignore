@@ -11,8 +11,6 @@
 /data/cache/page/*
 /data/cache/tags/*
 /data/cache/config/*
-/data/sessions/*
-
 
 !/data/cache/class/.gitkeep
 !/data/cache/core/.gitkeep
@@ -26,6 +24,8 @@
 /data/indexes/*
 /data/build/*
 /data/locales/*
+/data/temp/*
+/data/sessions/*
 
 !/data/build/.gitkeep
 !/data/uploads/.gitkeep
@@ -36,6 +36,7 @@
 !/data/locales/translation.csv
 !/data/locales/csv/*
 !/data/sessions/.gitkeep
+!/data/temp/.gitkeep
 
 /public/files/*
 /public/cached/*
@@ -57,3 +58,6 @@ application/configs/local.ini
 
 /tests/library/Centurion/Image/Adapter/_files/build/*
 /data/cache/config.php
+.sass-cache/
+
+*.done

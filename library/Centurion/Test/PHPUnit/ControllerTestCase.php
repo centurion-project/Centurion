@@ -7,8 +7,8 @@ class Centurion_Test_PHPUnit_ControllerTestCase extends Zend_Test_PHPUnit_Contro
         if (null == $this->bootstrap) {
             // Assign and instantiate in one step:
             $this->bootstrap = new Centurion_Application(
-                'testing',
-                APPLICATION_PATH . '/configs/'
+                APPLICATION_ENV,
+                Centurion_Config_Directory::loadConfig(APPLICATION_PATH . '/configs/', APPLICATION_ENV, true)
             );
         }
         
@@ -64,5 +64,40 @@ class Centurion_Test_PHPUnit_ControllerTestCase extends Zend_Test_PHPUnit_Contro
         }
         Centurion_Auth::getInstance()->clearIdentity();
         Centurion_Auth::getInstance()->getStorage()->write($user);
+    }
+
+    public function is404($url)
+    {
+        $this->resetResponse();
+        $this->resetRequest();
+
+        try {
+            $this->dispatch($url);
+
+            $exceptions = $this->getResponse()->getException();
+            if (!isset($exceptions[0]) || 404 !== $exceptions[0]->getCode()) {
+                return false;
+            }
+        } catch (Centurion_Controller_Action_Exception $e) {
+            if ($e->getCode() !== 404) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public function assert404($url)
+    {
+        if (!$this->is404($url)) {
+            $this->fail('The action not raised the 404 exception');
+        }
+    }
+
+    public function assertNot404($url)
+    {
+        if ($this->is404($url)) {
+            $this->fail('The action raised 404 exception. It should not.');
+        }
     }
 }

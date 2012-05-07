@@ -335,16 +335,14 @@ abstract class Centurion_Form_Model_Abstract extends Centurion_Form
 
             foreach ($this->getElements() as $key => $val) {
                 $class = $val->getAttrib('class');
-                $value = $val->getValue();
-                if (is_string($value) && '' !== trim($value)) {
-                    if (false !== strpos($class, 'field-datetimepicker')) {
-                        //In the case the field is empty, else Zend_Date is current time
-                        $posted_at = new Zend_Date($value, Centurion_Date::MYSQL_DATETIME);
-                        $val->setValue($posted_at->get($this->getDateFormat(true)));
-                    } else if (false !== strpos($class, 'field-datepicker')) {
-                        $posted_at = new Zend_Date($value, Centurion_Date::MYSQL_DATETIME);
-                        $val->setValue($posted_at->get($this->getDateFormat()));
-                    }
+                if (false !== strpos($class, 'field-datetimepicker') 
+                    && '' != $val->getValue()) { //In the case the field is empty, else Zend_Date is current time
+                    $posted_at = new Zend_Date($val->getValue(), 'YYYY-MM-dd HH:mm:ss');
+                    $val->setValue($posted_at->get($this->getDateFormat(true)));
+                } else if (false !== strpos($class, 'field-datepicker') 
+                    && '' != $val->getValue()) {
+                    $posted_at = new Zend_Date($val->getValue(), 'YYYY-MM-dd HH:mm:ss');
+                    $val->setValue($posted_at->get($this->getDateFormat()));
                 }
             }
         }
@@ -416,7 +414,7 @@ abstract class Centurion_Form_Model_Abstract extends Centurion_Form
      * Save the form and attached model.
      *
      * @todo implement multiple database
-     * @return Centurion_Db_Table_Abstract
+     * @return Centurion_Db_Table_Row_Abstract
      */
     public function save($adapter = null)
     {
@@ -807,6 +805,8 @@ abstract class Centurion_Form_Model_Abstract extends Centurion_Form
                 $objectsRelated = $element->getValue();
             } else if ($subForm = $this->getSubForm($key)) {
                 $objectsRelated = $subForm->getValue($key);
+            } else {
+                $objectsRelated = null;
             }
 
             if ($this->isExcluded($key) || null === $objectsRelated) {
@@ -957,14 +957,19 @@ abstract class Centurion_Form_Model_Abstract extends Centurion_Form
 
             //TODO: remove this Media_Model_DbTable_File reference from core
             if ($manyDependentTable['refTableClass'] !== 'Media_Model_DbTable_File') {
+                $table = Centurion_Db::getSingletonByClassName($manyDependentTable['refTableClass']);
                 $options['multioptions'] = $this->_buildOptions(
-                        Centurion_Db::getSingletonByClassName($manyDependentTable['refTableClass']),
+                        $table,
                         $key,
                         false,
                         true
                     );
 
                 $options['multioptions'][null] = '';
+
+                if ($table->hasColumn('order')) {
+                    $options['class'] = 'sortable';
+                }
 
                 $elementName = 'multiselect';
             } else {

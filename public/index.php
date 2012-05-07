@@ -16,6 +16,11 @@ if (isset($_GET['noredirect'])) {
     }
     die();
 }
+
+// Define application environment
+defined('APPLICATION_ENV')
+|| define('APPLICATION_ENV', (getenv('APPLICATION_ENV') ? getenv('APPLICATION_ENV') : 'production'));
+
 if (APPLICATION_ENV == 'testing') {
     //We allow to run test unit without deleting the status page.
     require_once 'index.php_next';

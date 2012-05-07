@@ -9,12 +9,15 @@ class Media_AdminMediaController extends Centurion_Controller_CRUD
         return '<img src="'.$row->getStaticUrl(array('cropcenterresize' => array('width' => 174, 'height' => 94))).'" height="94" width="174" alt="" class="picture">';
     }
 
-    public function init()
+    public function preDispatch()
     {
         $this->_helper->authCheck();
         $this->_helper->aclCheck();
         $this->_helper->layout->setLayout('admin');
+    }
 
+    public function init()
+    {
         $this->_formClassName = 'Media_Form_Model_Admin_File';
         $this->_layout = 'media';
 

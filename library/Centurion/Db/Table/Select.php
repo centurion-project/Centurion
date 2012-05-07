@@ -202,17 +202,6 @@ class Centurion_Db_Table_Select extends Zend_Db_Table_Select
     }
 
     /**
-     * Proxy function to test isAlreadyJoined
-     * @param unknown_type $tableName
-     * @param unknown_type $joinCond
-     * @return boolean
-     * @TODO: this should not be done like that.
-     */
-    public function isAlreadyJoined($tableName, $joinCond = null) {
-        return $this->_isAlreadyJoined($tableName, $joinCond);
-    }
-    
-    /**
      * Check if the table has already been joined to avoid multiple join of the same table
      *
      * @param string $tableName
@@ -228,7 +217,7 @@ class Centurion_Db_Table_Select extends Zend_Db_Table_Select
                 }
                 
                 //TODO: this should be foreach
-                if ($this->isConditionEquals($fromParts[$tableName]['joinCondition'], $joinCond)) {
+                if ($this->_isConditionEquals($fromParts[$tableName]['joinCondition'], $joinCond)) {
                     return true;
                 }
                 
@@ -240,7 +229,7 @@ class Centurion_Db_Table_Select extends Zend_Db_Table_Select
         return false;
     }
     
-    public function isConditionEquals($cond1, $cond2)
+    protected function _isConditionEquals($cond1, $cond2)
     {
         if (false !== strpos($cond1, '(') || false !== strpos($cond2, '(')) {
             throw new Exception('Not yet supported');
@@ -340,18 +329,14 @@ class Centurion_Db_Table_Select extends Zend_Db_Table_Select
         return implode(' ', $tabCond);
     }
 
+    /**
+     * @param $colName
+     * @return bool
+     * @deprecated Us IsInQuery instead
+     */
     public function hasColumn($colName)
     {
-        $partsCol = $this->getPart(Centurion_Db_Table_Select::COLUMNS);
-
-        $found = false;
-        foreach ($partsCol as $col) {
-            if ($colName == $col[2] || is_null($col[2]) && is_string($col[1]) && $colName == $col[1]) {
-                $found = true;
-                break;
-            }
-        }
-        return $found;
+        return $this->isInQuery($colName);
     }
 
     /**
@@ -739,7 +724,12 @@ class Centurion_Db_Table_Select extends Zend_Db_Table_Select
     public function filter(array $kwargs)
     {
         foreach ($kwargs as $key => $value) {
-            if ($value instanceof Zend_Db_Expr && is_numeric($key)) {
+            if (is_int($key) && is_array($value)) {
+                $key = $value[0];
+                $value = $value[1];
+            }
+            
+            if (is_numeric($key)) {
                 $this->where($value);
                 continue;
             }
@@ -756,10 +746,6 @@ class Centurion_Db_Table_Select extends Zend_Db_Table_Select
             $altSuffix = '';
             $sqlColumnPattern = '';
 
-            if (is_int($key) && is_array($value)) {
-                $key = $value[0];
-                $value = $value[1];
-            }
 
             if (!strncmp($key, self::OPERATOR_OR, strlen(self::OPERATOR_OR))) {
                 $key = substr($key, strlen(self::OPERATOR_OR));
@@ -947,9 +933,9 @@ class Centurion_Db_Table_Select extends Zend_Db_Table_Select
 
     /**
      *
-     * Enter description here ...
+     * Exclude a Row or a RowSet from the current select.
+     *
      * @param Zend_Db_Table_Row_Abstract|Zend_Db_Table_RowSet_Abstract $rowSet
-     * @todo It could be a problem with rowset and multiple primary. We must check that with a test case.
      */
     public function not($rowSet)
     {
@@ -962,7 +948,7 @@ class Centurion_Db_Table_Select extends Zend_Db_Table_Select
         foreach ($rowSet as $row) {
             $conditions = array();
             foreach ($primaries as $primary) {
-                $conditions[] = $this->getAdapter()->quote($primary) . ' = ' . $this->getAdapter()->quote($row->{$primary});
+                $conditions[] = $this->getAdapter()->quoteIdentifier($primary) . ' = ' . $this->getAdapter()->quote($row->{$primary});
             }
             $this->where('!(' . implode(' and ', $conditions). ')');
         }

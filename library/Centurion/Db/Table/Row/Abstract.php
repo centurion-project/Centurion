@@ -8,14 +8,14 @@
  * with this package in the file LICENSE.txt.
  * If you did not receive a copy of the license and are unable to
  * obtain it through the world-wide-web, please send an email
- * to license@centurion-project.org so we can send you a copy immediately.
+ * to license @centurion-project.org so we can send you a copy immediately.
  *
- * @category    Centurion
- * @package     Centurion_Db
- * @subpackage  Table
- * @copyright   Copyright (c) 2008-2011 Octave & Octave (http://www.octaveoctave.com)
- * @license     http://centurion-project.org/license/new-bsd     New BSD License
- * @version     $Id$
+ * @category         Centurion
+ * @package          Centurion_Db
+ * @subpackage       Table
+ * @copyright        Copyright (c) 2008-2011 Octave & Octave (http://www.octaveoctave.com)
+ * @license          http://centurion-project.org/license/new-bsd     New BSD License
+ * @version          $Id$
  */
 
 /**
@@ -29,11 +29,12 @@
  */
 abstract class Centurion_Db_Table_Row_Abstract extends Zend_Db_Table_Row_Abstract implements Centurion_Traits_Traitsable
 {
+
     protected $_specialGets = array(
-        'permalink'       =>  '_getAbsoluteUrl',
-        'admin_permalink' =>  '_getAdminUrl',
-        'pk'              =>  'getPrimaryKey',
-        'px'              =>  'getPx'
+        'permalink'       => '_getAbsoluteUrl',
+        'admin_permalink' => '_getAdminUrl',
+        'pk'              => 'getPrimaryKey',
+        'px'              => 'getPx'
     );
 
     /**
@@ -73,8 +74,9 @@ abstract class Centurion_Db_Table_Row_Abstract extends Zend_Db_Table_Row_Abstrac
 
     public function getTraitQueue()
     {
-        if (null == $this->_traitQueue)
+        if (null == $this->_traitQueue) {
             $this->_traitQueue = new Centurion_Traits_Queue();
+        }
 
         return $this->_traitQueue;
     }
@@ -114,14 +116,14 @@ abstract class Centurion_Db_Table_Row_Abstract extends Zend_Db_Table_Row_Abstrac
 
         $method = 'set' . ucfirst($columnName);
         if (method_exists($this, $method)) {
-            call_user_func(array($this , $method), $value);
+            call_user_func(array($this, $method), $value);
         } else {
             $this->_data[$columnName] = $value;
         }
 
         $this->_modifiedFields[$columnName] = true;
 
-        // @todo implement get for trait
+        // @todo implement set for trait
 
     }
 
@@ -138,17 +140,20 @@ abstract class Centurion_Db_Table_Row_Abstract extends Zend_Db_Table_Row_Abstrac
         if (array_key_exists($columnName, $this->_specialGets)) {
             if (is_string($this->_specialGets[$columnName])) {
                 if (!method_exists($this, $this->_specialGets[$columnName])) {
-                    throw new Centurion_Db_Table_Exception(sprintf("Specified method \"%s\" does not exist", $this->_specialGets[$columnName]));
+                    throw new Zend_Db_Table_Row_Exception(sprintf("Specified method \"%s\" does not exist", $this->_specialGets[$columnName]));
                 } else {
                     return call_user_func(array($this, $this->_specialGets[$columnName]));
                 }
             } elseif (is_array($this->_specialGets[$columnName]) && 2 == count($this->_specialGets[$columnName])) {
                 if (is_object($this->_specialGets[$columnName][0]) && is_string($this->_specialGets[$columnName][1]) && method_exists($this->_specialGets[$columnName][0], $this->_specialGets[$columnName][1])) {
                     return call_user_func_array($this->_specialGets[$columnName], array());
-                }else if (!method_exists($this, (string) $this->_specialGets[$columnName][0])) {
-                    throw new Centurion_Db_Table_Exception(sprintf("Specified method \"%s\" does not exist", $this->_specialGets[$columnName][0]));
+                } else if (!method_exists($this, (string) $this->_specialGets[$columnName][0])) {
+                    throw new Zend_Db_Table_Row_Exception(sprintf("Specified method \"%s\" does not exist", $this->_specialGets[$columnName][0]));
                 } else {
-                    return call_user_func_array(array($this, $this->_specialGets[$columnName][0]), (array) $this->_specialGets[$columnName][1]);
+                    return call_user_func_array(array(
+                                                     $this,
+                                                     $this->_specialGets[$columnName][0]
+                                                ), (array) $this->_specialGets[$columnName][1]);
                 }
             }
         }
@@ -167,8 +172,9 @@ abstract class Centurion_Db_Table_Row_Abstract extends Zend_Db_Table_Row_Abstrac
 
         if (null !== ($pos = strpos($columnName, '__')) && $pos !== false) {
             $row = $this->{substr($columnName, 0, $pos)};
-            if ($row == null)
+            if ($row == null) {
                 return null;
+            }
 
             return $row->{substr($columnName, $pos + 2)};
         }
@@ -182,6 +188,7 @@ abstract class Centurion_Db_Table_Row_Abstract extends Zend_Db_Table_Row_Abstrac
             if (is_string($columns)) {
                 $pkValue = $this->{$columns};
             } else {
+                $pkValue = array();
                 foreach ($columns as $column) {
                     $pkValue[] = $this->$column;
                 }
@@ -193,7 +200,7 @@ abstract class Centurion_Db_Table_Row_Abstract extends Zend_Db_Table_Row_Abstrac
 
                 self::$_relationship[$className][$pkValue]
                     = $this->findParentRow($referenceMap[$columnName]['refTableClass'],
-                                           $columnName);
+                    $columnName);
             }
             return self::$_relationship[$className][$pkValue];
         }
@@ -212,10 +219,10 @@ abstract class Centurion_Db_Table_Row_Abstract extends Zend_Db_Table_Row_Abstrac
                 Centurion_Db_Table_Abstract::setFiltersStatus(true);
                 $this->_children[$columnName]
                     = $this->findManyToManyRowset($manyDependentTables[$columnName]['refTableClass'],
-                                                  $manyDependentTables[$columnName]['intersectionTable'], 
-                                                  substr($manyDependentTables[$columnName]['columns']['local'], 0, -3),
-                                                  substr($manyDependentTables[$columnName]['columns']['foreign'], 0, -3)
-                                                  );
+                    $manyDependentTables[$columnName]['intersectionTable'],
+                    substr($manyDependentTables[$columnName]['columns']['local'], 0, -3),
+                    substr($manyDependentTables[$columnName]['columns']['foreign'], 0, -3)
+                );
                 $this->_children[$columnName]->setIntersectionColumns($manyDependentTables[$columnName]['columns']);
                 Centurion_Db_Table_Abstract::restoreFiltersStatus();
             }
@@ -229,14 +236,14 @@ abstract class Centurion_Db_Table_Row_Abstract extends Zend_Db_Table_Row_Abstrac
     public function toArray()
     {
         $return = array();
-        
+
         foreach ($this->_data as $key => $val) {
             $return[$key] = $this->_getRawData($key);
         }
-        
+
         return $return;
     }
-    
+
     public function getTable()
     {
         if (null === $this->_table && null !== $this->_tableClass) {
@@ -274,7 +281,8 @@ abstract class Centurion_Db_Table_Row_Abstract extends Zend_Db_Table_Row_Abstrac
         // even if we are interacting between a table defined in a class and a
         // table via extension, ensure to persist the definition
         if (($tableDefinition = $this->_table->getDefinition()) !== null
-            && ($parentTable->getDefinition() == null)) {
+            && ($parentTable->getDefinition() == null)
+        ) {
             $parentTable->setOptions(array(Zend_Db_Table_Abstract::DEFINITION => $tableDefinition));
         }
 
@@ -287,7 +295,7 @@ abstract class Centurion_Db_Table_Row_Abstract extends Zend_Db_Table_Row_Abstrac
         $map = $this->_prepareReference($this->_getTable(), $parentTable, $ruleKey);
 
         // iterate the map, creating the proper wheres
-        for ($i = 0; $i < count($map[Zend_Db_Table_Abstract::COLUMNS]); ++$i) {
+        for ($i = 0 ; $i < count($map[Zend_Db_Table_Abstract::COLUMNS]) ; ++$i) {
             $dependentColumnName = $db->foldCase($map[Zend_Db_Table_Abstract::COLUMNS][$i]);
             $value = $this->{$dependentColumnName};
             // Use adapter from parent table to ensure correct query construction
@@ -297,7 +305,7 @@ abstract class Centurion_Db_Table_Row_Abstract extends Zend_Db_Table_Row_Abstrac
             $parentInfo = $parentTable->info();
 
             // determine where part
-            $type     = $parentInfo[Zend_Db_Table_Abstract::METADATA][$parentColumnName]['DATA_TYPE'];
+            $type = $parentInfo[Zend_Db_Table_Abstract::METADATA][$parentColumnName]['DATA_TYPE'];
             $nullable = $parentInfo[Zend_Db_Table_Abstract::METADATA][$parentColumnName]['NULLABLE'];
             if ($value === null && $nullable == true) {
                 $select->where("$parentColumn IS NULL");
@@ -325,7 +333,7 @@ abstract class Centurion_Db_Table_Row_Abstract extends Zend_Db_Table_Row_Abstrac
         if ($this->columnsExists($columnName)) {
             return true;
         }
-        
+
         //Test concatenation of column
         if (null !== ($pos = strpos($columnName, '+')) && $pos !== false) {
             $part1 = isset($this->{trim(substr($columnName, 0, $pos))});
@@ -337,8 +345,9 @@ abstract class Centurion_Db_Table_Row_Abstract extends Zend_Db_Table_Row_Abstrac
         //Test reference, dependant and many dependant column with cascade
         if (null !== ($pos = strpos($columnName, '__')) && $pos !== false) {
             $row = $this->{substr($columnName, 0, $pos)};
-            if ($row == null)
+            if ($row == null) {
                 return false;
+            }
 
             return isset($row->{substr($columnName, $pos + 2)});
         }
@@ -368,6 +377,10 @@ abstract class Centurion_Db_Table_Row_Abstract extends Zend_Db_Table_Row_Abstrac
         return parent::__isset($columnName);
     }
 
+    /**
+     * @param string $columnName the column to test
+     * @return bool True if column exist in the row
+     */
     public function columnsExists($columnName)
     {
         return array_key_exists($columnName, $this->_data);
@@ -377,10 +390,11 @@ abstract class Centurion_Db_Table_Row_Abstract extends Zend_Db_Table_Row_Abstrac
     {
         if ($this->columnsExists($columnName)) {
             list($found, $retVal) = Centurion_Traits_Common::checkTraitOverload($this, __METHOD__, $columnName);
-            if (!$found)
+            if (!$found) {
                 return $this->_data[$columnName];
-            else
+            } else {
                 return $retVal;
+            }
         } else {
             throw new Exception(sprintf('Column %s doesn\'t exists', $columnName));
         }
@@ -392,7 +406,7 @@ abstract class Centurion_Db_Table_Row_Abstract extends Zend_Db_Table_Row_Abstrac
     }
 
     /**
-     * Return if current row is new (and so will be inserted and not updated) 
+     * Return if current row is new (and so will be inserted and not updated)
      *
      * @return true|false
      */
@@ -403,24 +417,27 @@ abstract class Centurion_Db_Table_Row_Abstract extends Zend_Db_Table_Row_Abstrac
 
     public function delegateGet($context, $column)
     {
-        if (!$this->isAllowedContext($context, $column))
+        if (!$this->isAllowedContext($context, $column)) {
             throw new Centurion_Db_Exception(sprintf('Unauthorize property %s', $column));
+        }
 
         return $this->$column;
     }
 
     public function delegateSet($context, $column, $value)
     {
-        if (!$this->isAllowedContext($context, $column))
+        if (!$this->isAllowedContext($context, $column)) {
             throw new Centurion_Db_Exception(sprintf('Unauthorize property %s', $column));
+        }
 
         $this->$column = $value;
     }
 
     public function delegateCall($context, $method, $args = array())
     {
-        if (!$this->isAllowedContext($context, $method))
+        if (!$this->isAllowedContext($context, $method)) {
             throw new Centurion_Db_Exception(sprintf('Unauthorize method %s', $method));
+        }
 
         return call_user_func_array(array($this, $method), $args);
     }
@@ -457,7 +474,7 @@ abstract class Centurion_Db_Table_Row_Abstract extends Zend_Db_Table_Row_Abstrac
                     return $this->$column;
                 }
             }
-            
+
             return null;
         }
 
@@ -465,7 +482,7 @@ abstract class Centurion_Db_Table_Row_Abstract extends Zend_Db_Table_Row_Abstrac
             return call_user_func_array(array($this, $method), array_merge(array($by), $args));
         }
 
-    	if (is_array($args) && count($args) == 1 && $args[0] instanceof Centurion_Db_Table_Select) {
+        if (is_array($args) && count($args) == 1 && $args[0] instanceof Centurion_Db_Table_Select) {
             $columnName = $this->_transformColumn($method);
             $referenceMap = $this->getTable()->info('referenceMap');
             $select = $args[0];
@@ -493,18 +510,18 @@ abstract class Centurion_Db_Table_Row_Abstract extends Zend_Db_Table_Row_Abstrac
             if (isset($manyDependentTables[$columnName])) {
                 if (!isset($this->_children[$columnName])) {
                     $this->_children[$columnName] = $this->findManyToManyRowset($manyDependentTables[$columnName]['refTableClass'],
-                                                      $manyDependentTables[$columnName]['intersectionTable'],
-                                                        null, null, $select);
+                        $manyDependentTables[$columnName]['intersectionTable'],
+                        null, null, $select);
                     $this->_children[$columnName]->setIntersectionColumns($manyDependentTables[$columnName]['columns']);
                 }
 
                 return $this->_children[$columnName];
             }
         }
-        
+
         try {
             $retVal = parent::__call($method, $args);
-        } catch(Zend_Db_Table_Row_Exception $e) {
+        } catch (Zend_Db_Table_Row_Exception $e) {
             list($found, $retVal) = Centurion_Traits_Common::checkTraitOverload($this, $method, $args);
 
             if (!$found) {
@@ -547,8 +564,8 @@ abstract class Centurion_Db_Table_Row_Abstract extends Zend_Db_Table_Row_Abstrac
         foreach ($referenceData as $reference => $cols) {
             $column = $referenceMap[$reference]['columns'];
             $className = $referenceMap[$reference]['refTableClass'];
-            
-	    //We dont hydrate, if all column are null (hydrate using left join)
+
+            //We dont hydrate, if all column are null (hydrate using left join)
             $useIt = false;
             foreach ($cols as $col) {
                 if (null !== $col) {
@@ -556,11 +573,11 @@ abstract class Centurion_Db_Table_Row_Abstract extends Zend_Db_Table_Row_Abstrac
                     break;
                 }
             }
-            
+
             if (!$useIt) {
                 continue;
             }
-            
+
             if (!isset(self::$_relationship[$className][$this->{$column}])) {
                 $table = Centurion_Db::getSingletonByClassName($className);
 
@@ -587,7 +604,7 @@ abstract class Centurion_Db_Table_Row_Abstract extends Zend_Db_Table_Row_Abstrac
                 $backendOptions = Centurion_Db_Table_Abstract::getDefaultBackendOptions();
             }
 
-            $frontendOptions['cache_id_prefix'] = get_class($this).'_'.md5(serialize($this->pk)).'_';
+            $frontendOptions['cache_id_prefix'] = get_class($this) . '_' . md5(serialize($this->pk)) . '_';
 
             $this->_cache = new Centurion_Db_Cache($this, $frontendOptions, $backendOptions);
         }
@@ -607,7 +624,7 @@ abstract class Centurion_Db_Table_Row_Abstract extends Zend_Db_Table_Row_Abstrac
     public function findManyToManyRowset($matchTable, $intersectionTable, $callerRefRule = null,
                                          $matchRefRule = null, Zend_Db_Table_Select $select = null)
     {
-        
+
         if (is_string($matchTable)) {
             $matchTable = $this->_getTableFromString($matchTable);
         }
@@ -619,19 +636,19 @@ abstract class Centurion_Db_Table_Row_Abstract extends Zend_Db_Table_Row_Abstrac
 
         // Use adapter from intersection table to ensure correct query construction
         $interInfo = $intersectionTable->info();
-        $interDb   = $intersectionTable->getAdapter();
+        $interDb = $intersectionTable->getAdapter();
         $interName = $interInfo['name'];
         $interSchema = isset($interInfo['schema']) ? $interInfo['schema'] : null;
         $matchInfo = $matchTable->info();
         $matchName = $matchInfo['name'];
         $matchSchema = isset($matchInfo['schema']) ? $matchInfo['schema'] : null;
 
-        
+
         // automatically use the column named order from the inter-table if it exists
         if (null === $select && in_array('order', $intersectionTable->info('cols'))) {
-            $select = $matchTable->select(false)->order($interName.'.order asc');
+            $select = $matchTable->select(false)->order($interName . '.order asc');
         }
-        
+
         $db = $this->_getTable()->getAdapter();
 
         if (!$intersectionTable instanceof Zend_Db_Table_Abstract) {
@@ -646,7 +663,8 @@ abstract class Centurion_Db_Table_Row_Abstract extends Zend_Db_Table_Row_Abstrac
         // even if we are interacting between a table defined in a class and a
         // table via extension, ensure to persist the definition
         if (($tableDefinition = $this->_table->getDefinition()) !== null
-            && ($intersectionTable->getDefinition() == null)) {
+            && ($intersectionTable->getDefinition() == null)
+        ) {
             $intersectionTable->setOptions(array(Zend_Db_Table_Abstract::DEFINITION => $tableDefinition));
         }
 
@@ -655,7 +673,7 @@ abstract class Centurion_Db_Table_Row_Abstract extends Zend_Db_Table_Row_Abstrac
         }
 
 
-        if (! $matchTable instanceof Zend_Db_Table_Abstract) {
+        if (!$matchTable instanceof Zend_Db_Table_Abstract) {
             $type = gettype($matchTable);
             if ($type == 'object') {
                 $type = get_class($matchTable);
@@ -666,7 +684,8 @@ abstract class Centurion_Db_Table_Row_Abstract extends Zend_Db_Table_Row_Abstrac
         // even if we are interacting between a table defined in a class and a
         // table via extension, ensure to persist the definition
         if (($tableDefinition = $this->_table->getDefinition()) !== null
-            && ($matchTable->getDefinition() == null)) {
+            && ($matchTable->getDefinition() == null)
+        ) {
             $matchTable->setOptions(array(Zend_Db_Table_Abstract::DEFINITION => $tableDefinition));
         }
 
@@ -687,7 +706,7 @@ abstract class Centurion_Db_Table_Row_Abstract extends Zend_Db_Table_Row_Abstrac
 
         $matchMap = $this->_prepareReference($intersectionTable, $matchTable, $matchRefRule);
 
-        for ($i = 0; $i < count($matchMap[Zend_Db_Table_Abstract::COLUMNS]); ++$i) {
+        for ($i = 0 ; $i < count($matchMap[Zend_Db_Table_Abstract::COLUMNS]) ; ++$i) {
             $interCol = $interDb->quoteIdentifier($interName . '.' . $matchMap[Zend_Db_Table_Abstract::COLUMNS][$i], true);
             $matchCol = $interDb->quoteIdentifier('m_' . $matchName . '.' . $matchMap[Zend_Db_Table_Abstract::REF_COLUMNS][$i], true);
             $joinCond[] = "$interCol = $matchCol";
@@ -709,14 +728,14 @@ abstract class Centurion_Db_Table_Row_Abstract extends Zend_Db_Table_Row_Abstrac
         //echo "\n" . $select->__toString();
         //        
         // debug - do not remove until fix        
-        
+
         $select->from(array($interName), array(), $interSchema)
-               ->joinInner(array('m_' . $matchName => $matchName), $joinCond, Zend_Db_Select::SQL_WILDCARD, $matchSchema)
-               ->setIntegrityCheck(false);               
-               
+            ->joinInner(array('m_' . $matchName => $matchName), $joinCond, Zend_Db_Select::SQL_WILDCARD, $matchSchema)
+            ->setIntegrityCheck(false);
+
         $callerMap = $this->_prepareReference($intersectionTable, $this->_getTable(), $callerRefRule);
-        
-        for ($i = 0; $i < count($callerMap[Zend_Db_Table_Abstract::COLUMNS]); ++$i) {
+
+        for ($i = 0 ; $i < count($callerMap[Zend_Db_Table_Abstract::COLUMNS]) ; ++$i) {
             $callerColumnName = $db->foldCase($callerMap[Zend_Db_Table_Abstract::REF_COLUMNS][$i]);
             $value = $this->_data[$callerColumnName];
             $interColumnName = $interDb->foldCase($callerMap[Zend_Db_Table_Abstract::COLUMNS][$i]);
@@ -730,7 +749,7 @@ abstract class Centurion_Db_Table_Row_Abstract extends Zend_Db_Table_Row_Abstrac
         //echo "\n" . $select->__toString();
         //        
         // debug - do not remove until fix
-        
+
         $stmt = $select->query();
 
         $config = array(
@@ -750,11 +769,11 @@ abstract class Centurion_Db_Table_Row_Abstract extends Zend_Db_Table_Row_Abstrac
                 throw new Zend_Db_Table_Row_Exception($e->getMessage(), $e->getCode(), $e);
             }
         }
-        
-        
+
+
         $rowset = new $rowsetClass($config);
         return $rowset->setRefRow($this)
-                      ->setIntersectionTableClass($intersectionTable);
+            ->setIntersectionTableClass($intersectionTable);
     }
 
     /**
@@ -843,6 +862,7 @@ abstract class Centurion_Db_Table_Row_Abstract extends Zend_Db_Table_Row_Abstrac
     {
         return Centurion_Db::getSingleton('media/file')->getPx();
     }
+
     /**
      * Retrieve the count of next rows.
      *
@@ -881,24 +901,25 @@ abstract class Centurion_Db_Table_Row_Abstract extends Zend_Db_Table_Row_Abstrac
     protected function _getAbsoluteUrl($urlParam = null)
     {
         //if (!isset($this->_data['permalink'])) {
-            if (null === $urlParam) {
-                $result = $this->getAbsoluteUrl();
-            } else {
-                $result = $urlParam;
-            }
-        
-            if (null === $result)
-                return '#';
+        if (null === $urlParam) {
+            $result = $this->getAbsoluteUrl();
+        } else {
+            $result = $urlParam;
+        }
 
-            list($params, $route) = $result;
+        if (null === $result) {
+            return '#';
+        }
 
-            if (is_string($params)) {
-                $temp = $route;
-                $route = $params;
-                $params = $temp;
-            }        
-            
-            $this->_data['permalink'] = Zend_Controller_Front::getInstance()->getRouter()->assemble($params, $route, true);
+        list($params, $route) = $result;
+
+        if (is_string($params)) {
+            $temp = $route;
+            $route = $params;
+            $params = $temp;
+        }
+
+        $this->_data['permalink'] = Zend_Controller_Front::getInstance()->getRouter()->assemble($params, $route, true);
         //}
 
         return $this->_data['permalink'];
@@ -929,10 +950,17 @@ abstract class Centurion_Db_Table_Row_Abstract extends Zend_Db_Table_Row_Abstrac
     {
         $router = Zend_Controller_Front::getInstance()->getRouter();
         $name = sprintf('%s_%s', $this->getTable()->info(Centurion_Db_Table_Abstract::NAME), 'get');
-        
+
         if (!$router->hasRoute($name)) {
             $data = explode('_', $this->getTable()->info(Centurion_Db_Table_Abstract::NAME), 2);
-            return array(array('module' => $data[0], 'controller' => str_replace('_', '-', $data[1]), 'action' => 'get', 'id' => $this->id), 'default');
+            return array(
+                array(
+                    'module'     => $data[0],
+                    'controller' => str_replace('_', '-', $data[1]),
+                    'action'     => 'get',
+                    'id'         => $this->id
+                ), 'default'
+            );
         }
         $route = $router->getRoute($name);
 
@@ -946,7 +974,7 @@ abstract class Centurion_Db_Table_Row_Abstract extends Zend_Db_Table_Row_Abstrac
     /**
      * Retrieve the primary key value.
      *
-     * @return int
+     * @return array|string|int
      */
     public function getPrimaryKey()
     {
@@ -960,27 +988,28 @@ abstract class Centurion_Db_Table_Row_Abstract extends Zend_Db_Table_Row_Abstrac
 
     public function getCacheTag($relation = null)
     {
-    	if (null === $relation) {
-    		$pk = is_string($this->pk) || is_int($this->pk) ? $this->pk : md5(serialize($this->pk));
-			return sprintf('__%s__%s', $this->getTable()->info(Centurion_Db_Table_Abstract::NAME), $pk);
-    	} else {
-	    	$dependentTables = $this->getTable()->info('dependentTables');
-	        if (isset($dependentTables[$relation])) {
-	        	$pk = is_string($this->pk) || is_int($this->pk) ? $this->pk : md5(serialize($this->pk));
-	        	return sprintf('__%s__%s__%s', $dependentTables[$relation], get_class($this), $pk);
-	        }
-    	}
+        if (null === $relation) {
+            $pk = is_string($this->pk) || is_int($this->pk) ? $this->pk : md5(serialize($this->pk));
+            return sprintf('__%s__%s', $this->getTable()->info(Centurion_Db_Table_Abstract::NAME), $pk);
+        } else {
+            $dependentTables = $this->getTable()->info('dependentTables');
+            if (isset($dependentTables[$relation])) {
+                $pk = is_string($this->pk) || is_int($this->pk) ? $this->pk : md5(serialize($this->pk));
+                return sprintf('__%s__%s__%s', $dependentTables[$relation], get_class($this), $pk);
+            }
+        }
     }
-    
+
     public function getReverseCacheTagForRelated($key)
     {
         $row = $this->{$key};
-        if (null === $row)
-           return null;
+        if (null === $row) {
+            return null;
+        }
         $pk = is_string($row->pk) || is_int($row->pk) ? $row->pk : md5(serialize($row->pk));
-	    return sprintf('__%s__%s__%s', get_class($this->getTable()), get_class($row), $pk);
+        return sprintf('__%s__%s__%s', get_class($this->getTable()), get_class($row), $pk);
     }
-    
+
     /**
      * Has selector, with a type, known if an object is a parent of another.
      * ex: if an user has a post.
@@ -988,13 +1017,15 @@ abstract class Centurion_Db_Table_Row_Abstract extends Zend_Db_Table_Row_Abstrac
      * @param string $type
      * @param string $pk
      * @todo add manyDependentTables
-     * @TODO: this is time and memory consume. It make fetchAll only to test if exist
+     * @TODO : this is time and memory consume. It make fetchAll only to test if exist
      * @return void
+     * @todo: this is mememory consuming, time consuming, and mysql consuming. We could check with pk
      */
     public function has($type, $object)
     {
         if (!array_key_exists($type, $this->getTable()->getDependentTables())
-            && !array_key_exists($type, $this->getTable()->getManyDependentTables())) {
+            && !array_key_exists($type, $this->getTable()->getManyDependentTables())
+        ) {
             throw new Centurion_Db_Exception(sprintf('type "%s" does not belong to %s', $type, get_class($this->getTable())));
         }
 
@@ -1016,10 +1047,10 @@ abstract class Centurion_Db_Table_Row_Abstract extends Zend_Db_Table_Row_Abstrac
     {
         $dependentTables = $this->getTable()->info('dependentTables');
         if (isset($dependentTables[$columnName])) {
-                $select = $this->_getTableFromString($dependentTables[$columnName])->select()->order($order);
-                $rowset = $this->findDependentRowset($dependentTables[$columnName], null, $select);
-                if (!isset($this->_children[$columnName])) {
-                    $this->_children[$columnName] = $rowset;
+            $select = $this->_getTableFromString($dependentTables[$columnName])->select()->order($order);
+            $rowset = $this->findDependentRowset($dependentTables[$columnName], null, $select);
+            if (!isset($this->_children[$columnName])) {
+                $this->_children[$columnName] = $rowset;
 
                 return $rowset;
             }
@@ -1030,7 +1061,7 @@ abstract class Centurion_Db_Table_Row_Abstract extends Zend_Db_Table_Row_Abstrac
         throw new Zend_Db_Table_Row_Exception(sprintf('%s is not in dependent table', $columnName));
     }
 
-/**
+    /**
      * Query a dependent table to retrieve rows matching the current row.
      *
      * @param string|Zend_Db_Table_Abstract  $dependentTable
@@ -1058,7 +1089,8 @@ abstract class Centurion_Db_Table_Row_Abstract extends Zend_Db_Table_Row_Abstrac
         // even if we are interacting between a table defined in a class and a
         // table via extension, ensure to persist the definition
         if (($tableDefinition = $this->_table->getDefinition()) !== null
-            && ($dependentTable->getDefinition() == null)) {
+            && ($dependentTable->getDefinition() == null)
+        ) {
             $dependentTable->setOptions(array(Zend_Db_Table_Abstract::DEFINITION => $tableDefinition));
         }
 
@@ -1070,7 +1102,7 @@ abstract class Centurion_Db_Table_Row_Abstract extends Zend_Db_Table_Row_Abstrac
 
         $map = $this->_prepareReference($dependentTable, $this->_getTable(), $ruleKey);
 
-        for ($i = 0; $i < count($map[Zend_Db_Table_Abstract::COLUMNS]); ++$i) {
+        for ($i = 0 ; $i < count($map[Zend_Db_Table_Abstract::COLUMNS]) ; ++$i) {
             $parentColumnName = $db->foldCase($map[Zend_Db_Table_Abstract::REF_COLUMNS][$i]);
             $value = $this->_data[$parentColumnName];
             // Use adapter from dependent table to ensure correct query construction
@@ -1079,7 +1111,7 @@ abstract class Centurion_Db_Table_Row_Abstract extends Zend_Db_Table_Row_Abstrac
             $dependentColumn = $dependentDb->quoteIdentifier($dependentColumnName, true);
             $dependentInfo = $dependentTable->info();
             $type = $dependentInfo[Zend_Db_Table_Abstract::METADATA][$dependentColumnName]['DATA_TYPE'];
-            $select->where($dependentInfo['name'].'.'."$dependentColumn = ?", $value, $type);
+            $select->where($dependentInfo['name'] . '.' . "$dependentColumn = ?", $value, $type);
         }
 
         return $dependentTable->fetchAll($select);
@@ -1088,7 +1120,7 @@ abstract class Centurion_Db_Table_Row_Abstract extends Zend_Db_Table_Row_Abstrac
     public function findDependentRowsetByColumnName($column, $wheres = null)
     {
         $dependentTables = $this->getTable()->info('dependentTables');
-        
+
         if (isset($dependentTables[$column])) {
             $dependentTable = $dependentTables[$column];
             if (is_string($dependentTable)) {
@@ -1135,11 +1167,15 @@ abstract class Centurion_Db_Table_Row_Abstract extends Zend_Db_Table_Row_Abstrac
     {
         foreach ($this->getTable()->info('referenceMap') as $key => $val) {
             $tags = $this->getReverseCacheTagForRelated($key);
-            if ($tags !== null)
-            	Centurion_Signal::factory('clean_cache')->send($this, array(Zend_Cache::CLEANING_MODE_MATCHING_ANY_TAG, array($tags)));
+            if ($tags !== null) {
+                Centurion_Signal::factory('clean_cache')->send($this, array(
+                                                                           Zend_Cache::CLEANING_MODE_MATCHING_ANY_TAG,
+                                                                           array($tags)
+                                                                      ));
+            }
         }
     }
-    
+
     /**
      * override these methods to implement pre/post save logic
      */
@@ -1247,15 +1283,16 @@ abstract class Centurion_Db_Table_Row_Abstract extends Zend_Db_Table_Row_Abstrac
      */
     protected function _getFirstOrLastByField($by, $isFirst = true, $kwargs = null, $select = null)
     {
-        if (is_string($by))
+        if (is_string($by)) {
             $column = Centurion_Inflector::tableize($by);
+        }
 
         if (null === $select) {
             $select = $this->getTable()->select(true);
         }
 
         return $this->_getFirstOrLastSelectByField($column, $isFirst, $kwargs, $select)
-                                                ->limit(1, 0)->fetchRow();
+            ->limit(1, 0)->fetchRow();
     }
 
     /**
@@ -1269,8 +1306,9 @@ abstract class Centurion_Db_Table_Row_Abstract extends Zend_Db_Table_Row_Abstrac
      */
     protected function _getNextOrPreviousByField($by, $isNext = true, $kwargs = null, $select = null)
     {
-        if (is_string($by))
+        if (is_string($by)) {
             $column = Centurion_Inflector::tableize($by);
+        }
 
         if (null === $select) {
             $select = $this->getTable()->select(true);
@@ -1291,9 +1329,10 @@ abstract class Centurion_Db_Table_Row_Abstract extends Zend_Db_Table_Row_Abstrac
      */
     protected function _getNextOrPreviousCountByField($by, $isNext = true, $kwargs = null, $select = null)
     {
-        if (is_string($by))
+        if (is_string($by)) {
             $by = Centurion_Inflector::tableize($by);
-            
+        }
+
         if (null === $select) {
             $select = $this->getTable()->select(true);
         }
@@ -1303,6 +1342,7 @@ abstract class Centurion_Db_Table_Row_Abstract extends Zend_Db_Table_Row_Abstrac
 
     /**
      * Remove join in column name.
+     *
      * @param $column
      * @TODO: why a public column prefixed with '_'?
      */
@@ -1389,7 +1429,7 @@ abstract class Centurion_Db_Table_Row_Abstract extends Zend_Db_Table_Row_Abstrac
         $dontQuote = false;
 
         if (isset($metadata[$cleanColumn])) {
-            if ($metadata[$cleanColumn]['DATA_TYPE'] === Zend_Db::INT_TYPE || $metadata[$cleanColumn]['DATA_TYPE'] === Zend_Db::BIGINT_TYPE || $metadata[$cleanColumn]['DATA_TYPE'] === Zend_Db::FLOAT_TYPE ) {
+            if ($metadata[$cleanColumn]['DATA_TYPE'] === Zend_Db::INT_TYPE || $metadata[$cleanColumn]['DATA_TYPE'] === Zend_Db::BIGINT_TYPE || $metadata[$cleanColumn]['DATA_TYPE'] === Zend_Db::FLOAT_TYPE) {
                 $dontQuote = true;
             }
         }
@@ -1489,17 +1529,27 @@ abstract class Centurion_Db_Table_Row_Abstract extends Zend_Db_Table_Row_Abstrac
     /**
      * @return array
      * @todo documentation
-     * @TODO: i thinks we could resuse getModifiedData
+     * @TODO : i thinks we could resuse getModifiedData
      */
-    public function getModifiedFields() {
+    public function getModifiedFields()
+    {
         $fields = array();
         if (!$this->isNew()) {
-            foreach($this->_data as $field => $value) {
+            foreach ($this->_data as $field => $value) {
                 if (isset($this->_cleanData[$field]) && $this->_cleanData[$field] != $value) {
                     $fields[] = $field;
                 }
             }
         }
         return $fields;
+    }
+
+    /**
+     * @todo add some cache
+     * @return int|string
+     */
+    public function getContentTypeId()
+    {
+        return Centurion_Db::getSingleton('core/contentType')->getContentTypeIdOf($this);
     }
 }

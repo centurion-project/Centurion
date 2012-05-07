@@ -52,7 +52,7 @@ class Centurion_Auth extends Zend_Auth
     /**
      * Retrieve user object with session data.
      *
-     * @return Auth_Model_DbTable_User
+     * @return Auth_Model_DbTable_Row_User
      */
     public function getIdentity()
     {

@@ -34,7 +34,7 @@ class Centurion_Mail_Transport_Blackhole  extends Zend_Mail_Transport_Abstract
      * @see Zend/Mail/Transport/Zend_Mail_Transport_Abstract::_sendMail()
      * @return bool true if the mail is sent. Here we always sent true.
      */
-    public function _sendMail()
+    protected function _sendMail()
     {
         //Do nothing
         return true;

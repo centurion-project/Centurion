@@ -1,6 +1,9 @@
 <?php
 require_once dirname(__FILE__) . '/../../../../TestHelper.php';
 
+/**
+ * @TODO: test _getFirstOrLastSelectByField
+ */
 class Centurion_Db_Table_RowTest extends PHPUnit_Framework_TestCase
 {
 
@@ -142,5 +145,92 @@ class Centurion_Db_Table_RowTest extends PHPUnit_Framework_TestCase
 
         $this->assertEquals($expected, $data);
     }
+
+    /**
+     * @covers Centurion_Db_Table_Row_Abstract::isNew
+     */
+    public function testFunctionIsNew()
+    {
+        $table = new Asset_Model_DbTable_Simple();
+
+        $row = $table->createRow();
+
+        $this->assertTrue($row->isNew());
+
+        $row->title = 'test';
+        $row->save();
+
+        $this->assertFalse($row->isNew());
+    }
+
+    /**
+     * @covers Centurion_Db_Table_Row_Abstract::__get
+     */
+    public function testUnExistantColumnsDirectly()
+    {
+        $table = new Asset_Model_DbTable_Simple();
+        $row = $table->createRow();
+
+        //This columns exists. No exception should be throw
+        $row->title;
+
+        $this->setExpectedException('Zend_Db_Table_Row_Exception');
+
+        //This columns does not exist. An exception should be throw
+        $row->label;
+    }
+
+    /**
+     * @covers Centurion_Db_Table_Row_Abstract::columnsExists
+     */
+    public function testUnExistantColumnsWithColumnsExistsFunction()
+    {
+        $table = new Asset_Model_DbTable_Simple();
+        $row = $table->createRow();
+
+        //This columns exists
+        $this->assertTrue($row->columnsExists('title'));
+
+        //This columns does not exist
+        $this->assertFalse($row->columnsExists('label'));
+    }
+
+    /**
+     * @covers Centurion_Db_Table_Row_Abstract::__set
+     */
+    public function testFunction__Set()
+    {
+        $table = new Asset_Model_DbTable_Simple();
+        $row = $table->createRow();
+
+        $row->id = 'test';
+
+        try {
+            $row->imnotacolumn = 'test';
+            $this->fail('Setting a column that not exist should raised an exception');
+        } catch (Centurion_Db_Table_Exception $e) {
+
+        }
+
+    }
+
+    /**
+     * @covers Centurion_Db_Table_Row_Abstract::getModifiedData
+     * @covers Centurion_Db_Table_Row_Abstract::reset
+     */
+    public function testModifiedData()
+    {
+        $table = new Asset_Model_DbTable_Simple();
+        $row = $table->createRow();
+
+        $row->save();
+
+        $row->title = 'test';
+
+        $this->assertTrue(array_key_exists('title', $row->getModifiedData()));
+        $row->reset();
+        $this->assertFalse(array_key_exists('title', $row->getModifiedData()));
+    }
+
 }
 
