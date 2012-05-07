@@ -1,6 +1,6 @@
 <?php
 
-class Cms_Model_DbTable_Row_Flatpage extends Centurion_Db_Table_Row implements Translation_Traits_Model_DbTable_Row_Interface, Core_Traits_Mptt_Model_DbTable_Row_Interface, Core_Model_DbTable_Row_Navigable_Interface, Core_Traits_Slug_Model_DbTable_Row_Interfaces
+class Cms_Model_DbTable_Row_Flatpage extends Centurion_Db_Table_Row implements Translation_Traits_Model_DbTable_Row_Interface, Core_Traits_Mptt_Model_DbTable_Row_Interface, Core_Model_DbTable_Row_Navigable_Interface, Core_Traits_Slug_Model_DbTable_Row_Interface
 {
     protected $_navigation = false;
     protected $_route = null;
