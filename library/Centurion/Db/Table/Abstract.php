@@ -330,7 +330,12 @@ abstract class Centurion_Db_Table_Abstract extends Zend_Db_Table_Abstract implem
         return $this->_select;
     }
 
-    
+    public function getSelectClass()
+    {
+        return $this->_selectClass;
+    }
+
+
     /**
      * may be override to provide a way to get a filtered select
      * @return Centurion_Db_Table_Select
