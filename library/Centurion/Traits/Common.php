@@ -10,15 +10,20 @@ class Centurion_Traits_Common
      */
     static public function initTraits(Centurion_Traits_Traitsable $object)
     {
+        foreach (class_implements($object) as $implement) {
+            self::addTraits($object, $implement);
+        }
+    }
+
+    static public function addTraits(Centurion_Traits_Traitsable $object, $implement)
+    {
         $traitQueue = $object->getTraitQueue();
 
-        foreach (class_implements($object) as $implement) {
-            //TODO: change this preg match. Too permissive
-            if (preg_match('`(.*_Traits.*)_Interface`', $implement, $matches)) {
-                $className = $matches[1];
-                if (class_exists($className, true) && in_array('Centurion_Traits_Abstract', class_parents($className))) {
-                    $traitQueue->push(new $className($object));
-                }
+        //TODO: change this preg match. Too permissive
+        if (preg_match('`(.*_Traits.*)_Interface`', $implement, $matches)) {
+            $className = $matches[1];
+            if (class_exists($className, true) && in_array('Centurion_Traits_Abstract', class_parents($className))) {
+                $traitQueue->push(new $className($object));
             }
         }
     }
