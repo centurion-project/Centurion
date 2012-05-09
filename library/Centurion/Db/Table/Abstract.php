@@ -649,7 +649,11 @@ abstract class Centurion_Db_Table_Abstract extends Zend_Db_Table_Abstract implem
     {
         Centurion_Signal::factory('pre_delete')->send($this, array($where));
 
-        $return = parent::delete($where);
+        list($found, $return) = Centurion_Traits_Common::checkTraitOverload($this, 'delete', array($where));
+
+        if (!$found) {
+            $return = parent::delete($where);
+        }
 
         Centurion_Signal::factory('post_delete')->send($this, array($where));
         return $return;
