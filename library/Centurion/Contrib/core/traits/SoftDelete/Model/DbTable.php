@@ -18,14 +18,8 @@ class Core_Traits_SoftDelete_Model_DbTable extends Centurion_Traits_Model_DbTabl
             return;
         }
 
-        $corellationName = 0;
         if (is_array($name)) {
-            $corellationName = key($name);
             $name = current($name);
-        }
-
-        if (0 === $corellationName) {
-            $corellationName = $name;
         }
 
         if ($name !== $this->_model->info(Zend_Db_Table_Abstract::NAME)) {
@@ -49,13 +43,28 @@ class Core_Traits_SoftDelete_Model_DbTable extends Centurion_Traits_Model_DbTabl
         try {
             parent::checkForRequiredColumn($additionalCols);
         } catch (Exception $e) {
+            if (APPLICATION_ENV == 'testing') {
+                return $this->forceColumn();
+            }
+
             if (APPLICATION_ENV == 'development') {
-                $tableName = $this->_model->info(Zend_Db_Table_Abstract::NAME);
-                $str = 'ALTER TABLE  `' . $tableName . '` ADD  `is_deleted` INT( 1 ) UNSIGNED NOT NULL , ADD INDEX (  `is_deleted` )';
+                $str = $this->_getSqlForCreateColumn();
                 throw new Exception('Fix this by adding "' . $str . '" to your BDD.', 0, $e);
             }
 
             throw $e;
         }
+    }
+
+    protected function _getSqlForCreateColumn()
+    {
+        $tableName = $this->_model->info(Zend_Db_Table_Abstract::NAME);
+        $str = 'ALTER TABLE  `' . $tableName . '` ADD  `is_deleted` INT( 1 ) UNSIGNED NOT NULL , ADD INDEX (  `is_deleted` )';
+        return $str;
+    }
+
+    public function forceColumn()
+    {
+        $this->_model->getAdapter()->query($this->_getSqlForCreateColumn());
     }
 }

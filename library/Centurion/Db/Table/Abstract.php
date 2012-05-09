@@ -29,7 +29,7 @@
  * @author      Laurent Chenay <lchenay@gmail.com>
  * @author      Antoine Roesslinger <ar@octaveoctave.com>
  */
-abstract class Centurion_Db_Table_Abstract extends Zend_Db_Table_Abstract implements Centurion_Traits_Traitsable
+abstract class Centurion_Db_Table_Abstract extends Zend_Db_Table_Abstract implements Countable, Centurion_Traits_Traitsable
 {
     const CREATED_AT_COL = 'created_at';
     const UPDATED_AT_COL = 'updated_at';
