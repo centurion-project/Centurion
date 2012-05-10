@@ -71,9 +71,9 @@ class Centurion_Controller_CRUD extends Centurion_Controller_AGL
                                                      )
         );
 
-        $this->view->sortable = $this->_sortable;
+        $this->view->sortable = $this->isSortable();
 
-        if ($this->_sortable && $this->_defaultOrder == null)
+        if ($this->isSortable() && $this->_defaultOrder == null)
             $this->_defaultOrder = 'order asc';
 
         $this->_formViewScript = sprintf('%s/form.phtml', $this->_request->getControllerName());
@@ -133,9 +133,21 @@ class Centurion_Controller_CRUD extends Centurion_Controller_AGL
         return parent::generateList();
     }
 
+    /**
+     * @return bool
+     */
+    public function isSortable()
+    {
+        if ($this->_getModel() instanceof Core_Traits_Order_Model_DbTable_Interface) {
+            return true;
+        }
+
+        return $this->_sortable;
+    }
+
     public function orderAction($rowset = null)
     {
-        if ($this->_sortable) {
+        if ($this->isSortable()) {
             $order = 0;
             foreach ($rowset as $row) {
                 $row->order = $order++;
