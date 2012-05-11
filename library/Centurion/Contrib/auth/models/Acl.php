@@ -28,16 +28,21 @@
  */
 class Auth_Model_Acl extends Zend_Acl
 {
-    protected $_roles = array('Auth_Model_DbTable_Row_User'  => array('dbtable'        =>  'Auth_Model_DbTable_User',
+    protected $_roles = array('Auth_Model_DbTable_Row_User'  => array(
+                                                'dbtable'        =>  'Auth_Model_DbTable_User',
                                                 'rows'                  => array(),
-                                                'identColumn'           => 'username',
+                                                'identityColumn'           => 'username',
                                                 'parentColumn'          => 'user_parent',
-                                                'manyDependentTable'    => 'permissions'),
-                              'Auth_Model_DbTable_Row_Group'  => array('dbtable'       =>  'Auth_Model_DbTable_Group',
+                                                'manyDependentTable'    => 'permissions'
+                                    ),
+                              'Auth_Model_DbTable_Row_Group'  => array(
+                                                 'dbtable'       =>  'Auth_Model_DbTable_Group',
                                                  'rows'                 =>  array(),
-                                                 'identColumn'          =>  'name',
+                                                 'identityColumn'          =>  'name',
                                                  'parentColumn'         =>  'parent_group',
-                                                 'manyDependentTable'   => 'permissions'));
+                                                 'manyDependentTable'   => 'permissions'
+                              )
+    );
 
     protected $_loaded = array();
 
@@ -53,22 +58,22 @@ class Auth_Model_Acl extends Zend_Acl
     }
 
     /**
-     * @param Zend_Acl_Resource_Interface|string $ressource
+     * @param Zend_Acl_Resource_Interface|string $resource
      * @return bool
      */
-    public function isLoadedRessource($ressource)
+    public function isLoadedResource($resource)
     {
-        return $this->has($ressource);
-        //return isset($this->_loaded['Auth_Model_DbTable_Permission'][$ressource]);
+        return $this->has($resource);
+        //return isset($this->_loaded['Auth_Model_DbTable_Permission'][$resource]);
     }
 
     /**
-     * @param string $ressource
+     * @param string $resource
      */
-    public function loadRessource($ressource)
+    public function loadResource($resource)
     {
-        $this->_loaded['Auth_Model_DbTable_Permission'][$ressource] = $ressource;
-        $this->addResource(new Zend_Acl_Resource($ressource));
+        $this->_loaded['Auth_Model_DbTable_Permission'][$resource] = $resource;
+        $this->addResource(new Zend_Acl_Resource($resource));
     }
 
     public function isAllowed($role = null, $resource = null, $privilege = null)
@@ -79,10 +84,10 @@ class Auth_Model_Acl extends Zend_Acl
             throw new Zend_Acl_Exception(sprintf('The role class %s, can not be used in ACL', $key));
         }
         $resourceString = (string) $resource;
-        if (!$this->isLoadedRessource($resourceString)) {
-            $this->loadRessource($resourceString);
+        if (!$this->isLoadedResource($resourceString)) {
+            $this->loadResource($resourceString);
         }
-        $roleName = $role->{$this->_roles[$key]['identColumn']};
+        $roleName = $role->{$this->_roles[$key]['identityColumn']};
 
         if (!$this->isLoaded($roleName, $key)) {
             $this->load($role, $key);
@@ -92,29 +97,29 @@ class Auth_Model_Acl extends Zend_Acl
     }
 
     /**
-     * @param Centurion_Db_Table_Row_Abstract $ressource
+     * @param Centurion_Db_Table_Row_Abstract $resource
      * @param string $key One of key in $this->$_roles
      */
-    public function load($ressource, $key)
+    public function load($resource, $key)
     {
         if (!isset($this->_roles[$key])) {
-            throw new Zend_Acl_Exception('An error occured');
+            throw new Zend_Acl_Exception('An error occurred');
         }
 
         if (!isset($this->_loaded[$key])) {
             $this->_loaded[$key] = array();
         }
 
-        $column = $ressource->{$this->_roles[$key]['identColumn']};
+        $column = $resource->{$this->_roles[$key]['identityColumn']};
         $this->_loaded[$key][$column] = true;
 
-        $this->_addRole($key, $ressource);
+        $this->_addRole($key, $resource);
 
-        foreach ($ressource->{$this->_roles[$key]['manyDependentTable']} as $permissions) {
-            if (!$this->isLoadedRessource($permissions->name)) {
-                $this->loadRessource($permissions->name);
+        foreach ($resource->{$this->_roles[$key]['manyDependentTable']} as $permissions) {
+            if (!$this->isLoadedResource($permissions->name)) {
+                $this->loadResource($permissions->name);
             }
-            $this->allow($ressource->{$this->_roles[$key]['identColumn']}, $permissions->name);
+            $this->allow($resource->{$this->_roles[$key]['identityColumn']}, $permissions->name);
         }
     }
 
@@ -125,23 +130,23 @@ class Auth_Model_Acl extends Zend_Acl
     protected function _addRole($key, $role)
     {
         if (!isset($this->_roles[$key])) {
-            throw new Zend_Acl_Exception('An error occured');
+            throw new Zend_Acl_Exception('An error occurred');
         }
 
         $parents = array();
-        $identColumn = $this->_roles[$key]['identColumn'];
+        $identityColumn = $this->_roles[$key]['identityColumn'];
         $parentColumn = $this->_roles[$key]['parentColumn'];
 
         if (null !== $role->$parentColumn) {
-            if (!$this->isLoaded($role->$parentColumn->{$identColumn}, $key)) {
+            if (!$this->isLoaded($role->$parentColumn->{$identityColumn}, $key)) {
                 $this->load($role->$parentColumn, $key);
             }
             $this->_addRole($key, $role->$parentColumn);
-            array_push($parents, $this->getRole($role->$parentColumn->$identColumn));
+            array_push($parents, $this->getRole($role->$parentColumn->$identityColumn));
         }
 
-        if (!$this->hasRole($role->$identColumn)) {
-            $this->addRole(new Zend_Acl_Role($role->$identColumn), $parents);
+        if (!$this->hasRole($role->$identityColumn)) {
+            $this->addRole(new Zend_Acl_Role($role->$identityColumn), $parents);
         }
     }
 }
