@@ -38,6 +38,11 @@ class Centurion_Controller_CRUD extends Centurion_Controller_AGL
     protected $_form = null;
 
     /**
+     * @var bool
+     */
+    protected $_useTicket = true;
+
+    /**
      * @var string The name of class to instantiate
      */
     protected $_formClassName = null;
@@ -165,7 +170,7 @@ class Centurion_Controller_CRUD extends Centurion_Controller_AGL
             $rowset = $this->_getModel()->find($id);
         }
         
-        if (!$this->view->ticket()->isValid()) {
+        if ($this->_useTicket && !$this->view->ticket()->isValid()) {
             $this->view->error = $this->view->translate('Invalid ticket');
             return $this->_forward('index', null, null, array('errors' => array()));
         }
@@ -188,6 +193,12 @@ class Centurion_Controller_CRUD extends Centurion_Controller_AGL
         }
 
         $this->_cleanCache();
+
+        if ($this->_hasParam('_next', false)) {
+            $url = urldecode($this->_getParam('_next', null));
+            return $this->_response->setRedirect($url);
+        }
+
         $this->getHelper('redirector')->gotoRoute(array_merge(array(
             'controller' => $this->_request->getControllerName(),
             'module'     => $this->_request->getModuleName(),
@@ -216,6 +227,15 @@ class Centurion_Controller_CRUD extends Centurion_Controller_AGL
      * @return Centurion_Form_Model_Abstract
      */
     protected function _getForm()
+    {
+        return $this->getForm();
+    }
+
+    /**
+     * @return Centurion_Form_Model_Abstract|null
+     * @throws Centurion_Controller_Action_Exception
+     */
+    public function getForm()
     {
         if (null === $this->_form) {
             if (!$this->_formClassName || !is_string($this->_formClassName))
