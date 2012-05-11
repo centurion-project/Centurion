@@ -583,7 +583,7 @@ class Centurion_Db_Table_Select extends Zend_Db_Table_Select implements Centurio
                 foreach ((array) $refForeignArray['columns'] as $key => $columnName) {
                     $joinCond[] = sprintf('%s.%s = %s.%s', $this->_adapter->quoteIdentifier($interTableName),
                         $this->_adapter->quoteIdentifier($columnName),
-                        $this->_adapter->quoteIdentifier($quotedRefTableName),
+                        $quotedRefTableName,
                         $this->_adapter->quoteIdentifier($refForeignArray['refColumns'][$key]));
 
 
