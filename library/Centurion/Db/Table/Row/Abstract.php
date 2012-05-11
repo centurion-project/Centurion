@@ -244,6 +244,14 @@ abstract class Centurion_Db_Table_Row_Abstract extends Zend_Db_Table_Row_Abstrac
         return $return;
     }
 
+    /**
+     * @return array
+     */
+    public function getCleanData()
+    {
+        return $this->_cleanData;
+    }
+
     public function getTable()
     {
         if (null === $this->_table && null !== $this->_tableClass) {
