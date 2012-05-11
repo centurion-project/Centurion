@@ -542,10 +542,15 @@ class Centurion_Db_Table_Select extends Zend_Db_Table_Select implements Centurio
              */
             if ($interTableName !== $this->_uniqueCorrelation($interTableName)) {
                 $quotedInterTableName = $this->_adapter->quoteIdentifier($this->_uniqueCorrelation($interTableName));
-                $joinCond = sprintf('%s.%s = %s.%s', $quotedInterTableName,
-                                                 $this->_adapter->quoteIdentifier($ref['reflocal']),
-                                                 $this->_adapter->quoteIdentifier($localTableName),
-                                                 $this->_adapter->quoteIdentifier($localPrimary));
+                $joinCond = array();
+                $refLocalArray['refColumns'] = (array) $refLocalArray['refColumns'];
+                foreach ((array) $refLocalArray['columns'] as $key => $columnName) {
+                    $joinCond[] = sprintf('%s.%s = %s.%s', $quotedInterTableName,
+                        $this->_adapter->quoteIdentifier($columnName),
+                        $this->_adapter->quoteIdentifier($localTableName),
+                        $this->_adapter->quoteIdentifier($refLocalArray['refColumns'][$key]));
+                }
+                $joinCond = implode(' AND ', $joinCond);
             } else {
                 $quotedInterTableName = $this->_adapter->quoteIdentifier($interTableName);
             }
@@ -572,11 +577,18 @@ class Centurion_Db_Table_Select extends Zend_Db_Table_Select implements Centurio
              * we must change the join condition
              */
             if ($refTableName !== $this->_uniqueCorrelation($refTableName)) {
+                $joinCond = array();
                 $quotedRefTableName = $this->_adapter->quoteIdentifier($this->_uniqueCorrelation($refTableName));
-                $joinCond = sprintf('%s.%s = %s.%s', $quotedInterTableName,
-                                             $this->_adapter->quoteIdentifier($ref['refforeign']),
-                                             $quotedRefTableName,
-                                             $this->_adapter->quoteIdentifier($refPrimary));
+                $refForeignArray['refColumns'] = (array) $refForeignArray['refColumns'];
+                foreach ((array) $refForeignArray['columns'] as $key => $columnName) {
+                    $joinCond[] = sprintf('%s.%s = %s.%s', $this->_adapter->quoteIdentifier($interTableName),
+                        $this->_adapter->quoteIdentifier($columnName),
+                        $this->_adapter->quoteIdentifier($quotedRefTableName),
+                        $this->_adapter->quoteIdentifier($refForeignArray['refColumns'][$key]));
+
+
+                }
+                $joinCond = implode(' AND ', $joinCond);
             }
             $this->$method($refTableName, $joinCond, array());
         }
@@ -620,11 +632,11 @@ class Centurion_Db_Table_Select extends Zend_Db_Table_Select implements Centurio
 
         $tableName = $this->_adapter->quoteIdentifier($refTableName);
 
-        // Caster les variables en tableau, utile quand une seule colonne est précisé dans la referenceMap
+        // Caster les variables en tableau, utile quand une seule colonne est prï¿½cisï¿½ dans la referenceMap
         $refMap['refColumns'] = (array) $refMap['refColumns'];
         $refMap['columns'] = (array) $refMap['columns'];
 
-        // Création de la condition de jointure pour la referenceMap
+        // Crï¿½ation de la condition de jointure pour la referenceMap
         $joinCond = array();
         foreach ($refMap['refColumns'] as $key => $refColumn) {
             $joinCond[] = sprintf('%s.%s = %s.%s', $tableName,
@@ -632,7 +644,7 @@ class Centurion_Db_Table_Select extends Zend_Db_Table_Select implements Centurio
                 $this->_adapter->quoteIdentifier($localTableName),
                 $this->_adapter->quoteIdentifier($refMap['columns'][$key]));
         }
-        /* Dans le cas où il y a plusieurs colonnes dans la referenceMap, créer une string avec toutes les conditions
+        /* Dans le cas oï¿½ il y a plusieurs colonnes dans la referenceMap, crï¿½er une string avec toutes les conditions
          * du tableau $joinCond
          */
         $joinCond = implode(' AND ', $joinCond);
@@ -1071,7 +1083,7 @@ class Centurion_Db_Table_Select extends Zend_Db_Table_Select implements Centurio
     /**
      *
      * @param $dependences
-     * @todo accepter une reférence "lointaine" (ex user__profile__avatar)
+     * @todo accepter une refï¿½rence "lointaine" (ex user__profile__avatar)
      * @return Centurion_Db_Table_Select
      */
     public function hydrate($dependences, $joinType = self::JOIN_TYPE_LEFT)
