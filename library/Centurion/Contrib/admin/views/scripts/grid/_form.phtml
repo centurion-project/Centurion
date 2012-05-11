@@ -26,9 +26,9 @@ $this->placeholder('headling_1')->captureStart(); ?>
 <?php 
 if (isset($this->error) || isset($this->infos)) : ?>
     <div class="ui-state-message">
-        <?php if (isset($this->error)):
-            $this->error = (array) $this->error;
-            foreach ($this->error as $error):
+        <?php if (isset($this->errors)):
+            $this->errors = (array) $this->errors;
+            foreach ($this->errors as $error):
                 ?>
                 <p class="ui-state-error"">
                     <?php echo $error;?>

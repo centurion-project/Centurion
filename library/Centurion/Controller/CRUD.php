@@ -61,6 +61,9 @@ class Centurion_Controller_CRUD extends Centurion_Controller_AGL
     
     public function init()
     {
+        $this->view->infos = array();
+        $this->view->errors = array();
+
 //        $this->getHelper('ContextAutoSwitch')->direct();
 //        $this->_request->setParams($this->getHelper('params')->direct());
 
@@ -86,7 +89,7 @@ class Centurion_Controller_CRUD extends Centurion_Controller_AGL
         parent::init();
         
         if ($this->_getParam('saving') == 'done') {
-            $this->view->infos = $this->view->translate('Saving has been done.');
+            $this->view->infos[] = $this->view->translate('Saving has been done.');
         }
     }
 
@@ -171,7 +174,7 @@ class Centurion_Controller_CRUD extends Centurion_Controller_AGL
         }
         
         if ($this->_useTicket && !$this->view->ticket()->isValid()) {
-            $this->view->error = $this->view->translate('Invalid ticket');
+            $this->view->errors[] = $this->view->translate('Invalid ticket');
             return $this->_forward('index', null, null, array('errors' => array()));
         }
         
@@ -518,9 +521,9 @@ class Centurion_Controller_CRUD extends Centurion_Controller_AGL
             }
         } else {
             if (null != ($element = $this->_getForm()->getElement('_XSRF')) && $element->hasErrors()) {
-                $this->view->error = $this->view->translate('Form hasn\'t been save. Maybe you have waiting to much time. Try again.');
+                $this->view->errors[] = $this->view->translate('Form hasn\'t been save. Maybe you have waiting to much time. Try again.');
             } else {
-                $this->view->error = $this->view->translate('An error occur when validating the form. See below.');
+                $this->view->errors[] = $this->view->translate('An error occur when validating the form. See below.');
             }
         }
 
