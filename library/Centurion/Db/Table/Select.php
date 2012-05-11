@@ -29,8 +29,10 @@
  * @todo        refactor filter method, add more unit tests
  * @TODO        Make a contain function that check if a row is in a select
  */
-class Centurion_Db_Table_Select extends Zend_Db_Table_Select
+class Centurion_Db_Table_Select extends Zend_Db_Table_Select implements Centurion_Traits_Traitsable
 {
+    protected $_hydratedDependences = array();
+    
     const RULES_SEPARATOR = '__';
 
     const JOIN_TYPE_SEPARATOR = '|';
@@ -88,6 +90,94 @@ class Centurion_Db_Table_Select extends Zend_Db_Table_Select
                                         self::OPERATOR_YEAR, self::OPERATOR_MONTH, self::OPERATOR_DAY);
 
     protected static $_prefixes = array(self::OPERATOR_NEGATION, self::OPERATOR_OR);
+
+    protected $_traitQueue;
+
+    /**
+     * retrieve the trait queue for the current instance
+     **/
+    public function getTraitQueue()
+    {
+        if (null == $this->_traitQueue)
+            $this->_traitQueue = new Centurion_Traits_Queue();
+
+        return $this->_traitQueue;
+    }
+
+    /**
+     * implementation forced by Traitable interface
+     **/
+    public function __isset($name) 
+    {
+    }
+
+    /**
+     * implementation forced by Traitable interface
+     **/
+    public function __unset($name)
+    {   
+    }
+
+    /**
+     * implementation forced by Traitable interface
+     **/
+    public function __set($name, $value)
+    {
+    }
+
+    public function isAllowedContext($context, $resource = null)
+    {
+        return in_array($context, iterator_to_array($this->_traitQueue), true);
+    }
+
+    public function delegateGet($context, $column)
+    {
+        if (!$this->isAllowedContext($context, $column))
+            throw new Centurion_Db_Exception(sprintf('Unauthorized property %s', $column));
+
+        return $this->{$column};
+    }
+
+    public function delegateSet($context, $column, $value)
+    {
+        if (!$this->isAllowedContext($context, $column))
+            throw new Centurion_Db_Exception(sprintf('Unauthorized property %s', $column));
+
+        $this->$column = $value;
+    }
+
+    public function delegateCall($context, $method, $args = array())
+    {
+        if (!$this->isAllowedContext($context, $method))
+            throw new Centurion_Db_Exception(sprintf('Unauthorized method %s', $method));
+
+        return call_user_func_array(array($this, $method), $args);
+    }
+
+    public function __get($property)
+    {
+        $trait = Centurion_Traits_Common::checkTraitPropertyExists($this, $property);
+        if (null !== $trait) {
+            return $trait->{$property};
+        }
+    }
+
+    /**
+     * @see Zend_Db_Select::_where
+     **/
+    protected function _where($condition, $value = null, $type = null, $bool = true)
+    {
+        
+        $originalValue = $value;
+        list($found, $value) = Centurion_Traits_Common::checkTraitOverload($this, '_where', array($condition, $value, $type, $bool), $stopOnFound = false);
+        
+        if (!$found) {
+            return parent::_where($condition, $originalValue, $type, $bool);
+        } else {
+            return $value;
+        }
+        
+    }
 
     /**
      * Clone the current query and do a "count(1)" query in order to get the number of element that the original query will return.
@@ -421,11 +511,26 @@ class Centurion_Db_Table_Select extends Zend_Db_Table_Select
 
         $tableName = $this->_adapter->quoteIdentifier($interTableName);
 
+
+        //TODO: this should be remove after. It's only for retrocompatibility
+        if (!isset($ref['refforeign']) && isset($ref['columns'])) {
+            $ref['refforeign'] = substr($ref['columns']['local'], 0, -3);
+            $ref['reflocal'] = substr($ref['columns']['foreign'], 0, -3);
+        }
+
+        $refForeignArray = $interTable->getReferenceMap($ref['refforeign']);
+        $refLocalArray = $interTable->getReferenceMap($ref['reflocal']);
+
         do {
-            $joinCond = sprintf('%s.%s = %s.%s', $tableName,
-                                                 $this->_adapter->quoteIdentifier($ref['columns']['local']),
-                                                 $this->_adapter->quoteIdentifier($localTableName),
-                                                 $this->_adapter->quoteIdentifier($localPrimary));
+            $joinCond = array();
+            $refLocalArray['refColumns'] = (array) $refLocalArray['refColumns'];
+            foreach ((array) $refLocalArray['columns'] as $key => $columnName) {
+                $joinCond[] = sprintf('%s.%s = %s.%s', $tableName,
+                                                     $this->_adapter->quoteIdentifier($columnName),
+                                                     $this->_adapter->quoteIdentifier($localTableName),
+                                                     $this->_adapter->quoteIdentifier($refLocalArray['refColumns'][$key]));
+            }
+            $joinCond = implode(' AND ', $joinCond);
 
             $tableName = $this->_uniqueCorrelation($interTableName);
         } while ($this->_isAlreadyJoined($tableName, $joinCond));
@@ -438,7 +543,7 @@ class Centurion_Db_Table_Select extends Zend_Db_Table_Select
             if ($interTableName !== $this->_uniqueCorrelation($interTableName)) {
                 $quotedInterTableName = $this->_adapter->quoteIdentifier($this->_uniqueCorrelation($interTableName));
                 $joinCond = sprintf('%s.%s = %s.%s', $quotedInterTableName,
-                                                 $this->_adapter->quoteIdentifier($ref['columns']['local']),
+                                                 $this->_adapter->quoteIdentifier($ref['reflocal']),
                                                  $this->_adapter->quoteIdentifier($localTableName),
                                                  $this->_adapter->quoteIdentifier($localPrimary));
             } else {
@@ -448,11 +553,17 @@ class Centurion_Db_Table_Select extends Zend_Db_Table_Select
             $this->$method($interTableName, $joinCond, array());
         }
 
-        $joinCond = sprintf('%s.%s = %s.%s', $interTableName,
-                                             $this->_adapter->quoteIdentifier($ref['columns']['foreign']),
-                                             $this->_adapter->quoteIdentifier($refTableName),
-                                             $this->_adapter->quoteIdentifier($refPrimary));
+        $joinCond = array();
+        $refForeignArray['refColumns'] = (array) $refForeignArray['refColumns'];
+        foreach ((array) $refForeignArray['columns'] as $key => $columnName) {
+            $joinCond[] = sprintf('%s.%s = %s.%s', $this->_adapter->quoteIdentifier($interTableName),
+                                                 $this->_adapter->quoteIdentifier($columnName),
+                                                 $this->_adapter->quoteIdentifier($refTableName),
+                                                 $this->_adapter->quoteIdentifier($refForeignArray['refColumns'][$key]));
 
+            
+        }
+        $joinCond = implode(' AND ', $joinCond);
         $quotedRefTableName = $this->_adapter->quoteIdentifier($refTableName);
 
         if ($full && !$this->_isAlreadyJoined($refTableName, $joinCond)) {
@@ -463,7 +574,7 @@ class Centurion_Db_Table_Select extends Zend_Db_Table_Select
             if ($refTableName !== $this->_uniqueCorrelation($refTableName)) {
                 $quotedRefTableName = $this->_adapter->quoteIdentifier($this->_uniqueCorrelation($refTableName));
                 $joinCond = sprintf('%s.%s = %s.%s', $quotedInterTableName,
-                                             $this->_adapter->quoteIdentifier($ref['columns']['foreign']),
+                                             $this->_adapter->quoteIdentifier($ref['refforeign']),
                                              $quotedRefTableName,
                                              $this->_adapter->quoteIdentifier($refPrimary));
             }
@@ -509,11 +620,11 @@ class Centurion_Db_Table_Select extends Zend_Db_Table_Select
 
         $tableName = $this->_adapter->quoteIdentifier($refTableName);
 
-        // Caster les variables en tableau, utile quand une seule colonne est prÃ©cisÃ© dans la referenceMap
+        // Caster les variables en tableau, utile quand une seule colonne est précisé dans la referenceMap
         $refMap['refColumns'] = (array) $refMap['refColumns'];
         $refMap['columns'] = (array) $refMap['columns'];
 
-        // CrÃ©ation de la condition de jointure pour la referenceMap
+        // Création de la condition de jointure pour la referenceMap
         $joinCond = array();
         foreach ($refMap['refColumns'] as $key => $refColumn) {
             $joinCond[] = sprintf('%s.%s = %s.%s', $tableName,
@@ -521,7 +632,7 @@ class Centurion_Db_Table_Select extends Zend_Db_Table_Select
                 $this->_adapter->quoteIdentifier($localTableName),
                 $this->_adapter->quoteIdentifier($refMap['columns'][$key]));
         }
-        /* Dans le cas oÃ¹ il y a plusieurs colonnes dans la referenceMap, crÃ©er une string avec toutes les conditions
+        /* Dans le cas où il y a plusieurs colonnes dans la referenceMap, créer une string avec toutes les conditions
          * du tableau $joinCond
          */
         $joinCond = implode(' AND ', $joinCond);
@@ -678,6 +789,7 @@ class Centurion_Db_Table_Select extends Zend_Db_Table_Select
                 if (null === $nextRule) {
                     $full = false;
                     $interTable = Centurion_Db::getSingletonByClassName($manyToManyMap[$rule[1]]['intersectionTable']);
+                    //TODO: this should be fixed because it's not working for many columns ref
                     $sqlField = sprintf('%s.%s', $this->_adapter->quoteIdentifier($interTable->info(Centurion_Db_Table_Abstract::NAME)),
                                                  $this->_adapter->quoteIdentifier($manyToManyMap[$rule[1]]['columns']['foreign']));
                 }
@@ -959,7 +1071,7 @@ class Centurion_Db_Table_Select extends Zend_Db_Table_Select
     /**
      *
      * @param $dependences
-     * @todo accepter une refÃ©rence "lointaine" (ex user__profile__avatar)
+     * @todo accepter une reférence "lointaine" (ex user__profile__avatar)
      * @return Centurion_Db_Table_Select
      */
     public function hydrate($dependences, $joinType = self::JOIN_TYPE_LEFT)

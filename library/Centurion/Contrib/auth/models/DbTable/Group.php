@@ -56,18 +56,14 @@ class Auth_Model_DbTable_Group extends Centurion_Db_Table_Abstract
         'users'        =>  array(
             'refTableClass'     =>  'Auth_Model_DbTable_User', 
             'intersectionTable' =>  'Auth_Model_DbTable_Belong',
-            'columns'   =>  array(
-                'local'         =>  'group_id',
-                'foreign'       =>  'user_id'
-            )
+            'reflocal'         =>  'group',
+            'refforeign'       =>  'user'
         ),
         'permissions'        =>  array(
             'refTableClass'     =>  'Auth_Model_DbTable_Permission', 
             'intersectionTable' =>  'Auth_Model_DbTable_GroupPermission',
-            'columns'        =>  array(
-                'local'         =>  'group_id',
-                'foreign'       =>  'permission_id'
-            )
+            'reflocal'         =>  'group',
+            'refforeign'       =>  'permission'
         )
     );
 }

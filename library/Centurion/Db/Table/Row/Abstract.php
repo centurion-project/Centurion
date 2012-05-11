@@ -204,26 +204,57 @@ abstract class Centurion_Db_Table_Row_Abstract extends Zend_Db_Table_Row_Abstrac
             }
             return self::$_relationship[$className][$pkValue];
         }
+
+        $orderClause = null;
+        $extractedColumnName = $columnName;
+        if (preg_match('/^(.*)Order(Asc|Desc)?By(.*)$/', $columnName, $matches)) {
+            list(, $extractedColumnName, $orderDirection, $orderCol) = $matches;
+
+            $orderClause = trim($orderCol . ' ' . $orderDirection);
+        }
+
         $dependentTables = $this->getTable()->info('dependentTables');
-        if (isset($dependentTables[$columnName])) {
+        if (isset($dependentTables[$extractedColumnName])) {
             if (!isset($this->_children[$columnName])) {
-                $this->_children[$columnName] = $this->findDependentRowset($dependentTables[$columnName]);
+                $select = Centurion_Db::getSingletonByClassName($dependentTables[$extractedColumnName])->select();
+                if (!is_null($orderClause))
+                    $select->order($orderClause);
+
+                $this->_children[$columnName] = $this->findDependentRowset($dependentTables[$extractedColumnName], null, $select);
             }
 
             return $this->_children[$columnName];
         }
 
         $manyDependentTables = $this->getTable()->info('manyDependentTables');
-        if (isset($manyDependentTables[$columnName])) {
+        if (isset($manyDependentTables[$extractedColumnName])) {
             if (!isset($this->_children[$columnName])) {
                 Centurion_Db_Table_Abstract::setFiltersStatus(true);
+
+                $select = Centurion_Db::getSingletonByClassName($manyDependentTables[$extractedColumnName]['refTableClass'])->select();
+                if (!is_null($orderClause)) {
+                    $select->order($orderClause);
+                }
+
+                $refForeignCond = null;
+                if (isset($manyDependentTables[$extractedColumnName]['refforeigncond'])) {
+                    $refForeignCond = $manyDependentTables[$extractedColumnName]['refforeigncond'];
+                }
+
+                //TODO: this should be remove after. It's only for retrocompatibility
+                if (!isset($manyDependentTables[$extractedColumnName]['refforeign']) && isset($manyDependentTables[$extractedColumnName]['columns'])) {
+                    $manyDependentTables[$extractedColumnName]['refforeign'] = substr($manyDependentTables[$extractedColumnName]['columns']['local'], -3);
+                    $manyDependentTables[$extractedColumnName]['reflocal'] = substr($manyDependentTables[$extractedColumnName]['columns']['foreign'], -3);
+                }
+
                 $this->_children[$columnName]
-                    = $this->findManyToManyRowset($manyDependentTables[$columnName]['refTableClass'],
-                    $manyDependentTables[$columnName]['intersectionTable'],
-                    substr($manyDependentTables[$columnName]['columns']['local'], 0, -3),
-                    substr($manyDependentTables[$columnName]['columns']['foreign'], 0, -3)
-                );
-                $this->_children[$columnName]->setIntersectionColumns($manyDependentTables[$columnName]['columns']);
+                    = $this->findManyToManyRowset($manyDependentTables[$extractedColumnName]['refTableClass'],
+                                                  $manyDependentTables[$extractedColumnName]['intersectionTable'], 
+                                                  $manyDependentTables[$extractedColumnName]['reflocal'],
+                                                  $manyDependentTables[$extractedColumnName]['refforeign'],
+                                                  $select, $refForeignCond);
+                //todo: fix this
+                //$this->_children[$columnName]->setIntersectionColumns($manyDependentTables[$extractedColumnName]['columns']);
                 Centurion_Db_Table_Abstract::restoreFiltersStatus();
             }
 
@@ -630,7 +661,7 @@ abstract class Centurion_Db_Table_Row_Abstract extends Zend_Db_Table_Row_Abstrac
      * @throws Zend_Db_Table_Row_Exception If $matchTable or $intersectionTable is not a table class or is not loadable.
      */
     public function findManyToManyRowset($matchTable, $intersectionTable, $callerRefRule = null,
-                                         $matchRefRule = null, Zend_Db_Table_Select $select = null)
+                                         $matchRefRule = null, Zend_Db_Table_Select $select = null, $refForeignCond = null)
     {
 
         if (is_string($matchTable)) {
@@ -752,6 +783,14 @@ abstract class Centurion_Db_Table_Row_Abstract extends Zend_Db_Table_Row_Abstrac
             $type = $interInfo[Zend_Db_Table_Abstract::METADATA][$interColumnName]['DATA_TYPE'];
             $select->where($interDb->quoteInto("$interCol = ?", $value, $type));
         }
+
+        ///TODO : Redo that
+        if (null !== $refForeignCond) {
+            foreach ($refForeignCond as $columnName => $columnValue) {
+                $select->where('m_' . $matchName . '.' .  $columnName . ' = ?', $columnValue);
+            }
+        }
+
         // debug - do not remove until fix
         //
         //echo "\n" . $select->__toString();
