@@ -41,21 +41,34 @@ class Auth_Model_Acl extends Zend_Acl
 
     protected $_loaded = array();
 
+    /**
+     *
+     * @param string $role
+     * @param string $key
+     * @return bool
+     */
     public function isLoaded($role, $key)
     {
         return isset($this->_loaded[$key][$role]);
     }
 
+    /**
+     * @param Zend_Acl_Resource_Interface|string $ressource
+     * @return bool
+     */
     public function isLoadedRessource($ressource)
     {
         return $this->has($ressource);
         //return isset($this->_loaded['Auth_Model_DbTable_Permission'][$ressource]);
     }
 
+    /**
+     * @param string $ressource
+     */
     public function loadRessource($ressource)
     {
         $this->_loaded['Auth_Model_DbTable_Permission'][$ressource] = $ressource;
-        $this->add(new Zend_Acl_Resource($ressource));
+        $this->addResource(new Zend_Acl_Resource($ressource));
     }
 
     public function isAllowed($role = null, $resource = null, $privilege = null)
@@ -78,8 +91,16 @@ class Auth_Model_Acl extends Zend_Acl
         return parent::isAllowed($role, $resource, $privilege);
     }
 
+    /**
+     * @param Centurion_Db_Table_Row_Abstract $ressource
+     * @param string $key One of key in $this->$_roles
+     */
     public function load($ressource, $key)
     {
+        if (!isset($this->_roles[$key])) {
+            throw new Zend_Acl_Exception('An error occured');
+        }
+
         if (!isset($this->_loaded[$key])) {
             $this->_loaded[$key] = array();
         }
@@ -97,8 +118,16 @@ class Auth_Model_Acl extends Zend_Acl
         }
     }
 
+    /**
+     * @param string $key One of key in $this->$_roles
+     * @param Centurion_Db_Table_Row_Abstract $role
+     */
     protected function _addRole($key, $role)
     {
+        if (!isset($this->_roles[$key])) {
+            throw new Zend_Acl_Exception('An error occured');
+        }
+
         $parents = array();
         $identColumn = $this->_roles[$key]['identColumn'];
         $parentColumn = $this->_roles[$key]['parentColumn'];
