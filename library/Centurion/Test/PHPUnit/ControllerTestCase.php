@@ -87,6 +87,35 @@ class Centurion_Test_PHPUnit_ControllerTestCase extends Zend_Test_PHPUnit_Contro
         return true;
     }
 
+    public function is200($url)
+    {
+        $this->resetResponse();
+        $this->resetRequest();
+
+        try {
+            $this->dispatch($url);
+            if ($this->getResponse()->getHttpResponseCode() != 200) {
+                return false;
+            }
+        } catch (Centurion_Controller_Action_Exception $e) {
+            return false;
+        }
+
+        return true;
+    }
+
+    public function assert200($url) {
+        if (!$this->is200($url)) {
+            $this->fail('The action not raised the 200 code');
+        }
+    }
+
+    public function assertNot200($url) {
+        if ($this->is200($url)) {
+            $this->fail('The action raised the 200 code. It should not');
+        }
+    }
+
     public function assert404($url)
     {
         if (!$this->is404($url)) {
