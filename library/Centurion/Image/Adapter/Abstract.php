@@ -36,6 +36,10 @@ abstract class Centurion_Image_Adapter_Abstract
     const RIGHT  = 4;
     const BOTTOM = 1;
 
+    /**
+     * Store if current image has been modified. It avoid to recompress an image that is same as original
+     * @var bool
+     */
     protected $_hasBeenModified = false;
     
     protected $_thumbWidth = null;
@@ -370,11 +374,17 @@ abstract class Centurion_Image_Adapter_Abstract
 
     }
 
+    /**
+     * @return int
+     */
     public function getThumbHeight()
     {
         return $this->_thumbHeight;
     }
 
+    /**
+     * @return int
+     */
     public function getThumbWidth()
     {
         return $this->_thumbWidth;

@@ -213,7 +213,10 @@ class Centurion_Image_Adapter_GD extends Centurion_Image_Adapter_Abstract
         
         return $this;
     }
-    
+
+    /**
+     * @return Centurion_Image_Adapter_GD
+     */
     protected function _reloadSize()
     {
         $this->_sourceWidth = imagesx($this->_source);

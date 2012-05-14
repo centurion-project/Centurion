@@ -45,13 +45,12 @@ class Centurion_Movie_Flv
     protected $_fileSize = 0;
     protected $_debug = false;
 
-    public function __construct($file_name)
+    public function __construct($filename)
     {
-        if (file_exists($file_name)) {
-            $this->_filename = $file_name;
-            $this->_fileSize = filesize($file_name);
-            $this->filefound = true;
-            $this->_fileId = @fopen($file_name, 'rb');
+        if (file_exists($filename)) {
+            $this->_filename = $filename;
+            $this->_fileSize = filesize($filename);
+            $this->_fileId = @fopen($filename, 'rb');
 
             if ($this->_fileId) {
                 $this->isReadable = true;
@@ -77,10 +76,13 @@ class Centurion_Movie_Flv
 
     public function getMetadata($key = null)
     {
-        if ( $key !== null && isset($this->_metadata[$key]))
+        if ( $key !== null && isset($this->_metadata[$key])) {
             return $this->_metadata[$key];
-        if ($key !== null)
+        }
+
+        if ($key !== null) {
             return null;
+        }
         return $this->_metadata;
     }
 
