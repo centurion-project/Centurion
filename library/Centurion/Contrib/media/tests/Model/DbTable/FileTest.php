@@ -58,7 +58,7 @@ class Media_Test_Model_DbTable_File extends PHPUnit_Framework_TestCase
         $row = $fileTable->createRow();
 
         $os = 'linux';
-        if (preg_match('`Window`i', $_SERVER['OS'])) {
+        if (isset($_SERVER['OS']) && preg_match('`Window`i', $_SERVER['OS'])) {
             $os = 'windows';
         }
         if ('linux' == $os) {
