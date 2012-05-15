@@ -23,7 +23,7 @@
  * @package     Centurion_Signal
  * @copyright   Copyright (c) 2008-2011 Octave & Octave (http://www.octaveoctave.com)
  * @license     http://centurion-project.org/license/new-bsd     New BSD License
- * @author      Florent Messa <florent.messa@gmail.com>
+ * @author      Richard Déloge <rd@octaveoctave.com>
  */
 class Centurion_Signal_OnFormValidation extends Centurion_Signal_Abstract
 {
