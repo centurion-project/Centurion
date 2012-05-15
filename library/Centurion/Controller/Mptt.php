@@ -156,6 +156,10 @@ class Centurion_Controller_Mptt extends Centurion_Controller_Action
 
         $this->view->form = $this->_getForm(array(), $row);
         $this->_processValues();
+
+        $this->_formViewScript = 'mptt/edit.phtml';
+        $this->_renderForm($this->view->form);
+
         $this->renderIfNotExists('mptt/edit', null, true);
     }
 
@@ -175,6 +179,10 @@ class Centurion_Controller_Mptt extends Centurion_Controller_Action
         $this->view->form = $this->_getForm();
         $this->view->form->populate($this->_request->getParam(Centurion_Controller_CRUD::PARAM_FORM_VALUES, array()));
         $this->_processValues();
+
+        $this->_formViewScript = 'mptt/create.phtml';
+        $this->_renderForm($this->view->form);
+
         $this->renderIfNotExists('mptt/create', null, true);
     }
 
@@ -206,6 +214,23 @@ class Centurion_Controller_Mptt extends Centurion_Controller_Action
                 $row->moveTo();
                 //$this->forward404(sprintf('Type %s is unknown', $type));
         }
+    }
+
+    public function _preRenderForm()
+    {
+        Centurion_Traits_Common::checkTraitOverload($this, '_preRenderForm', array(), false);
+    }
+
+    protected function _renderForm($form)
+    {
+        $this->view->form = $form;
+        $this->view->formViewScript = 'grid/_form.phtml';
+
+        $this->_preRenderForm();
+
+        $script = substr($this->view->selectScript(array($this->_formViewScript, 'grid/form.phtml')), 0, -6);
+        //$script = substr($this->view->selectScript(array(sprintf('%s/form.phtml', $this->_request->getControllerName()), 'grid/form.phtml')), 0, -6);
+        $this->render($script, true, true);
     }
 
     /**
