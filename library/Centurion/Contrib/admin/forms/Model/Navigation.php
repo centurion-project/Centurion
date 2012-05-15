@@ -41,6 +41,8 @@ class Admin_Form_Model_Navigation extends Centurion_Form_Model_Abstract implemen
     {
         $this->_model = Centurion_Db::getSingleton('core/navigation');
 
+        $this->_exclude = array('mptt_parent_id');
+
         $this->_elementLabels = array(
             'label'                 => $this->_translate('Label'),
             'module'                => $this->_translate('Module name'),
