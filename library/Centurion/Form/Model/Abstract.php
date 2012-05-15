@@ -143,6 +143,10 @@ abstract class Centurion_Form_Model_Abstract extends Centurion_Form
      */
     protected $_elementLabels = array();
 
+    /**
+     * @var null
+     * @todo this seems to be unused
+     */
     protected $_fields = null;
 
     protected $_values = null;
@@ -203,7 +207,7 @@ abstract class Centurion_Form_Model_Abstract extends Centurion_Form
         $this->_postGenerate();
 
     }
-    
+
     public function __wakeup()
     {
         if (null !== $this->getElement('_XSRF')) {
@@ -211,11 +215,6 @@ abstract class Centurion_Form_Model_Abstract extends Centurion_Form
             $this->addElement('Hash', '_XSRF', array('salt' => $this->getAttrib('id')));
         }
     }
-
-//    public function __call($function, $args)
-//    {
-//
-//    }
 
     /**
      * Retrieve instance of model form.
@@ -352,6 +351,9 @@ abstract class Centurion_Form_Model_Abstract extends Centurion_Form
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function setSubInstance()
     {
         $parentReferenceMap = $this->getModel()->getReferenceMap();
@@ -364,6 +366,10 @@ abstract class Centurion_Form_Model_Abstract extends Centurion_Form
         return $this;
     }
 
+    /**
+     * @param Centurion_Db_Table_Row_Abstract|null $instance
+     * @return $this
+     */
     public function populateWithInstance(Centurion_Db_Table_Row_Abstract $instance = null)
     {
         if (null !== $instance) {
@@ -388,7 +394,7 @@ abstract class Centurion_Form_Model_Abstract extends Centurion_Form
      */
     public function hasInstance()
     {
-        return null !== $this->_instance;
+        return (null !== $this->_instance);
     }
 
     /**
@@ -403,6 +409,10 @@ abstract class Centurion_Form_Model_Abstract extends Centurion_Form
         return $this->_model;
     }
 
+    /**
+     * @param Centurion_Db_Table_Abstract $model
+     * @return $this
+     */
     public function setModel(Centurion_Db_Table_Abstract $model)
     {
         $this->_model = $model;
@@ -436,6 +446,10 @@ abstract class Centurion_Form_Model_Abstract extends Centurion_Form
         return $this->_instance;
     }
 
+    /**
+     * @param null|array $values
+     * @return Centurion_Db_Table_Row_Abstract|null
+     */
     public function saveInstance($values = null)
     {
         if ($values === null) {
@@ -521,6 +535,10 @@ abstract class Centurion_Form_Model_Abstract extends Centurion_Form
         return $this->_cleanValues(parent::getValues($suppressArrayNotation));
     }
 
+    /**
+     * @param array|null $values
+     * @return $this
+     */
     public function setValues($values)
     {
         $this->_values = $values;
@@ -528,6 +546,10 @@ abstract class Centurion_Form_Model_Abstract extends Centurion_Form
         return $this;
     }
 
+    /**
+     * @param string $columnName
+     * @return bool
+     */
     public function isExcluded($columnName)
     {
         if (in_array($columnName, $this->_exclude)) {
@@ -541,6 +563,10 @@ abstract class Centurion_Form_Model_Abstract extends Centurion_Form
         return false;
     }
 
+    /**
+     * @param string $columnName
+     * @return bool
+     */
     public function isDisabled($columnName)
     {
         if (in_array($columnName, $this->_disable)) {
@@ -576,6 +602,7 @@ abstract class Centurion_Form_Model_Abstract extends Centurion_Form
 
         return $this;
     }
+
 
     public function setDisable(array $disable)
     {
@@ -621,17 +648,19 @@ abstract class Centurion_Form_Model_Abstract extends Centurion_Form
         return $result;
     }
 
+    /**
+     * @return bool
+     */
     public function isNew()
     {
         return $this->_isNew;
     }
 
-    protected function _doSave($adapter = null)
+    /**
+     * @return $this
+     */
+    protected function _doSave()
     {
-        if (null === $adapter) {
-            $adapter = $this->getModel()->getAdapter();
-        }
-
         $this->saveInstance();
 
         return $this;
@@ -711,7 +740,7 @@ abstract class Centurion_Form_Model_Abstract extends Centurion_Form
     
     /**
      * 
-     * @param unknown_type $values
+     * @param array $values
      */
     public function processValues($values)
     {
