@@ -305,7 +305,7 @@ class Centurion_Form extends Zend_Form implements Centurion_Traits_Traitsable
      * @param   string          $elementName
      * @param   string          $action
      * @param   string          $pivotElementName OPTIONAL
-     * @return  Centurion_Form
+     * @return  $this
      */
     public function moveElement($elementName, $action, $pivotElementName = null)
     {
@@ -361,7 +361,7 @@ class Centurion_Form extends Zend_Form implements Centurion_Traits_Traitsable
     /**
      * Clean form decorators.
      *
-     * @return Centurion_Form
+     * @return $this
      */
     public function cleanForm()
     {
@@ -413,7 +413,7 @@ class Centurion_Form extends Zend_Form implements Centurion_Traits_Traitsable
     /**
      * Clean displayGroups.
      *
-     * @return Centurion_Form
+     * @return $this
      */
     public function cleanDisplayGroups()
     {
@@ -436,7 +436,7 @@ class Centurion_Form extends Zend_Form implements Centurion_Traits_Traitsable
      * @param  string|Zend_Form_Element $element
      * @param  string $name
      * @param  array|Zend_Config $options
-     * @return Centurion_Form
+     * @return $this
      */
     public function addElement($element, $name = null, $options = null)
     {
@@ -705,7 +705,7 @@ class Centurion_Form extends Zend_Form implements Centurion_Traits_Traitsable
     /**
      * Render error for a form.
      *
-     * @return Centurion_Form
+     * @return $this
      */
     public function renderError()
     {
@@ -759,8 +759,9 @@ class Centurion_Form extends Zend_Form implements Centurion_Traits_Traitsable
      */
     public function render(Zend_View_Interface $view = null)
     {
-        if (null == $this->getElement('formId'))
+        if (null == $this->getElement('formId')) {
             $this->addElement('hidden', 'formId', array('value' => $this->getFormId()));
+        }
         
         if ($this->_clear) {
             $this->renderError();
