@@ -284,7 +284,7 @@ class Core_Traits_Mptt_Model_DbTable extends Centurion_Traits_Model_DbTable_Abst
      * Creates space for a new tree by incrementing all tree ids greater than targetTreeId.
      *
      * @param string $targetTreeId
-     * @return Core_Traits_Mptt_Model_DbTable
+     * @return $this
      */
     protected function _createTreeSpace($targetTreeId)
     {
@@ -331,7 +331,7 @@ EOF;
      * @param int $leftRightChange
      * @param int $newTreeId
      * @param int $parentPk
-     * @return Core_Traits_Mptt_Model_DbTable
+     * @return $this
      */
     protected function _interTreeMoveAndCloseGap($node, $levelChange, $leftRightChange, $newTreeId, $parentPk = null)
     {
@@ -351,7 +351,7 @@ EOF;
      *
      * @param Core_Traits_Mptt_Model_DbTable_Row_Interface $node The node object
      * @param int $newTreeId If not specified, a new tree id will be generated
-     * @return Core_Traits_Mptt_Model_DbTable
+     * @return $this
      */
     protected function _makeChildRootNode($node, $newTreeId = null)
     {
@@ -383,7 +383,7 @@ EOF;
      * @param Core_Traits_Mptt_Model_DbTable_Row_Interface $node The node object
      * @param Core_Traits_Mptt_Model_DbTable_Row_Interface $target The target object
      * @param string $position Valid values are first-child, last-child, left or right
-     * @return Core_Traits_Mptt_Model_DbTable
+     * @return $this
      */
     protected function _makeSiblingOfRootNode($node, $target, $position)
     {
@@ -469,7 +469,7 @@ EOF;
      * @param int $size Size for updating the space
      * @param int $target The target point
      * @param int $treeId The tree identified
-     * @return Core_Traits_Mptt_Model_DbTable
+     * @return $this
      */
     protected function _manageSpace($size, $target, $treeId)
     {
@@ -504,7 +504,7 @@ EOF;
      * @param Core_Traits_Mptt_Model_DbTable_Row_Interface $node The node object
      * @param Core_Traits_Mptt_Model_DbTable_Row_Interface $target The target node object
      * @param string $position Valid values are first-child, last-child, left or right
-     * @return Core_Traits_Mptt_Model_DbTable
+     * @return $this
      */
     protected function _moveChildToNewTree($node, $target, $position)
     {
@@ -540,7 +540,7 @@ EOF;
      * @param Core_Traits_Mptt_Model_DbTable_Row_Interface $node The node object
      * @param Core_Traits_Mptt_Model_DbTable_Row_Interface $target The target node object
      * @param string $position Valid values are first-child, last-child, left or right
-     * @return Core_Traits_Mptt_Model_DbTable
+     * @return $this
      */
     protected function _moveChildWithinTree($node, $target, $position)
     {
@@ -639,7 +639,7 @@ EOF;
      * @param Core_Traits_Mptt_Model_DbTable_Row_Interface $node The node object
      * @param Core_Traits_Mptt_Model_DbTable_Row_Interface $target The target node object
      * @param string $position Valid values are first-child, last-child, left or right
-     * @return Core_Traits_Mptt_Model_DbTable
+     * @return $this
      */
     protected function _moveRootNode($node, $target, $position)
     {

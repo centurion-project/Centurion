@@ -28,6 +28,10 @@
  */
 class Centurion_View_Helper_Email extends Zend_View_Helper_Abstract
 {
+    /**
+     * @param string $email
+     * @return $this|string
+     */
     public function email($email = '')
     {
         if (!empty($email)) {
