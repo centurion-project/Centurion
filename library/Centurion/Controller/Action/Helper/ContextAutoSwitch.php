@@ -52,8 +52,6 @@ class Centurion_Controller_Action_Helper_ContextAutoSwitch extends Zend_Controll
     {
         $request = $this->getActionController()->getRequest();
 
-        $controller = $this->getActionController();
-
         // Set a Vary response header based on the Accept header
         $this->getResponse()->setHeader('Vary', 'Accept');
         

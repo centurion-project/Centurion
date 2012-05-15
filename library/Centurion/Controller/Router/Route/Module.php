@@ -64,24 +64,32 @@ class Centurion_Controller_Router_Route_Module extends Zend_Controller_Router_Ro
                     $url .= '/' . $arrayValue;
                 }
             } else {
-                if ($encode) $value = urlencode(urlencode($value));
+                if ($encode) {
+                    $value = urlencode(urlencode($value));
+                }
                 $url .= '/' . $key;
                 $url .= '/' . $value;
             }
         }
 
         if (!empty($url) || $action !== $this->_defaults[$this->_actionKey]) {
-            if ($encode) $action = urlencode($action);
+            if ($encode) {
+                $action = urlencode($action);
+            }
             $url = '/' . $action . $url;
         }
 
         if (!empty($url) || $controller !== $this->_defaults[$this->_controllerKey]) {
-            if ($encode) $controller = urlencode($controller);
+            if ($encode) {
+                $controller = urlencode($controller);
+            }
             $url = '/' . $controller . $url;
         }
 
         if (isset($module)) {
-            if ($encode) $module = urlencode($module);
+            if ($encode) {
+                $module = urlencode($module);
+            }
             $url = '/' . $module . $url;
         }
 

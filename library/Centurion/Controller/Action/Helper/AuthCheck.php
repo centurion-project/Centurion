@@ -37,12 +37,13 @@ class Centurion_Controller_Action_Helper_AuthCheck extends Zend_Controller_Actio
     {
         if (!$this->getActionController()->getUser()->hasIdentity() || $this->getActionController()->getUser()->getIdentity()->username == 'anonymous') {
             if (null === $url) {
-                if (null != Centurion_Config_Manager::get('auth.login.params'))
+                if (null != Centurion_Config_Manager::get('auth.login.params')) {
                     $params = Centurion_Config_Manager::get('auth.login.params');
-                else
+                } else {
                     $params = array('controller'  =>  'login',
                                     'action'      =>  'index',
                                     'module'      =>  'admin');
+                }
                 if (null !== Centurion_Config_Manager::get('auth.login.params')) {
                     $route = Centurion_Config_Manager::get('auth.login.route');
                 } else {

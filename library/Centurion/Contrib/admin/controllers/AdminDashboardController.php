@@ -15,6 +15,10 @@ class Admin_AdminDashboardController extends Centurion_Controller_Action
        
    }
 
+    /**
+     * This action list all admin controller in all active modules.
+     * It can help to build navigation.
+     */
     public function listAdminAction()
     {
         $front = $this->getFrontController();

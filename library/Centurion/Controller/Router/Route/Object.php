@@ -66,16 +66,4 @@ class Centurion_Controller_Router_Route_Object extends Centurion_Controller_Rout
         
         return parent::assemble($data, $reset, $encode, $partial);
     }
-    
-    /**
-     * Matches a user submitted path with parts defined by a map. Assigns and
-     * returns an array of variables on a successful match.
-     *
-     * @param string $path Path used to match against this routing map
-     * @return array|false An array of assigned values or a false on a mismatch
-     */
-    public function match($path, $partial = false)
-    {
-        return parent::match($path, $partial);
-    }
 }

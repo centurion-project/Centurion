@@ -28,10 +28,15 @@
  */
 class Centurion_Controller_Router_Route_Queue extends Centurion_Queue
 {
+    /**
+     * @param array|Zend_Controller_Router_Route $data
+     * @throws Centurion_Exception
+     */
     public function push($data)
     {
-        if ((is_array($data) && (!isset($data['name']) || !isset($data['route']))) || (!is_array($data) && !$data instanceof Zend_Controller_Router_Route))
+        if ((is_array($data) && (!isset($data['name']) || !isset($data['route']))) || (!is_array($data) && !$data instanceof Zend_Controller_Router_Route)) {
             throw new Centurion_Exception('Parameter must be a instance of Zend_Controller_Router_Route');
+        }
             
         parent::push($data);
     }

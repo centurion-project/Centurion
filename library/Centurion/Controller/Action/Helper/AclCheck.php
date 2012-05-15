@@ -70,6 +70,7 @@ class Centurion_Controller_Action_Helper_AclCheck extends Zend_Controller_Action
                 if ($this->getRequest()->isXmlHttpRequest()) {
                     $params = array('ajax' => true);
                 }
+
                 if (defined('PHPUNIT') && PHPUNIT == true) {
                     $this->getActionController()->getHelper('viewRenderer')->setNoRender();
                     $this->getActionController()->getHelper('layout')->disableLayout();

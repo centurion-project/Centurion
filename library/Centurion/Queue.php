@@ -25,6 +25,10 @@
  * @author      Laurent Chenay <lchenay@gmail.com>
  */
 class Centurion_Queue extends ArrayObject {
+
+    /**
+     * @param array|Zend_Controller_Router_Route $data
+     */
     public function push($data)
     {
         $this->append($data);

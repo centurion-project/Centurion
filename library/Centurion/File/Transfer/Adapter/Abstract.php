@@ -3,9 +3,15 @@
 class Centurion_File_Transfer_Adapter_Abstract extends Zend_File_Transfer_Adapter_Abstract
 {
     protected $_defaultDestination = null;
-    
+
+    /**
+     * @var bool
+     */
     protected $_keepOriginal = false;
-    
+
+    /**
+     * @param array $options
+     */
     public function __construct($options = array())
     {
         $this->setOptions($options);
@@ -169,7 +175,10 @@ class Centurion_File_Transfer_Adapter_Abstract extends Zend_File_Transfer_Adapte
 
         return true;
     }
-    
+
+    /**
+     * @param bool $bool
+     */
     public function setKeepOriginal($bool = true) {
         $this->_keepOriginal = $bool;
     }

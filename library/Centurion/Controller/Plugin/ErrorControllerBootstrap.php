@@ -40,8 +40,9 @@ class Centurion_Controller_Plugin_ErrorControllerBootstrap extends Zend_Controll
     {
         $front = Zend_Controller_Front::getInstance();
 
-        if (!($front->getPlugin('Zend_Controller_Plugin_ErrorHandler') instanceof Zend_Controller_Plugin_ErrorHandler))
+        if (!($front->getPlugin('Zend_Controller_Plugin_ErrorHandler') instanceof Zend_Controller_Plugin_ErrorHandler)) {
             return;
+        }
 
         $error = $front->getPlugin('Zend_Controller_Plugin_ErrorHandler');
 

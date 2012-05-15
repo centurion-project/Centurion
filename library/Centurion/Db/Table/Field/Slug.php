@@ -28,4 +28,5 @@
  */
 class Centurion_Db_Table_Field_Slug extends Centurion_Db_Table_Field_Abstract
 {
+
 }
