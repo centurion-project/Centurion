@@ -162,7 +162,11 @@ class Centurion_Form extends Zend_Form implements Centurion_Traits_Traitsable
         //Try to generate uniq ID
         return md5(get_class($this) . $this->getAttrib('formId'));
     }
-    
+
+    /**
+     * @param $request
+     * @return bool return true if current form has been posted in current request.
+     */
     public function hasBeenPost($request)
     {
         if ($request->isPost()) {
@@ -171,7 +175,10 @@ class Centurion_Form extends Zend_Form implements Centurion_Traits_Traitsable
         }
         return false;
     }
-    
+
+    /**
+     * @return bool return true if the current form have already been cleared
+     */
     public function isClear()
     {
         return $this->_clear;
@@ -258,6 +265,9 @@ class Centurion_Form extends Zend_Form implements Centurion_Traits_Traitsable
         return $this->_loaders[$type];
     }
 
+    /**
+     * @return array The order of element during the render process
+     */
     public function getElementOrder()
     {
         return $this->_order;
@@ -349,7 +359,7 @@ class Centurion_Form extends Zend_Form implements Centurion_Traits_Traitsable
     }
 
     /**
-     * Clean form decoractors.
+     * Clean form decorators.
      *
      * @return Centurion_Form
      */
@@ -451,6 +461,12 @@ class Centurion_Form extends Zend_Form implements Centurion_Traits_Traitsable
         return $this;
     }
 
+    /**
+     * @param Zend_Form $form
+     * @param string $name
+     * @param null $order
+     * @return $this
+     */
     public function addSubForm(Zend_Form $form, $name, $order = null)
     {
         parent::addSubForm($form, $name, $order);
@@ -511,7 +527,7 @@ class Centurion_Form extends Zend_Form implements Centurion_Traits_Traitsable
      * @param  array $elements
      * @param  string $name
      * @param  array|Zend_Config $options
-     * @return Centurion_Form
+     * @return $this
      * @throws Zend_Form_Exception if no valid elements provided
      */
     public function addDisplayGroup(array $elements, $name, $options = null)
@@ -591,7 +607,7 @@ class Centurion_Form extends Zend_Form implements Centurion_Traits_Traitsable
      * Clean decorators for an element.
      *
      * @param Zend_Form_Element $element
-     * @return Centurion_Form
+     * @return $this
      */
     public function cleanElement(Zend_Form_Element $element)
     {
@@ -642,7 +658,7 @@ class Centurion_Form extends Zend_Form implements Centurion_Traits_Traitsable
     /**
      * Clean all elements.
      *
-     * @return Centurion_Form
+     * @return $this
      */
     public function cleanElements()
     {
@@ -653,6 +669,10 @@ class Centurion_Form extends Zend_Form implements Centurion_Traits_Traitsable
         return $this;
     }
 
+    /**
+     * @param Centurion_Form $form
+     * @return $this
+     */
     public function cleanSubForm(Centurion_Form $form)
     {
         $form->setAttrib('class', 'subform')
@@ -671,7 +691,7 @@ class Centurion_Form extends Zend_Form implements Centurion_Traits_Traitsable
     /**
      * Clean all subforms
      *
-     * @return Centurion_Form
+     * @return $this
      */
     public function cleanSubForms()
     {
