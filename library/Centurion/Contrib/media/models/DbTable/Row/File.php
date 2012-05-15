@@ -34,11 +34,17 @@ class Media_Model_DbTable_Row_File extends Centurion_Db_Table_Row_Abstract
 
     static protected $_options = null;
 
+    /**
+     * @return string
+     */
     public function __toString()
     {
         return $this->filename;
     }
 
+    /**
+     * @return string
+     */
     public function getContent()
     {
         return file_get_contents(Centurion_Config_Manager::get('media.uploads_dir') . PATH_SEPARATOR . $this->local_filename);
@@ -61,14 +67,20 @@ class Media_Model_DbTable_Row_File extends Centurion_Db_Table_Row_Abstract
             throw new Centurion_Exception(sprintf('This type "%s" is not a valid proxy', $type));
         }
 
-        return $proxies[$type] === $this->proxy_model;
+        return ($proxies[$type] === $this->proxy_model);
     }
 
+    /**
+     * @return bool
+     */
     public function isImage()
     {
         return $this->is('images');
     }
 
+    /**
+     * @return bool
+     */
     public function isVideo()
     {
         return $this->is('videos');
@@ -224,6 +236,9 @@ class Media_Model_DbTable_Row_File extends Centurion_Db_Table_Row_Abstract
         return self::getOptions('uploads_dir') . DIRECTORY_SEPARATOR . $this->local_filename;
     }
 
+    /**
+     * @return int
+     */
     public function delete()
     {
         if ($this->delete_original == '1') {
@@ -232,9 +247,16 @@ class Media_Model_DbTable_Row_File extends Centurion_Db_Table_Row_Abstract
             }
         }
 
-        parent::delete();
+        return parent::delete();
     }
 
+    /**
+     * @param null $effects
+     * @param bool $extra
+     * @param bool $realPath
+     * @return string
+     * @todo manage extra param
+     */
     public function getRelativePath($effects = null, $extra = false, $realPath = false)
     {
         if (is_array($effects)) {
@@ -331,6 +353,11 @@ class Media_Model_DbTable_Row_File extends Centurion_Db_Table_Row_Abstract
         return $url;
     }
 
+    /**
+     * @param $effect
+     * @param Zend_Date|int $mktime
+     * @return string
+     */
     public function getTemporaryKey($effect, $mktime = null)
     {
         return Media_Model_DbTable_File::getMediaAdapter()->getTemporaryKey($this->pk, $effect, $mktime);
