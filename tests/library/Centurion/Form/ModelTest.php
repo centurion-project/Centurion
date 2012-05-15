@@ -42,7 +42,9 @@ class Centurion_Form_ModelTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * Check if many to many works when we save a form
      * @TODO : Ajouter la vérification de chaque groupe
+     * @covers Centurion_Form_Model_Abstract::_saveManyDependentTables
      */
     public function testSaveManyToMany()
     {

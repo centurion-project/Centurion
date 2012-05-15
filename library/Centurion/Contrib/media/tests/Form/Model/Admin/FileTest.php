@@ -4,21 +4,28 @@ require_once dirname(__FILE__) . '/../../../../../../../../tests/TestHelper.php'
 
 class Media_Test_Form_Model_Admin_FileTest extends PHPUnit_Framework_TestCase
 {
-    /*
-    public function testFormEmpty()
+    public function testForm()
     {
-        $form = new Media_Form_Model_Admin_File();
+        $fileName = tempnam(sys_get_temp_dir(), 'test');
+        copy(APPLICATION_PATH . '/../library/Centurion/Contrib/media/tests/Support/images/centurion.png', $fileName);
 
         //We create empty data.
-        $_FILES[$form->getFilename()->getName()] = array();
+        $_FILES['filename_'] = array(
+            'name' => 'centurion.png',
+            'type' => 'image/png',
+            'tmp_name' => $fileName,
+            'error' => 4,
+            'size' => 676,
+        );
 
-        var_dump($form->getFilename()->isValid(array()));
-        var_dump($form->getFilename()->getErrorMessages());
+        $form = new Media_Form_Model_Admin_File();
+
+        $result = $form->getFilename()->isValid(array());
+        $this->assertTrue($result);
+
         $result = $form->isValid(array());
 
-        var_dump($form->getErrorMessages());
         $this->assertTrue($result);
 
     }
-    */
 }

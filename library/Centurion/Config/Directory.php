@@ -71,7 +71,7 @@ class Centurion_Config_Directory
             sort($tabFile);
 
             $backendOptions = array('cache_dir' => APPLICATION_PATH . '/../data/cache/config/' );
-            $frontendOptions = array('master_files' => array_values($tabFile), 'automatic_serialization' => true);
+            $frontendOptions = array('master_files' => array_values($tabFile), 'automatic_serialization' => true, 'cache_id_prefix' => str_replace('-', '_', $environment));
             $cacheConfig = Zend_Cache::factory('File', 'File', $frontendOptions, $backendOptions);
 
             if (!($config = $cacheConfig->load(md5(implode('|', $tabFile))))) {
@@ -115,7 +115,12 @@ class Centurion_Config_Directory
         throw new Centurion_Exception('Path must be a directory', 500);
     }
 
-
+    /**
+     * @static
+     * @param $file
+     * @return false|mixed|Zend_Config_Ini|Zend_Config_Xml
+     * @deprecated
+     */
     protected static function _loadConfigCached($file)
     {
         $backendOptions = array('cache_dir' => APPLICATION_PATH . '/../data/cache/config/' );

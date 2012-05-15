@@ -1,6 +1,6 @@
 <?php
 
-class Cms_Model_DbTable_Row_Flatpage extends Centurion_Db_Table_Row implements Translation_Traits_Model_DbTable_Row_Interface, Core_Traits_Mptt_Model_DbTable_Row_Interface, Core_Model_DbTable_Row_Navigable_Interface
+class Cms_Model_DbTable_Row_Flatpage extends Centurion_Db_Table_Row implements Translation_Traits_Model_DbTable_Row_Interface, Core_Traits_Mptt_Model_DbTable_Row_Interface, Core_Model_DbTable_Row_Navigable_Interface, Core_Traits_Slug_Model_DbTable_Row_Interface
 {
     protected $_navigation = false;
     protected $_route = null;
@@ -117,17 +117,6 @@ class Cms_Model_DbTable_Row_Flatpage extends Centurion_Db_Table_Row implements T
     public function getNumber()
     {
         return str_pad($this->order, 2, '0', STR_PAD_LEFT);
-    }
-
-    protected function _preSave()
-    {
-        parent::_preSave();
-
-        if ($this->title) {
-            $this->slug = Centurion_Inflector::slugify($this->title);
-        } else {
-            $this->slug = Centurion_Inflector::slugify($this->slug);
-        }
     }
 
     protected function _postSave()

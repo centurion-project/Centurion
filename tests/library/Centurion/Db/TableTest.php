@@ -33,6 +33,7 @@ class Centurion_Db_Table_TableTest extends PHPUnit_Framework_TestCase
     public function testMagicFunctionFindby()
     {
         $simpleTable = new Asset_Model_DbTable_Simple();
+        $simpleTable->delete(array(new Zend_Db_Expr('1')));
 
         $test1Row = $simpleTable->insert(array('title' => 'test', 'retrieve' => true));
         $simpleTable->insert(array('title' => 'test'));

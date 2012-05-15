@@ -29,80 +29,41 @@ abstract class Centurion_Signal_Abstract extends Centurion_Collection
 {
     const PUSH = 'push';
     const UNSHIFT = 'unshift';
-
     /**
-     * contain callback that are filtered by classname
+     *
      * @var Centurion_Collection
      */
     protected $_classnameCollection = null;
 
     /**
-     * contain callback that are filtered by object
+     *
      * @var Centurion_Collection
      */
     protected $_objectCollection = null;
 
-    /**
-     * @param array $data
-     */
     public function __construct($data = array())
     {
-        $this->clean();
+        $this->_classnameCollection = new Centurion_Collection();
+        $this->_objectCollection = new Centurion_Collection();
 
         parent::__construct($data);
     }
 
-    /**
-     * Proxy to connect function that force the param $onlyOnce to true
-     *
-     * @param callback $receiver
-     * @param array|string|null $sender
-     * @param string $behavior In case of find : do we continue or break the loop
-     * @param string $method push at the end or beginning of the stack.
-     * @return Centurion_Collection|Centurion_Signal_Abstract
-     */
-    public function connectOnce($receiver, $sender = null, $behavior = Centurion_Signal::BEHAVIOR_CONTINUE, $method = Centurion_Signal_Abstract::PUSH)
-    {
-        return $this->connect($receiver, $sender, $behavior, $method, true);
-    }
-
-    /**
-     * @param callback $receiver
-     * @param array|string|null $sender
-     * @param string $behavior In case of find : do we continue or break the loop
-     * @param string $method push at the end or beginning of the stack.
-     * @param bool $onlyOnce if true, we check that current callback aren't already in the stack
-     * @return Centurion_Collection|Centurion_Signal_Abstract
-     */
-    public function connect($receiver, $sender = null, $behavior = Centurion_Signal::BEHAVIOR_CONTINUE, $method = Centurion_Signal_Abstract::PUSH, $onlyOnce = false)
+    public function connect($receiver, $sender = null, $behavior = Centurion_Signal::BEHAVIOR_CONTINUE, $method = Centurion_Signal_Abstract::PUSH)
     {
         if (!is_array($sender)) {
             $receiver = array(Centurion_Signal::RECEIVER => $receiver, Centurion_Signal::BEHAVIOR => $behavior);
-        } else {
-            foreach($sender as $val) {
-                $this->connect($receiver, $val, $method);
-            }
-            return $this;
         }
 
         if (is_object($sender)) {
-            $container = $this->_setupObjectContainer($sender);
-
-            if ($onlyOnce && $container->contains($receiver)) {
-                return $this;
-            }
             if ($method === Centurion_Signal_Abstract::UNSHIFT) {
-                $container->unshift($receiver);
-            } else {
-                $container->push($receiver);
+                $this->_setupObjectContainer($sender)->unshift($receiver);
+            }else {
+                $this->_setupObjectContainer($sender)->push($receiver);
             }
 
             return $this;
         } elseif(is_string($sender)) {
-            if ($onlyOnce && $this->_classnameCollection->contains(array($sender => $receiver))) {
-                return $this;
-            }
-
             if ($method === Centurion_Signal_Abstract::UNSHIFT) {
                 $this->_classnameCollection->unshift(array($sender => $receiver));
             } else {
@@ -110,37 +71,24 @@ abstract class Centurion_Signal_Abstract extends Centurion_Collection
             }
 
             return $this;
-        }
-
-        if ($onlyOnce && $this->contains($receiver)) {
+        } elseif (is_array($sender)) {
+            foreach($sender as $val) {
+                $this->connect($receiver, $val, $method);
+            }
             return $this;
         }
+
         return $this->push($receiver);
     }
 
-    /**
-     * Remove all connected function of current signal
-     */
-    public function clean()
-    {
-        $this->_classnameCollection = new Centurion_Collection();
-        $this->_objectCollection = new Centurion_Collection();
-        $this->_data = array();
-    }
-
-    /**
-     * Send a signal
-     *
-     * @param null $sender
-     * @param array $args
-     * @return Centurion_Signal_Abstract
-     */
     public function send($sender = null, $args = array())
     {
-        $args = (array) $args;
+        if (!is_array($args)) {
+            $args = array($args);
+        }
 
         if (null !== $sender) {
-            $args = array_unshift($args, array($this, $sender));
+            $args = array_merge(array($this, $sender), $args);
         }
 
         $receiver = $this->_getReceivers($sender);

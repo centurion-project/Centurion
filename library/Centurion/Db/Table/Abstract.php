@@ -29,7 +29,7 @@
  * @author      Laurent Chenay <lchenay@gmail.com>
  * @author      Antoine Roesslinger <ar@octaveoctave.com>
  */
-abstract class Centurion_Db_Table_Abstract extends Zend_Db_Table_Abstract implements Centurion_Traits_Traitsable
+abstract class Centurion_Db_Table_Abstract extends Zend_Db_Table_Abstract implements Countable, Centurion_Traits_Traitsable
 {
     const CREATED_AT_COL = 'created_at';
     const UPDATED_AT_COL = 'updated_at';
@@ -178,6 +178,32 @@ abstract class Centurion_Db_Table_Abstract extends Zend_Db_Table_Abstract implem
         }
     }
 
+    /**
+     * Find the column and table as set in foreign key of a column
+     * @param string $columnName The name of the column to find foreign key
+     * @return array|bool false if no foreign key, else array: array('table' => 'tablename', 'column' => 'column')
+     * @throws Centurion_Db_Table_Exception
+     */
+    public function getMysqlForeignKey($columnName)
+    {
+        if ($this->getAdapter() instanceof Zend_Db_Adapter_Pdo_Mysql) {
+
+            $createTable = $this->getAdapter()->query('show create table ' . $this->_name)->fetch();
+
+            if (!isset($createTable['Create Table'])) {
+                return false;
+            }
+            $sql = $createTable['Create Table'];
+
+            if (preg_match('^CONSTRAINT .* FOREIGN KEY \(`'.$columnName.'`\) REFERENCES `(.*)\` \(`(.*)`\)^', $sql, $matches)) {
+                return array('table' => $matches['1'], 'column' => $matches['2']);
+            }
+            return false;
+        } else {
+            throw new Centurion_Db_Table_Exception('Adapter is not MYSQL, so I can not check index.');
+        }
+    }
+
     public function delegateGet($context, $column)
     {
         if (!$this->isAllowedContext($context, $column))
@@ -304,7 +330,12 @@ abstract class Centurion_Db_Table_Abstract extends Zend_Db_Table_Abstract implem
         return $this->_select;
     }
 
-    
+    public function getSelectClass()
+    {
+        return $this->_selectClass;
+    }
+
+
     /**
      * may be override to provide a way to get a filtered select
      * @return Centurion_Db_Table_Select
@@ -623,7 +654,11 @@ abstract class Centurion_Db_Table_Abstract extends Zend_Db_Table_Abstract implem
     {
         Centurion_Signal::factory('pre_delete')->send($this, array($where));
 
-        $return = parent::delete($where);
+        list($found, $return) = Centurion_Traits_Common::checkTraitOverload($this, 'delete', array($where));
+
+        if (!$found) {
+            $return = parent::delete($where);
+        }
 
         Centurion_Signal::factory('post_delete')->send($this, array($where));
         return $return;

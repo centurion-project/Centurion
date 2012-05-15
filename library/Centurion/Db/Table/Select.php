@@ -329,18 +329,14 @@ class Centurion_Db_Table_Select extends Zend_Db_Table_Select
         return implode(' ', $tabCond);
     }
 
+    /**
+     * @param $colName
+     * @return bool
+     * @deprecated Us IsInQuery instead
+     */
     public function hasColumn($colName)
     {
-        $partsCol = $this->getPart(Centurion_Db_Table_Select::COLUMNS);
-
-        $found = false;
-        foreach ($partsCol as $col) {
-            if ($colName == $col[2] || is_null($col[2]) && is_string($col[1]) && $colName == $col[1]) {
-                $found = true;
-                break;
-            }
-        }
-        return $found;
+        return $this->isInQuery($colName);
     }
 
     /**
@@ -728,7 +724,12 @@ class Centurion_Db_Table_Select extends Zend_Db_Table_Select
     public function filter(array $kwargs)
     {
         foreach ($kwargs as $key => $value) {
-            if ($value instanceof Zend_Db_Expr && is_numeric($key)) {
+            if (is_int($key) && is_array($value)) {
+                $key = $value[0];
+                $value = $value[1];
+            }
+            
+            if (is_numeric($key)) {
                 $this->where($value);
                 continue;
             }
@@ -745,10 +746,6 @@ class Centurion_Db_Table_Select extends Zend_Db_Table_Select
             $altSuffix = '';
             $sqlColumnPattern = '';
 
-            if (is_int($key) && is_array($value)) {
-                $key = $value[0];
-                $value = $value[1];
-            }
 
             if (!strncmp($key, self::OPERATOR_OR, strlen(self::OPERATOR_OR))) {
                 $key = substr($key, strlen(self::OPERATOR_OR));

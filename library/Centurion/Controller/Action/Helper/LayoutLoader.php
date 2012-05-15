@@ -51,7 +51,7 @@ class Centurion_Controller_Action_Helper_LayoutLoader extends Zend_Controller_Ac
             Centurion_Config_Manager::set('resources.layout.configs', $config['resources']['layout']['configs'][$layoutScript]);
         }
 
-        if (null !== $layoutScript) {
+        if (null !== $layoutScript && $layoutScript !== 'default') {
             //$this->getRequest()->setParam('_layout', $layoutScript);
             $this->getActionController()
                  ->getHelper('layout')

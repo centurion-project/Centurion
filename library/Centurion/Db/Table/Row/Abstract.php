@@ -123,7 +123,7 @@ abstract class Centurion_Db_Table_Row_Abstract extends Zend_Db_Table_Row_Abstrac
 
         $this->_modifiedFields[$columnName] = true;
 
-        // @todo implement get for trait
+        // @todo implement set for trait
 
     }
 
@@ -188,6 +188,7 @@ abstract class Centurion_Db_Table_Row_Abstract extends Zend_Db_Table_Row_Abstrac
             if (is_string($columns)) {
                 $pkValue = $this->{$columns};
             } else {
+                $pkValue = array();
                 foreach ($columns as $column) {
                     $pkValue[] = $this->$column;
                 }
@@ -241,6 +242,14 @@ abstract class Centurion_Db_Table_Row_Abstract extends Zend_Db_Table_Row_Abstrac
         }
 
         return $return;
+    }
+
+    /**
+     * @return array
+     */
+    public function getCleanData()
+    {
+        return $this->_cleanData;
     }
 
     public function getTable()
@@ -973,7 +982,7 @@ abstract class Centurion_Db_Table_Row_Abstract extends Zend_Db_Table_Row_Abstrac
     /**
      * Retrieve the primary key value.
      *
-     * @return int
+     * @return array|string|int
      */
     public function getPrimaryKey()
     {
@@ -1018,6 +1027,7 @@ abstract class Centurion_Db_Table_Row_Abstract extends Zend_Db_Table_Row_Abstrac
      * @todo add manyDependentTables
      * @TODO : this is time and memory consume. It make fetchAll only to test if exist
      * @return void
+     * @todo: this is mememory consuming, time consuming, and mysql consuming. We could check with pk
      */
     public function has($type, $object)
     {
@@ -1540,5 +1550,14 @@ abstract class Centurion_Db_Table_Row_Abstract extends Zend_Db_Table_Row_Abstrac
             }
         }
         return $fields;
+    }
+
+    /**
+     * @todo add some cache
+     * @return int|string
+     */
+    public function getContentTypeId()
+    {
+        return Centurion_Db::getSingleton('core/contentType')->getContentTypeIdOf($this);
     }
 }

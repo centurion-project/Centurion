@@ -24,10 +24,10 @@ abstract class Asset_Model_DbTable_Abstract extends Centurion_Db_Table
 
     public function __destruct()
     {
+        self::$_instance[get_class($this)]--;
+
         if (self::$_instance[get_class($this)] == 0) {
             $this->_destructTable();
         }
-
-        self::$_instance[get_class($this)]--;
     }
 }
