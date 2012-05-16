@@ -159,8 +159,6 @@ class Centurion_Controller_Mptt extends Centurion_Controller_Action
 
         $this->_formViewScript = 'mptt/edit.phtml';
         $this->_renderForm($this->view->form);
-
-        $this->renderIfNotExists('mptt/edit', null, true);
     }
 
     public function newAction()
@@ -182,8 +180,6 @@ class Centurion_Controller_Mptt extends Centurion_Controller_Action
 
         $this->_formViewScript = 'mptt/create.phtml';
         $this->_renderForm($this->view->form);
-
-        $this->renderIfNotExists('mptt/create', null, true);
     }
 
     public function moveAction()
