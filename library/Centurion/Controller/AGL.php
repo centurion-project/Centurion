@@ -289,8 +289,16 @@ class Centurion_Controller_AGL extends Centurion_Controller_Action
                     }
                 }
             }
-            
+
+            $useDefaultSort = true;
+
             if (null !== $this->_sort && isset($this->_displays[$this->_sort])) {
+                if (!isset($this->_displays[$this->_sort]['sortable']) || $this->_displays[$this->_sort]['sortable'] == false) {
+                    $useDefaultSort = false;
+                }
+            }
+
+            if ($useDefaultSort) {
                 $options = $this->_displays[$this->_sort];
                 if ($this->_order !== Zend_Db_Select::SQL_DESC && $this->_order !== Zend_Db_Select::SQL_ASC) {
                         $this->_order = Zend_Db_Select::SQL_ASC;
