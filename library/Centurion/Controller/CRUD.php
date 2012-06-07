@@ -329,7 +329,14 @@ class Centurion_Controller_CRUD extends Centurion_Controller_AGL
                     throw new Exception('Column is not in the row');
                 }
 
-                $object->{$column} =  !((int)$this->_getParam('value'));
+                $value = (int) $this->_getParam('value');
+                if ($value == 1) {
+                    $value = 0;
+                } else {
+                    $value = 1;
+                }
+
+                $object->{$column} =  $value;
                 $object->save();
 
                 $this->_postSwitch($object);
