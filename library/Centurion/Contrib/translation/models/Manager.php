@@ -32,7 +32,7 @@ class Translation_Model_Manager
             $str = '<?php' . PHP_EOL . ' return array(' . PHP_EOL;
             
             foreach (self::_getTranslation($languageRow->id) as $translationRow) { 
-                $str .= '"' . str_replace('"', '\"', $translationRow->uid) . '" => "' . str_replace('"', '\"', (null !== $translationRow->translation)?$translationRow->translation:$translationRow->uid) . '",' . PHP_EOL;
+                $str .= '\'' . addcslashes($translationRow->uid, '\\\'') . '\' => \'' . addcslashes((null !== $translationRow->translation)?$translationRow->translation:$translationRow->uid, '\\\'') . '\',' . PHP_EOL;
             }
             
             $str .= ');' . PHP_EOL;
