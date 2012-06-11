@@ -8,7 +8,7 @@ class Centurion_Controller_AGLTest extends PHPUnit_Framework_TestCase
     protected function _getNewAglController()
     {
         $request = new Zend_Controller_Request_Http();
-        $response = new Zend_Controller_Response_Http();
+        $response = new Zend_Controller_Response_HttpTestCase();
 
         $aglController = new Centurion_Controller_AGL($request, $response);
 
