@@ -213,9 +213,8 @@ class Centurion_Controller_AGL extends Centurion_Controller_Action
         if (null === $this->_paginator) {
             $adapter = new Zend_Paginator_Adapter_DbTableSelect($select);
             $this->_paginator = new Zend_Paginator($adapter);
-            if ($this->_itemPerPage > 0) {
+            if ($this->_itemPerPage > 0)
                 $this->_paginator->setItemCountPerPage($this->_itemPerPage);
-        }
             $this->_paginator->setCurrentPageNumber($this->_page);
         }
         return $this->_paginator;
@@ -238,10 +237,21 @@ class Centurion_Controller_AGL extends Centurion_Controller_Action
     {
         if (is_string($this->_model)) {
             $this->_model = Centurion_Db::getSingleton($this->_model);
-        } elseif (null === $this->_model) {
+        } else if (null === $this->_model) {
             throw new Exception('No model given');
         }
+
         return $this->_model;
+    }
+
+    /**
+     * @param string|Centurion_Db_Table_Abstract $model
+     * @return $this
+     */
+    public function setModel($model)
+    {
+        $this->_model = $model;
+        return $this;
     }
 
     /**
@@ -403,7 +413,7 @@ class Centurion_Controller_AGL extends Centurion_Controller_Action
             foreach ($this->_displays as $key => $options) {
                 if (is_string($options) || !isset($options['type'])) {
                     $value = $row->{$key};
-                } else if ($options['type'] === self::COLS_ROW_COL) {
+                }else if ($options['type'] === self::COLS_ROW_COL) {
                     if (isset($options['col'])) {
                         $col = $options['col'];
                     } else {
