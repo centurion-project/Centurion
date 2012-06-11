@@ -29,7 +29,7 @@
  * @todo        refactor filter method, add more unit tests
  * @TODO        Make a contain function that check if a row is in a select
  */
-class Centurion_Db_Table_Select extends Zend_Db_Table_Select
+class Centurion_Db_Table_Select extends Zend_Db_Table_Select implements Countable
 {
     const RULES_SEPARATOR = '__';
 
