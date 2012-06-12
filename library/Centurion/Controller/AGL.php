@@ -217,6 +217,7 @@ class Centurion_Controller_AGL extends Centurion_Controller_Action
                 $this->_paginator->setItemCountPerPage($this->_itemPerPage);
             $this->_paginator->setCurrentPageNumber($this->_page);
         }
+
         return $this->_paginator;
     }
 
@@ -233,12 +234,22 @@ class Centurion_Controller_AGL extends Centurion_Controller_Action
         return $this->_select;
     }
 
+    /**
+     * @deprecated use public function getModel instead
+     */
     protected function _getModel()
     {
+        return $this->getModel();
+    }
+
+    /**
+     * @return Centurion_Db_Table_Abstract
+     */
+    public function getModel() {
         if (is_string($this->_model)) {
             $this->_model = Centurion_Db::getSingleton($this->_model);
         } else if (null === $this->_model) {
-            throw new Exception('No model given');
+            throw new Centurion_Controller_Action_Exception('No model given');
         }
 
         return $this->_model;
@@ -371,7 +382,6 @@ class Centurion_Controller_AGL extends Centurion_Controller_Action
     public function generateList()
     {
         $select = $this->getSelectFiltred();
-        $filter = $this->getFilter();
 
         //TODO: move all of this in a view helper (except pagination, )
         $headCol = array();
@@ -533,7 +543,6 @@ class Centurion_Controller_AGL extends Centurion_Controller_Action
 
     protected function _getParams()
     {
-        
         $this->_page = $this->_getParam('page', null);
         $this->_sort = $this->_getParam('sort', null);
         $this->_order = $this->_getParam('order', null);

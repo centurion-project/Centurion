@@ -70,6 +70,7 @@ class Centurion_Controller_Mptt extends Centurion_Controller_Action
     {
         parent::init();
 
+        $this->view->formViewScript = array();
         $this->getHelper('ContextAutoSwitch')->direct(array('index', 'create', 'delete'));
 
         $this->getRequest()->setParams($this->getHelper('params')->direct());
@@ -220,7 +221,7 @@ class Centurion_Controller_Mptt extends Centurion_Controller_Action
     protected function _renderForm($form)
     {
         $this->view->form = $form;
-        $this->view->formViewScript = 'grid/_form.phtml';
+        $this->view->formViewScript[] = 'grid/_form.phtml';
 
         $this->_preRenderForm();
 

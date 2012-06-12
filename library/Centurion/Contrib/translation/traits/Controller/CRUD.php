@@ -89,8 +89,8 @@ class Translation_Traits_Controller_CRUD extends Translation_Traits_Controller
 
     public function _preRenderForm()
     {
-        
-        $this->view->formViewScript = $this->_formViewScript;
+        $this->view->formViewScript[] = $this->_formViewScript;
         $this->_formViewScript = 'traits/form.phtml';
+
     }
 }

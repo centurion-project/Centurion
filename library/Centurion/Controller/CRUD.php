@@ -63,6 +63,7 @@ class Centurion_Controller_CRUD extends Centurion_Controller_AGL
     {
         $this->view->infos = array();
         $this->view->errors = array();
+        $this->view->formViewScript = array();
 
 //        $this->getHelper('ContextAutoSwitch')->direct();
 //        $this->_request->setParams($this->getHelper('params')->direct());
@@ -411,7 +412,7 @@ class Centurion_Controller_CRUD extends Centurion_Controller_AGL
     protected function _renderForm($form)
     {
         $this->view->form = $form;
-        $this->view->formViewScript = 'grid/_form.phtml';
+        $this->view->formViewScript[] = 'grid/_form.phtml';
 
         $this->_preRenderForm();
 
