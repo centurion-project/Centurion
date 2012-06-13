@@ -208,13 +208,14 @@ class Centurion_Controller_AGL extends Centurion_Controller_Action
      * @param $select
      * @return Zend_Paginator
      */
-    public function getPaginator($select = null)
+    public function getPaginator($select)
     {
         if (null === $this->_paginator) {
             $adapter = new Zend_Paginator_Adapter_DbTableSelect($select);
             $this->_paginator = new Zend_Paginator($adapter);
-            if ($this->_itemPerPage > 0)
+            if ($this->_itemPerPage > 0) {
                 $this->_paginator->setItemCountPerPage($this->_itemPerPage);
+            }
             $this->_paginator->setCurrentPageNumber($this->_page);
         }
 
@@ -224,11 +225,21 @@ class Centurion_Controller_AGL extends Centurion_Controller_Action
     /**
      *
      * @return Centurion_Db_Table_Select
+     * @deprecated use public function getSelect instead
      */
     protected function _getSelect()
     {
+        return $this->getSelect();
+    }
+
+    /**
+     *
+     * @return Centurion_Db_Table_Select
+     */
+    public function getSelect()
+    {
         if (null === $this->_select) {
-            $this->_select = $this->_getModel()->select(true);
+            $this->_select = $this->getModel()->select(true);
         }
 
         return $this->_select;
@@ -395,12 +406,13 @@ class Centurion_Controller_AGL extends Centurion_Controller_Action
             }
 
             $params = array('page' => 0, 'sort' => $key, 'order' => ($this->_sort !== $key || $this->_order === Zend_Db_Select::SQL_DESC)?Zend_Db_Select::SQL_ASC:Zend_Db_Select::SQL_DESC);
-            $params += $this->_filter->getValuesForUrl();
+            $params += $this->getFilter()->getValuesForUrl();
 
-            if (!isset($col['sortable']) || $col['sortable'] !== false)
+            if (!isset($col['sortable']) || $col['sortable'] !== false) {
                 $link = $this->view->url($params);
-            else
+            }else {
                 $link = null;
+            }
 
             $headCol[$key] = array('label' => $label, 'link' => $link);
         }
@@ -509,7 +521,7 @@ class Centurion_Controller_AGL extends Centurion_Controller_Action
     public function getFilter()
     {
         if (null === $this->_filter) {
-            $this->_filter = new Admin_Form_Filter(array('table' => $this->_getModel(), 'filters' => $this->_filters));
+            $this->_filter = new Admin_Form_Filter(array('table' => $this->getModel(), 'filters' => $this->_filters));
             $this->_filter->setIsArray(true);
             $this->_filter->setElementsBelongTo('filter');
             $this->_filter->setAction($this->view->url(array('page' => null)));
