@@ -53,7 +53,7 @@ abstract class Centurion_Social_TokenHandler_Abstract
      */
     public function setConfig(Zend_Config $options) 
     {
-        $tis->setOptions($options->toArray());
+        $this->setOptions($options->toArray());
     }
     
     /**

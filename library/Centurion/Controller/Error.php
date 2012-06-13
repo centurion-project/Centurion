@@ -53,10 +53,9 @@ class Centurion_Controller_Error extends Centurion_Controller_Action
         $this->_exception = $this->_getParam('error_handler');
 
         if ($this->_exception) {
-        	
-        	if (isset($this->_exception) && $this->_exception->exception->getMessage() == 'die') {
-        		return;
-        	}
+            if (isset($this->_exception) && $this->_exception->exception->getMessage() == 'die') {
+                return;
+            }
             $this->_response->clearBody();
 
             $this->_response->append('error', null);
@@ -118,15 +117,17 @@ class Centurion_Controller_Error extends Centurion_Controller_Action
 
         if ($log = $this->_getLog()) {
             if ($this->_exception) {
-                if (method_exists($this->_request, 'getRequestUri'))
+                if (method_exists($this->_request, 'getRequestUri')) {
                     $uri = $this->_request->getRequestUri();
-                else
+                } else {
                     $uri = $this->view->url();
+                }
 
                 $referer = '';
 
-                if (isset($_SERVER['HTTP_REFERER']))
+                if (isset($_SERVER['HTTP_REFERER'])) {
                     $referer =' (' . $_SERVER['HTTP_REFERER'] . ')';
+                }
 
                 $log->log(sprintf("%d: \n%s \n%s: %s\n\n%s\n\n",
                                   $this->_httpCode,

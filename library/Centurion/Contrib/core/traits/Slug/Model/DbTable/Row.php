@@ -53,7 +53,7 @@ class Core_Traits_Slug_Model_DbTable_Row extends Centurion_Traits_Model_DbTable_
             $select = $this->getTable()->select();
             $filters = array();
             // TODO : Comment needed here
-            if(method_exists($this->_row, 'getFilterFieldsForSlug')) {
+            if (method_exists($this->_row, 'getFilterFieldsForSlug')) {
                 $filterField = $this->_row->getFilterFieldsForSlug();
                 if(is_array($filterField)) {
                     foreach($filterField as $field) {

@@ -133,8 +133,9 @@ abstract class Centurion_Controller_Action extends Zend_Controller_Action implem
     public function __isset($name)
     {
         try {
-            if (!$this->$name)
+            if (!$this->$name) {
                 return false;
+            }
         } catch (Exception $e) {
             return false;
         }
@@ -175,8 +176,9 @@ abstract class Centurion_Controller_Action extends Zend_Controller_Action implem
      */
     public function delegateGet($context, $column)
     {
-        if (!$this->isAllowedContext($context, $column))
+        if (!$this->isAllowedContext($context, $column)) {
             throw new Centurion_Controller_Action_Exception(sprintf('Undefined property %s', $column));
+        }
 
         return $this->$column;
     }
@@ -186,8 +188,9 @@ abstract class Centurion_Controller_Action extends Zend_Controller_Action implem
      */
     public function delegateSet($context, $column, $value)
     {
-        if (!$this->isAllowedContext($context, $column))
+        if (!$this->isAllowedContext($context, $column)) {
             throw new Centurion_Controller_Action_Exception(sprintf('Undefined property %s', $column));
+        }
 
         $this->$column = $value;
     }
@@ -197,8 +200,9 @@ abstract class Centurion_Controller_Action extends Zend_Controller_Action implem
      */
     public function delegateCall($context, $method, $args = array())
     {
-        if (!$this->isAllowedContext($context, $method))
+        if (!$this->isAllowedContext($context, $method)) {
             throw new Centurion_Controller_Action_Exception(sprintf('Undefined method %s', $method));
+        }
 
         return call_user_func_array(array($this, $method), $args);
     }

@@ -197,8 +197,9 @@ class Centurion_Cache_Manager extends Zend_Cache_Manager
                     $this->_shutdownClean[$frontend][$mode] = true;
                     break;
                 case Zend_Cache::CLEANING_MODE_MATCHING_ANY_TAG:
-                    if (!isset($this->_shutdownClean[$frontend][$mode]))
+                    if (!isset($this->_shutdownClean[$frontend][$mode])) {
                         $this->_shutdownClean[$frontend][$mode] = array();
+                    }
 
                     foreach ($tags as $tag) {
                         $this->_shutdownClean[$frontend][$mode][$tag] = $tag;

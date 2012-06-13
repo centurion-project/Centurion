@@ -44,8 +44,9 @@ class Centurion_Traits_Common
             if (method_exists($trait, $method)) {
                 $retVal = call_user_func_array(array($trait, $method), (array) $args);
                 $found = true;
-                if ($stopOnFound)
+                if ($stopOnFound) {
                     break;
+                }
             }
         }
 

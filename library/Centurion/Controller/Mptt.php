@@ -443,8 +443,9 @@ class Centurion_Controller_Mptt extends Centurion_Controller_Action
     protected function _getForm($options = array(), Centurion_Db_Table_Row_Abstract $instance = null)
     {
         if (null === $this->_form) {
-            if (!isset($options['method']))
+            if (!isset($options['method'])) {
                 $options['method'] = Centurion_Form::METHOD_POST;
+            }
 
             $this->_form = new $this->_formClass($options, $instance);
             $this->_form->cleanForm();
@@ -496,8 +497,6 @@ class Centurion_Controller_Mptt extends Centurion_Controller_Action
                 throw new Exception('Not valid name');
             }
         } catch (Exception $e) {
-            echo $e->getMessage();
-            echo $e->getTraceAsString();
             $this->_helper->json(array('statut' => 400, 'message' => 'not valid request', 'exception' => $e->getTrace()));
         }
     }

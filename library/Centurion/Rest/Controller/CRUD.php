@@ -26,6 +26,7 @@
  * @author      Florent Messa <florent.messa@gmail.com>
  * @author      Laurent Chenay <lchenay@gmail.com>
  * @author      Mathias Desloges <m.desloges@gmail.com>
+ * @deprecated
  */
 class Centurion_Rest_Controller_CRUD extends Centurion_Rest_Controller
 {
