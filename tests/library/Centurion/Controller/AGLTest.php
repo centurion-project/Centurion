@@ -56,9 +56,8 @@ class Centurion_Controller_AGLTest extends PHPUnit_Framework_TestCase
     public function testGetSelect()
     {
         $aglController = $this->_getNewAglController();
+        $aglController->setModel('asset/simple');
+        
         $this->assertInstanceOf('Centurion_Db_Table_Select', $aglController->getSelect());
     }
-    
-    
-    
 }
