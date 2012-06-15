@@ -126,7 +126,10 @@ class Centurion_Controller_CRUD extends Centurion_Controller_AGL
     {
         if ($this->getRequest()->isPost()) {
             $posts = $this->_request->getPost();
-            $this->_getForm()->removeElement('id');
+            $_form = $this->_getForm();
+            $_form->removeElement('id');
+            //To simulate prePopulate before validate value fixx  #6317
+            Centurion_Signal::factory('post_form_pre_validate')->send($_form, array($posts));
             $this->_processValues($posts);
         }
     }

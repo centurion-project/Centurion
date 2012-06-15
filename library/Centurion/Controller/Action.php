@@ -364,4 +364,12 @@ abstract class Centurion_Controller_Action extends Zend_Controller_Action implem
                          $this->getRequest()->getActionName())
                : $message;
     }
+
+    /**
+     * To disseminate the defined main object to the platform
+     * @param mixed $object
+     */
+    public function definingMainObject($object){
+        Centurion_Signal::factory('on_defining_main_object')->send($this, array($object));
+    }
 }

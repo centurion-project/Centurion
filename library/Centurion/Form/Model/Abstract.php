@@ -643,11 +643,19 @@ abstract class Centurion_Form_Model_Abstract extends Centurion_Form
         return $this;
     }
 
+    /**
+     * Trigger called before saving reference subforms to allow developpers to customize it
+     * @param mixed $values
+     */
+    protected function _preSaveReferenceSubForms($values){
+        Centurion_Signal::factory('on_form_pre_save_reference_subform')->send($this, array($this, $values));
+    }
     protected function _saveReferenceSubForms($values = null)
     {
         if (null === $values) {
             $values = $this->getValues();
         }
+        $this->_preSaveReferenceSubForms($values);
 
         $parentReferenceMap = $this->getModel()->getReferenceMap();
 
@@ -657,11 +665,18 @@ abstract class Centurion_Form_Model_Abstract extends Centurion_Form
             }
 
             $referenceMap = $parentReferenceMap[$form->getName()];
-
-            $form->saveInstance($values[$form->getName()]);
+            if(!empty($values[$form->getName()])){
+                //To not save an empty row to prevent error when the form return NULL instead of FALSE
+                $form->saveInstance($values[$form->getName()]);
+            }
             $instance = $form->getInstance();
 
-            $values[$referenceMap['columns']] = $instance->{$referenceMap['refColumns']};
+            if(null != $instance){
+                $values[$referenceMap['columns']] = $instance->{$referenceMap['refColumns']};
+            } else{
+                //Reset the column
+                $values[$referenceMap['columns']] = null;
+            }
         }
 
         return $values;
@@ -765,7 +780,10 @@ abstract class Centurion_Form_Model_Abstract extends Centurion_Form
         $manyDependentTables = $this->getModel()->info(Centurion_Db_Table_Abstract::MANY_DEPENDENT_TABLES);
         foreach ($manyDependentTables as $key => $manyDependentTable) {
 
-            if ($this->isExcluded($key)) {
+            $el = $this->getElement($key);
+
+            if ($this->isExcluded($key)
+                && !($el instanceof Centurion_Form_Element_Info)) {
                 continue;
             }
 
@@ -775,7 +793,7 @@ abstract class Centurion_Form_Model_Abstract extends Centurion_Form
                 array_push($valuesSelected, $object->id);
             }
 
-            if ($el = $this->getElement($key)) {
+            if (null!= $el) {
                 $el->setValue($valuesSelected);
             } else if ($form = $this->getSubForm($key)) {
                 $form->setValue($valuesSelected);
