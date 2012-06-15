@@ -4,19 +4,19 @@ RewriteRule ^attachment/(.*)$ /static/$1 [PT]
 
 RewriteCond %{REQUEST_FILENAME} !-s
 RewriteCond %{QUERY_STRING} ^([^:]*):([^:]*):([^:]*)(:([0-9a-z]*))?(.*)$ [NC,OR]
-RewriteCond %{QUERY_STRING} ^([a-zA-Z0-9_-]*)%3A([a-zA-Z0-9_-]*)%3A([a-zA-Z0-9_-]*)(%3A([0-9a-z]*))?%3A(.*)$ [NC]
+RewriteCond %{QUERY_STRING} ^([a-zA-Z0-9_-]*)%3A([a-zA-Z0-9_-]*)%3A([a-zA-Z0-9_-]*)(%3A([0-9a-z]*))?(.*)$ [NC]
 RewriteRule ^public/static/(.*)/(.*)$ public/files/%2/_%5.centurion [NC,PT]
 
 #Rewrite for static image (with effect)
 RewriteCond %{REQUEST_FILENAME} !-s
 RewriteCond %{QUERY_STRING} ^([^:]*):([^:]*):([^:]*):([0-9a-z]*)(.*)$ [NC,OR]
-RewriteCond %{QUERY_STRING} ^([a-zA-Z0-9_-]*)%3A([a-zA-Z0-9_-]*)%3A([a-zA-Z0-9_-]*)%3A([0-9a-z]*)%3A(.*)$ [NC]
+RewriteCond %{QUERY_STRING} ^([a-zA-Z0-9_-]*)%3A([a-zA-Z0-9_-]*)%3A([a-zA-Z0-9_-]*)%3A([0-9a-z]*)(.*)$ [NC]
 RewriteRule ^public/files/.*$ /media/image/get/id/%1/fileid/%2/key/%3/effect/%4/extra/%5? [NC,R,L]
 
 #Rewrite for static file
 RewriteCond %{REQUEST_FILENAME} !-s
 RewriteCond %{QUERY_STRING} ^([^:]*):([^:]*):([^:]*)(.*)$ [NC,OR]
-RewriteCond %{QUERY_STRING} ^([a-zA-Z0-9_-]*)%3A([a-zA-Z0-9_-]*)%3A([0-9a-z]*)%3A(.*)$ [NC]
+RewriteCond %{QUERY_STRING} ^([a-zA-Z0-9_-]*)%3A([a-zA-Z0-9_-]*)%3A([0-9a-z]*)(.*)$ [NC]
 RewriteRule ^public/files/.*$ /media/file/get/id/%1/fileid/%2/key/%3/extra/%4? [NC,R,L]
 
 #Rewrite for cached file
