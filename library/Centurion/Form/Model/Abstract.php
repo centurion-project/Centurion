@@ -52,6 +52,9 @@ abstract class Centurion_Form_Model_Abstract extends Centurion_Form
 
     protected $_dependentSubForms = array();
 
+    /**
+     * @var bool is the form for new instance or for an existing instance
+     */
     protected $_isNew = false;
 
     protected $_select = array();
@@ -621,6 +624,9 @@ abstract class Centurion_Form_Model_Abstract extends Centurion_Form
         return $result;
     }
 
+    /**
+     * @return bool
+     */
     public function isNew()
     {
         return $this->_isNew;
@@ -711,7 +717,7 @@ abstract class Centurion_Form_Model_Abstract extends Centurion_Form
     
     /**
      * 
-     * @param unknown_type $values
+     * @param array $values
      */
     public function processValues($values)
     {
