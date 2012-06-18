@@ -170,6 +170,9 @@ class Centurion_Controller_AGL extends Centurion_Controller_Action
      */
     protected $_model = null;
     
+    /**
+     * @var bool
+     */
     protected $_showCheckbox = false;
 
     protected $_dateFormat = null;
@@ -194,9 +197,11 @@ class Centurion_Controller_AGL extends Centurion_Controller_Action
 
     public function init()
     {
+        //@TODo Why 2 call to direct() ?
         $this->getHelper('ContextAutoSwitch')->direct(array('index', 'list'));
         $this->getHelper('ContextAutoSwitch')->direct();
 
+        //@TODO: why call to setParams. Params should already have been populated by frontController
         $this->_request->setParams($this->getHelper('params')->direct());
         
         parent::init();
@@ -279,6 +284,7 @@ class Centurion_Controller_AGL extends Centurion_Controller_Action
     /**
      *
      * Enter description here ...
+     * @todo test
      * @return Centurion_Db_Table_Select
      */
     public function getSelectFiltred()
@@ -376,7 +382,7 @@ class Centurion_Controller_AGL extends Centurion_Controller_Action
 
     public function resetFilter()
     {
-        $session = new Zend_Session_Namespace(sprintf('crud_%s_%s', $this->_request->getModuleName(), $this->_request->getControllerName()));
+        $session = $this->getSession();
         $session->unsetAll();
     }
 
@@ -497,7 +503,7 @@ class Centurion_Controller_AGL extends Centurion_Controller_Action
                         if ($filter === self::COL_DISPLAY_DATE) {
                             if ($value == '0000-00-00 00:00:00' || $value == null) {
                                 $value = '';
-                            }else {
+                            } else {
                                 $date = new Zend_Date($value, Centurion_Date::MYSQL_DATETIME);
                                 $value = $date->toString(Zend_Date::DATE_MEDIUM);
                             }
@@ -527,7 +533,17 @@ class Centurion_Controller_AGL extends Centurion_Controller_Action
             $this->_filter->setAction($this->view->url(array('page' => null)));
             $this->_filter->setMethod('GET');
             $this->_filter->setDescription($this->view->translate('Filters'));
-            $this->_filter->addElement('submit', 'submit', array('label' => $this->view->translate('Submit'), 'decorators' => array('ViewHelper', array('HtmlTag', array('tag' => 'div', 'class' => 'submit ui-button-tiny-squared')))));
+            $this->_filter->addElement('submit', 'submit', array(
+                                                                'label' => $this->view->translate('Submit'), 
+                                                                'decorators' => array(
+                                                                    'ViewHelper', array(
+                                                                        'HtmlTag',  array(
+                                                                            'tag' => 'div', 
+                                                                            'class' => 'submit ui-button-tiny-squared')
+                                                                        )
+                                                                    )
+                                                                )
+            );
         }
         return $this->_filter;
     }
@@ -553,6 +569,11 @@ class Centurion_Controller_AGL extends Centurion_Controller_Action
     }
 
 
+    public function getSession()
+    {
+        return new Zend_Session_Namespace(sprintf('crud_%s_%s', $this->_request->getModuleName(), $this->_request->getControllerName()));
+    }
+    
     protected function _getParams()
     {
         $this->_page = $this->_getParam('page', null);
@@ -560,7 +581,8 @@ class Centurion_Controller_AGL extends Centurion_Controller_Action
         $this->_order = $this->_getParam('order', null);
         
         if ($this->_useSession) {
-            $session = new Zend_Session_Namespace(sprintf('crud_%s_%s', $this->_request->getModuleName(), $this->_request->getControllerName()));
+            
+            $session = $this->getSession();
             if ($this->_order === null && isset($session->order)) {
                 $this->_order = $session->order;
             }
