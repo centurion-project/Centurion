@@ -112,9 +112,6 @@ class Translation_Traits_Model_DbTable extends Core_Traits_Version_Model_DbTable
 
         $corellationName = 0;
         if (is_array($name)) {
-            // echo '<pre>';
-            // var_dump($name);
-            // echo "\n" . $select->__toString();
             $corellationName = key($name);
             $name = current($name);
         }
