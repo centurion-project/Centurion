@@ -26,10 +26,20 @@
  * @license     http://centurion-project.org/license/new-bsd     New BSD License
  * @author      Laurent Chenay <lc@octaveoctave.com>
  */
+
+/**
+ * This class only works with models which contains a pk id
+ */
 class Centurion_Controller_AGL extends Centurion_Controller_Action
 {
+    /**
+     * @todo : description
+     */
     const PARAM_FORM_VALUES = 'crud_form_values';
 
+    /**
+     * Const used to create filters
+     */
     const FILTER_TYPE_RADIO = 'radio';
     const FILTER_TYPE_CHECKBOX = 'checkbox';
     const FILTER_TYPE_SELECT = 'select';
@@ -45,6 +55,9 @@ class Centurion_Controller_AGL extends Centurion_Controller_Action
     // const FILTER_TYPE_SLIDER = 'slider';
     // const FILTER_TYPE_SLIDER = 'slider';
 
+    /**
+     * Const used to define the filters behavior
+     */
     const FILTER_BEHAVIOR_LIKE = 'like';
     const FILTER_BEHAVIOR_CONTAINS = 'contains';
     const FILTER_BEHAVIOR_IN = 'in';
@@ -56,11 +69,43 @@ class Centurion_Controller_AGL extends Centurion_Controller_Action
 	const FILTER_BEHAVIOR_GREATER = 'gt';
 	const FILTER_BEHAVIOR_LESS = 'lt';
 
+    /**
+     * Default column type
+     */
     const COLS_ROW_COL = 'row_col';
+
+    /**
+     * Call a function of the row to display the content of the column
+     * @todo: exemple
+     */
     const COLS_ROW_FUNCTION = 'row_function';
+
+    /**
+     * Call a callback function (anywhere) to display the content of the column (in grid)
+     *@todo : exemple
+     */
     const COLS_CALLBACK = 'callback';
 
+    /**
+     * Display a column preview with the permalink of the row
+     * @todo : exemple
+     */
     const COLS_TYPE_PREVIEW = 'preview';
+
+    /**
+     * Can be used to display an alternative first column
+     *
+     * Exemple :
+     * 'columnname'      =>  array(
+     *      'type'  => self::COL_TYPE_FIRSTCOL,
+     *      'label' => $this->view->translate('Name'),
+     *      'param' => array(
+     *          'title' => 'name',                      // Column used to display the first line
+     *          'cover' => null,                        // Column used to display the pictur
+     *          'subtitle' => null,                     // Column used to display the second line
+     *      ),
+     * )
+     */
     const COL_TYPE_FIRSTCOL = 'fisrtcol';
 
     /**
@@ -74,27 +119,62 @@ class Centurion_Controller_AGL extends Centurion_Controller_Action
      */
     const COL_DISPLAY_DATE = 'date';
 
+    /**
+     * Can be used on a bool database column to switch in the grid the value
+     * @todo : exemple
+     */
     const COLS_FILTER_ONOFF = 'onoff';
+
+    /**
+     * @deprecated : seems to be unused
+     */
     const COLS_FILTER_DATE = 'date';
 
     /**
-     *
-     * Enter description here ...
+     * Select object used to get the content of the list
      * @var Centurion_Db_Table_Select
      */
     protected $_select = null;
+
+    /**
+     * An array which contains all the filters of the grid
+     *
+     * @var array
+     * @todo : exemple
+     */
     protected $_filters = array();
+
+    /**
+     * @var array
+     * @todo : exemple
+     */
     protected $_extraParam = array();
 
     /**
-     * Enter description here ...
+     * Item per page if pagination is active
      * @var int
      */
     protected $_itemPerPage = 30;
+
+    /**
+     * The default order to display row in grid
+     *
+     * Exemple : $this->_defaultOrder = 'name ASC'
+     *
+     * @var null
+     */
     protected $_defaultOrder = null;
 
+    /**
+     * Enable/disable the filter system
+     * @var bool
+     */
     protected $_hasFiltred = false;
 
+    /**
+     * Enable/disable session to keep actives filters
+     * @var bool
+     */
     protected $_useSession = true;
     
     /**
@@ -104,35 +184,43 @@ class Centurion_Controller_AGL extends Centurion_Controller_Action
     protected $_layout = 'grid';
 
     /**
-     *
+     * @todo : description
      * @var string
      */
     protected $_sort = null;
 
     /**
+     * Order to display row in grid
+     * Only used if $_sort != null and $_sort is a column displayed in the grid ($_display)
      *
-     * @var string
+     * Default value : Zend_Db_Select::SQL_ASC
+     *
+     * @var null
      */
     protected $_order = null;
 
     /**
-     *
+     * @todo : description
      * @var Zend_Paginator
      */
     protected $_paginator = null;
 
     /**
-     *
+     * @todo : description
      * @var Admin_Form_Filter
      */
     protected $_filter = null;
 
     /**
-     *
+     * @todo : description
      * @var string
      */
     protected $_debug = '';
 
+    /**
+     * @todo : description
+     * @var array
+     */
     protected $_toolbarActions = array();
 
     /**
@@ -162,23 +250,124 @@ class Centurion_Controller_AGL extends Centurion_Controller_Action
      */
     protected $_displays = array();
 
+    /**
+     * @todo : description
+     * @var array
+     */
     protected $_rowActions = array();
 
     /**
-     *
+     * Current model
      * @var Centurion_Db_Table_Abstract|string
      */
     protected $_model = null;
-    
+
     /**
+     * Display checkbox on each row in the grid
      * @var bool
      */
     protected $_showCheckbox = false;
 
+    /**
+     * @todo : description
+     * @var null|string
+     */
     protected $_dateFormat = null;
     protected $_dateFormatIso = null;
     protected $_timeFormatIso = null;
 
+    /**
+     * Getter $_sort
+     *
+     * @return string|null
+     */
+    public function getSort()
+    {
+        return $this->_sort;
+    }
+
+    /***
+     * Setter $_displays
+     *
+     * @param $model array
+     */
+    public function setDisplays($displays)
+    {
+        $this->_displays = $displays;
+        return $this;
+    }
+
+    /**
+     * Getter $_displays
+     *
+     * @return array
+     */
+    public function getDisplays()
+    {
+        return $this->_displays;
+    }
+
+    /***
+     * Setter $_sort
+     *
+     * @param $_sort string|null
+     */
+    public function setSort($sort)
+    {
+        $this->_sort = $sort;
+        return $this;
+    }
+
+    /**
+     * Getter $_order
+     *
+     * @return string|null
+     */
+    public function getOrder()
+    {
+        return $this->_order;
+    }
+
+    /***
+     * Setter $_order
+     *
+     * @param $_order string|null
+     */
+    public function setOrder($order)
+    {
+        $this->_order = $order;
+        return $this;
+    }
+
+    /**
+     * Getter $_hasFiltred
+     *
+     * @return bool
+     */
+    public function getHasFiltred()
+    {
+        return $this->_hasFiltred;
+    }
+
+    /***
+     * Setter $_hasFiltred
+     *
+     * @param $bool bool
+     */
+    public function setHasFiltred($bool)
+    {
+        $this->_hasFiltred = $bool;
+        return $this;
+    }
+    
+    /**
+     * Class contructor
+     *
+     * @param Zend_Controller_Request_Abstract $request
+     * @param Zend_Controller_Response_Abstract $response
+     * @param array $invokeArgs
+     * @return void
+     */
     public function __construct(Zend_Controller_Request_Abstract $request, Zend_Controller_Response_Abstract $response, array $invokeArgs = array())
     {
         if (null == $this->_dateFormat) {
@@ -195,6 +384,11 @@ class Centurion_Controller_AGL extends Centurion_Controller_Action
         $this->view->dateFormat = $this->_dateFormat;
     }
 
+    /**
+     * @todo : description
+     *
+     * @return void
+     */
     public function init()
     {
         //@TODo Why 2 call to direct() ?
@@ -228,7 +422,9 @@ class Centurion_Controller_AGL extends Centurion_Controller_Action
     }
 
     /**
-     *
+     * This function can be used in a controller who extends Centurion_Controller_AGL OR Centurion_Controller_CRUD
+     * to modify the current select object.
+     * 
      * @return Centurion_Db_Table_Select
      * @deprecated use public function getSelect instead
      */
@@ -251,7 +447,10 @@ class Centurion_Controller_AGL extends Centurion_Controller_Action
     }
 
     /**
-     * @deprecated use public function getModel instead
+     * Getter for the model
+     *
+     * @return Centurion_Db_Table_Abstract|null|string
+     * @throws Exception
      */
     protected function _getModel()
     {
@@ -259,8 +458,11 @@ class Centurion_Controller_AGL extends Centurion_Controller_Action
     }
 
     /**
-     * @return Centurion_Db_Table_Abstract
-     */
+    * Getter $_model
+    *
+    * @return Centurion_Db_Table_Abstract|null
+    * @throws Exception
+    */
     public function getModel() {
         if (is_string($this->_model)) {
             $this->_model = Centurion_Db::getSingleton($this->_model);
@@ -371,7 +573,9 @@ class Centurion_Controller_AGL extends Centurion_Controller_Action
             $filter = $this->getFilter();
             if ($filter->isValid($this->_request->getParams())) {
                 $select->filter($filter->getSqlFilter());
-                
+
+                // GROUP BY pour éviter les doublons de row à cause des JOIN
+                //TODO : id en dur, utiliser la pk du model
                 if (!isset($this->_noUseGroupe))
                     $select->group($select->getTable()->info('name') . '.id');
             }
@@ -380,22 +584,42 @@ class Centurion_Controller_AGL extends Centurion_Controller_Action
         return $this->_select;
     }
 
+    /**
+     * Delete all the filter stored in session
+     *
+     * @return void
+     */
     public function resetFilter()
     {
         $session = $this->getSession();
         $session->unsetAll();
     }
 
+    /**
+     * Action to do before the function generateList
+     *
+     * @return void
+     */
     protected function _preGenerateList()
     {
         
     }
     
+    /**
+    * Action to do after the function generateList
+    *
+    * @return void
+    */
     protected function _postGenerateList($paginator)
     {
         
     }
-    
+
+    /**
+     * @todo : description
+     * @return mixed
+     * @throws Centurion_Exception
+     */
     public function generateList()
     {
         $select = $this->getSelectFiltred();
@@ -435,6 +659,7 @@ class Centurion_Controller_AGL extends Centurion_Controller_Action
         foreach ($paginator as $row) {
             $temp = array();
             if ($this->_showCheckbox) {
+                //TODO : id en dur, utiliser la pk du model
                 $temp['checkbox'] = '<input type="checkbox" value="'.$row->id.'" name="rowId[]">';
             }
             
@@ -483,6 +708,7 @@ class Centurion_Controller_AGL extends Centurion_Controller_Action
                         $column = $key;
                     }
 
+                    //TODO : id en dur, utiliser la pk du model
                     $element = new Zend_Form_Element_Select(array('disableTranslator' => true, 'name' => $key . '_' . $row->id, 'class' => 'field-switcher'));
                     $element->addMultiOption('1', $onLabel);
                     $element->addMultiOption('0', $offLabel);
@@ -514,6 +740,7 @@ class Centurion_Controller_AGL extends Centurion_Controller_Action
                 $temp[$key] = $value;
             }
             $temp['row'] = $row;
+            //TODO : id en dur, utiliser la pk du model
             $result[$row->id] = $temp;
         }
         $this->_result = $result;
@@ -523,6 +750,8 @@ class Centurion_Controller_AGL extends Centurion_Controller_Action
 
     /**
      * Generate the filter Form object
+     *
+     * @return Admin_Form_Filter|null
      */
     public function getFilter()
     {
@@ -550,6 +779,8 @@ class Centurion_Controller_AGL extends Centurion_Controller_Action
 
     /**
      * Set params to the view
+     *
+     * @return void
      */
     protected function _setViewParams()
     {
@@ -573,7 +804,17 @@ class Centurion_Controller_AGL extends Centurion_Controller_Action
     {
         return new Zend_Session_Namespace(sprintf('crud_%s_%s', $this->_request->getModuleName(), $this->_request->getControllerName()));
     }
-    
+
+    /**
+    * Get all current params
+    * In order we use :
+    *  - params set in the url
+    *  - params set in session (if session are enable)
+    *
+    * If params are set in url save their values in session
+    *
+    * @return void
+    */
     protected function _getParams()
     {
         $this->_page = $this->_getParam('page', null);
@@ -611,10 +852,16 @@ class Centurion_Controller_AGL extends Centurion_Controller_Action
         }
     }
 
+    /**
+     * Generate & display the grid with the filter form, toolbar action & pagination
+     *
+     * @return void
+     */
     public function indexAction()
     {
         Centurion_Traits_Common::checkTraitOverload($this, 'indexAction', array(), false);
 
+        // Get all the params used to generate the list
         $this->_getParams();
 
         $this->generateList();
@@ -624,6 +871,10 @@ class Centurion_Controller_AGL extends Centurion_Controller_Action
     }
 
     /**
+     * Verify if the view file exists in a views directory
+     * else we use the file name passed in attribute to do the render
+     *
+     * @return void
      * @todo use renderToResponse instead
      */
     public function renderIfNotExists($action = null, $name = null, $noController = false)
