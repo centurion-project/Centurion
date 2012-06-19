@@ -4,10 +4,10 @@
 $(function() {
 
     var urls = {
-        "move": "<?php echo $this->url(array('action' => 'move', 'controller' => $this->controllerName, 'module' => $this->moduleName, 'id' => '{{id}}'), 'default', false, false); ?>",
-        "edit": "<?php echo $this->url(array('action' => 'edit', 'controller' => $this->controllerName, 'module' => $this->moduleName, 'id' => '{{id}}'), 'default', false, false); ?>",
-        "create": "<?php echo $this->url(array('action' => 'create', 'controller' => $this->controllerName, 'module' => $this->moduleName), 'default', false); ?>",
-        "delete": "<?php echo $this->url(array('action' => 'delete', 'controller' => $this->controllerName, 'module' => $this->moduleName, 'id' => '{{id}}'), 'default', false, false); ?>"
+        "move": "<?php echo $this->url(array('saving' => null, 'action' => 'move', 'controller' => $this->controllerName, 'module' => $this->moduleName, 'id' => '{{id}}'), 'default', false, false); ?>",
+        "edit": "<?php echo $this->url(array('saving' => null, 'action' => 'edit', 'controller' => $this->controllerName, 'module' => $this->moduleName, 'id' => '{{id}}'), 'default', false, false); ?>",
+        "create": "<?php echo $this->url(array('saving' => null, 'action' => 'create', 'controller' => $this->controllerName, 'module' => $this->moduleName), 'default', false); ?>",
+        "delete": "<?php echo $this->url(array('saving' => null, 'action' => 'delete', 'controller' => $this->controllerName, 'module' => $this->moduleName, 'id' => '{{id}}'), 'default', false, false); ?>"
     }
 
     var page_id_re = new RegExp("page\-(\\d+)", "");
@@ -20,7 +20,7 @@ $(function() {
         "html_data" : {
             "data" : $('#tree').html(),
             "ajax" : { 
-                "url" : "<?php echo $this->url(array('type' => 'json'));?>",
+                "url" : "<?php echo $this->url(array('saving' => null, 'type' => 'json'));?>",
                 "data" : function (n) {
                         return {
                         
@@ -68,8 +68,34 @@ $(function() {
 <?php $this->headScript()->captureEnd(); ?>
 
 <?php $this->placeholder('headling_1')->captureStart(); ?>
+<?php if (isset($this->error) || isset($this->infos)) : ?>
+    <div class="ui-state-message">
+        <?php if (isset($this->errors)):
+            $this->errors = (array) $this->errors;
+            foreach ($this->errors as $error):
+                ?>
+                    <p class="ui-state-error"">
+                        <?php echo $error;?>
+                    </p>
+                <?php
+            endforeach;
+            ?>
+        <?php endif;?>
+        <?php if (isset($this->infos)):
+            $this->infos = (array) $this->infos;
+
+            foreach ($this->infos as $info):
+                ?>
+                <p class="ui-state-highlight">
+                    <?php echo $info;?>
+                </p>
+                <?php
+            endforeach;
+        endif;?>
+    </div>
+<?php endif;?>
 <div class="ui-button-big">
-    <a href="<?php echo $this->url(array('action' => 'create', 'controller' => $this->controllerName, 'module' => $this->moduleName), 'default'); ?>" class="ui-button ui-button-bg-white ui-button-text-red ui-button-text-only">
+    <a href="<?php echo $this->url(array('saving' => null, 'action' => 'create', 'controller' => $this->controllerName, 'module' => $this->moduleName), 'default'); ?>" class="ui-button ui-button-bg-white ui-button-text-red ui-button-text-only">
         <span class="ui-button-text"><?php echo $this->translate('Add a new %s', $this->placeholder('headling_1_add_button')); ?></span>
     </a>
 </div>

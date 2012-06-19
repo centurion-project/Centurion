@@ -68,12 +68,20 @@ class Centurion_Controller_Mptt extends Centurion_Controller_Action
 
     public function init()
     {
+        $this->view->infos = array();
+        $this->view->errors = array();
+        
         parent::init();
 
         $this->view->formViewScript = array();
         $this->getHelper('ContextAutoSwitch')->direct(array('index', 'create', 'delete'));
 
         $this->getRequest()->setParams($this->getHelper('params')->direct());
+
+        if ($this->getRequest()->getParam('saving') == 'done') {
+            $this->view->infos[] = $this->view->translate('Saving has been done.');
+            $this->getRequest()->setParam('saving', null);
+        }
     }
 
     public function preDispatch()
@@ -213,11 +221,22 @@ class Centurion_Controller_Mptt extends Centurion_Controller_Action
         }
     }
 
+
+    /**
+     * Import from Centurion_Controller_CRUD to call trait to overload form rendering
+     */
     public function _preRenderForm()
     {
         Centurion_Traits_Common::checkTraitOverload($this, '_preRenderForm', array(), false);
     }
 
+    /**
+     * Variant of renderIfNotExists, used by create/new and edit/get
+     * to support Traits for CRUD Controller in MPTT controlelr (They can overload the view to use)
+     * @param string $action : default view to use if the action does not exist
+     *
+     * @todo use renderToResponse instead
+     */
     protected function _renderForm($form)
     {
         $this->view->form = $form;
@@ -419,7 +438,9 @@ class Centurion_Controller_Mptt extends Centurion_Controller_Action
                             );
                         }
 
-                         $url = $this->getHelper('url')->url($params, 'default', true);
+                        $params['saving'] = 'done';
+
+                        $url = $this->getHelper('url')->url(array_merge($this->_extraParam, $params), 'default', true);
                     }
                 }
 
