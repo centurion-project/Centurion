@@ -611,7 +611,7 @@ abstract class Centurion_Db_Table_Row_Abstract extends Zend_Db_Table_Row_Abstrac
 
                 $exist = true;
                 foreach($table->info('primary') as $pkfield) {
-                    if(empty($rawData[$pkfield])) {
+                    if(empty($rowData['data'][$pkfield])) {
                         $exist = false;
                         break;
                     }
