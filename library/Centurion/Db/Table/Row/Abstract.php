@@ -200,7 +200,14 @@ abstract class Centurion_Db_Table_Row_Abstract extends Zend_Db_Table_Row_Abstrac
 
                 self::$_relationship[$className][$pkValue]
                     = $this->findParentRow($referenceMap[$columnName]['refTableClass'],
-                    $columnName);
+                                           $columnName);
+                if (null === self::$_relationship[$className][$pkValue]) { 
+                    self::$_relationship[$className][$pkValue] = false; 
+                }
+            }
+            
+            if (false == self::$_relationship[$className][$pkValue]) {
+                return null;
             }
             return self::$_relationship[$className][$pkValue];
         }
@@ -501,8 +508,14 @@ abstract class Centurion_Db_Table_Row_Abstract extends Zend_Db_Table_Row_Abstrac
                 if (!isset(self::$_relationship[$className][$this->{$column}])) {
                     self::$_relationship[$className][$this->{$column}]
                         = $this->findParentRow($referenceMap[$columnName]['refTableClass'], $columnName, $select);
+                    if (null === self::$_relationship[$className][$this->{$column}]) { 
+                        self::$_relationship[$className][$this->{$column}] = false; 
+                    }
                 }
-
+            
+                if (false == self::$_relationship[$className][$this->{$column}]) {
+                    return null;
+                }
                 return self::$_relationship[$className][$this->{$column}];
             }
             $dependentTables = $this->getTable()->info('dependentTables');
@@ -596,7 +609,20 @@ abstract class Centurion_Db_Table_Row_Abstract extends Zend_Db_Table_Row_Abstrac
 
                 $rowClassName = $table->getRowClass();
 
-                self::$_relationship[$className][$this->{$column}] = new $rowClassName($rowData);
+                $exist = true;
+                foreach($table->info('primary') as $pkfield) {
+                    if(empty($rawData[$pkfield])) {
+                        $exist = false;
+                        break;
+                    }
+                }
+                if(!$exist) {
+                    self::$_relationship[$className][$this->{$column}] = false;
+                }
+                else {
+                    self::$_relationship[$className][$this->{$column}] = new $rowClassName($rowData);
+                }
+                
             }
         }
     }
