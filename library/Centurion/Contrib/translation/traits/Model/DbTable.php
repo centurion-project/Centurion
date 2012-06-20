@@ -137,7 +137,7 @@ class Translation_Traits_Model_DbTable
             );
 
         $this->_referenceMap = $referenceMap;
-        Centurion_Signal::factory('on_select_joinInner')->connect(array($this, 'onJoinInner'), $this->_model);
+        Centurion_Signal::factory('on_dbTable_select')->connect(array($this, 'onSelect'), $this->_model);
     }
 
 

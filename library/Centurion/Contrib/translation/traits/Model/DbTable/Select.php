@@ -124,7 +124,7 @@ class Translation_Traits_Model_DbTable_Select
         if (count($fromParts)) {
             $from = current($fromParts);
 
-            $this->onJoinInner(null, null, $from['tableName']);
+            $this->onJoinInner(null, null, null, $from['tableName']);
         }
     }
 

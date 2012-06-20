@@ -29,7 +29,7 @@
  * @todo        refactor filter method, add more unit tests
  * @TODO        Make a contain function that check if a row is in a select
  */
-class Centurion_Db_Table_Select extends Zend_Db_Table_Select implements Countable
+class Centurion_Db_Table_Select extends Zend_Db_Table_Select implements Countable, Centurion_Traits_Traitsable
 {
     const RULES_SEPARATOR = '__';
 
@@ -88,6 +88,95 @@ class Centurion_Db_Table_Select extends Zend_Db_Table_Select implements Countabl
                                         self::OPERATOR_YEAR, self::OPERATOR_MONTH, self::OPERATOR_DAY);
 
     protected static $_prefixes = array(self::OPERATOR_NEGATION, self::OPERATOR_OR);
+
+    protected $_traitQueue;
+
+    /**
+     * retrieve the trait queue for the current instance
+     **/
+    public function getTraitQueue()
+    {
+        if (null == $this->_traitQueue)
+            $this->_traitQueue = new Centurion_Traits_Queue();
+
+        return $this->_traitQueue;
+    }
+
+    /**
+     * implementation forced by Traitable interface
+     **/
+    public function __isset($name) 
+    {
+    }
+
+    /**
+     * implementation forced by Traitable interface
+     **/
+    public function __unset($name)
+    {   
+    }
+
+    /**
+     * implementation forced by Traitable interface
+     **/
+    public function __set($name, $value)
+    {
+    }
+
+    public function isAllowedContext($context, $resource = null)
+    {
+        //return in_array($context, iterator_to_array($this->_traitQueue), true);
+        return $this->_traitQueue->inQueue($context);
+    }
+
+    public function delegateGet($context, $column)
+    {
+        if (!$this->isAllowedContext($context, $column))
+            throw new Centurion_Db_Exception(sprintf('Unauthorized property %s', $column));
+
+        return $this->{$column};
+    }
+
+    public function delegateSet($context, $column, $value)
+    {
+        if (!$this->isAllowedContext($context, $column))
+            throw new Centurion_Db_Exception(sprintf('Unauthorized property %s', $column));
+
+        $this->$column = $value;
+    }
+
+    public function delegateCall($context, $method, $args = array())
+    {
+        if (!$this->isAllowedContext($context, $method))
+            throw new Centurion_Db_Exception(sprintf('Unauthorized method %s', $method));
+
+        return call_user_func_array(array($this, $method), $args);
+    }
+
+    public function __get($property)
+    {
+        $trait = Centurion_Traits_Common::checkTraitPropertyExists($this, $property);
+        if (null !== $trait) {
+            return $trait->{$property};
+        }
+    }
+
+    /**
+     * @see Zend_Db_Select::_where
+     **/
+    protected function _where($condition, $value = null, $type = null, $bool = true)
+    {
+        
+        $originalValue = $value;
+        list($found, $value) = Centurion_Traits_Common::checkTraitOverload($this, '_where', array($condition, $value, $type, $bool), $stopOnFound = false);
+        
+        if (!$found) {
+            return parent::_where($condition, $originalValue, $type, $bool);
+        } else {
+            return $value;
+        }
+        
+    }
 
     /**
      * Clone the current query and do a "count(1)" query in order to get the number of element that the original query will return.

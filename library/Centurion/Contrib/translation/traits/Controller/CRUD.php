@@ -224,4 +224,76 @@ class Translation_Traits_Controller_CRUD extends Translation_Traits_Controller
             $_instance->id = $_instance->{Translation_Traits_Model_DbTable::ORIGINAL_FIELD};
         }
     }
+
+    public function getMissingTranslation($row)
+    {
+        if (null !== $row->original_id) {
+            $row = $row->original;
+        }
+
+        $name = $row->getTable()->info(Centurion_Db_Table_Abstract::NAME);
+
+        $select = Centurion_Db::getSingleton('translation/language')
+                                ->select(true)
+                                ->setIntegrityCheck(false);
+
+        $joinLeftCondition = $name . '.`language_id` = `translation_language`.`id`'
+                         .' and (' .$name . '.`id` = ' .$row->id .' or ' . $name . '.`original_id` = ' . $row->id . ')';
+        $select->joinLeft($name, $joinLeftCondition, array());
+        $select->where($name . '.`id` is null');
+        
+        $languages = $select->fetchAll();
+
+        $str = array();
+
+        foreach ($languages as $language) {
+            if(isset($row->_usePermissions)
+                && $row->_usePermissions == true) {
+
+                if($this->hasPermissionForField(self::MISSING_TRANSLATION_INDICATOR, array($language)) == true) {
+                    $str[] = '<img src="' . $this->view->baseUrl($language->flag) . '" />';
+                }
+            } else {
+                $str[] = '<img src="' . $this->view->baseUrl($language->flag) . '" />';
+            }
+        }
+        
+        return implode($str, ' ');
+    }
+
+
+    /**
+     * Signal sent by the form after form generation
+     * Add a field to signal to the crud controller during form submit it is a form for translation
+     * @param Centurion_Signal_Abstract $signal
+     * @param Centurion_Form_Model_Abstract $sender
+     */
+    public function postGenerateForm($signal, $sender){
+        $_request = $this->getRequest();
+        if($sender instanceof Translation_Traits_Form_Model_Interface
+            && ('translate' == $_request->action //From btn language
+                || isset($_request->_translating))){ //if post fail
+
+            $sender->addElement('hidden', '_translating', array('value' => 'on'));
+        }
+    }
+
+    /**
+     * Signal sended by the form after the saving.
+     * This method change the id of the object with the original id to not break the "save and continue"
+     * (because the object returned is the localized object, and not the original object)
+     * @param Centurion_Signal_Abstract $signal
+     * @param Centurion_Form_Model_Abstract $sender
+     */
+    public function postSaveForm($signal, $sender){
+        $_instance = $sender->getInstance();
+        $_request = $this->getRequest();
+        if(isset($_request->_translating) //Only on translate form
+            && isset($_request->_continue) //and if the button "save and continue" was clicked
+            && $_instance //and if it is a translated row
+            && !empty($_instance->{Translation_Traits_Model_DbTable::ORIGINAL_FIELD})){
+
+            $_instance->id = $_instance->{Translation_Traits_Model_DbTable::ORIGINAL_FIELD};
+        }
+    }
 }
