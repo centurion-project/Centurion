@@ -64,4 +64,24 @@ class Centurion_Controller_Router_Rewrite extends Zend_Controller_Router_Rewrite
             }
         }
     }
+
+    /**
+     * Add default routes which are used to mimic basic router behaviour
+     *
+     * @return Zend_Controller_Router_Rewrite
+     */
+    public function addDefaultRoutes()
+    {
+        if (!$this->hasRoute('default')) {
+            $dispatcher = $this->getFrontController()->getDispatcher();
+            $request = $this->getFrontController()->getRequest();
+
+            //$1 'Zend/Controller/Router/Route/Module.php';
+            $compat = new Centurion_Controller_Router_Route_Module(array(), $dispatcher, $request);
+
+            $this->_routes = array_merge(array('default' => $compat), $this->_routes);
+        }
+
+        return $this;
+    }
 }
