@@ -90,8 +90,8 @@ class Core_Traits_Slug_Model_DbTable_Row extends Centurion_Traits_Model_DbTable_
                  *          We fill this slot with the current generated slug and we get :
                  *          slug, slug_1, slug_3, slug_2 (= current generated slug)
                  */
+                $i = 1;
                 if(count($identicalSlugIds) > 0) {
-                    $i = 1;
                     while(in_array($i, $identicalSlugIds)) {
                         $i++;
                     }
