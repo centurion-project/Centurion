@@ -916,7 +916,9 @@ class Centurion_Db_Table_Select extends Zend_Db_Table_Select implements Countabl
     public function joinInner($name, $cond, $cols = self::SQL_WILDCARD, $schema = null)
     {
         parent::joinInner($name, $cond, $cols, $schema);
-        Centurion_Signal::factory('on_select_joinInner')->send($this, array($this, $name));
+        if ($this->_table instanceof Centurion_Db_Table_Abstract) {
+            Centurion_Signal::factory('on_select_joinInner')->send($this, array($this, $name));
+        }
         return $this;
     }
 

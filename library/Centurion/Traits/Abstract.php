@@ -1,12 +1,42 @@
 <?php
 abstract class Centurion_Traits_Abstract
 {
+    /**
+     * @author Richard Déloge
+     * Uniq id to identify this trait object.
+     * Private to prevent all alteration
+     * @var int|null
+     */
+    private $_unique_id = null;
+
+    /**
+     * @author Richard Déloge
+     * Counter from uniq id are generated
+     * Private to prevent all alteration
+     * @var int
+     */
+    private static $_unique_counter = 1;
 
     protected $_delegateLink;
 
     public function __construct(Centurion_Traits_Traitsable $delegateLink)
     {
         $this->_delegateLink = $delegateLink;
+
+        /**
+         * @author Richard Déloge
+         * generate the unique id
+         */
+        $this->_unique_id = self::$_unique_counter++;
+    }
+
+    /**
+     * Return the unique id
+     * @author Richard Déloge
+     * @return int|null
+     */
+    public function getUniqueId(){
+        return $this->_unique_id;
     }
 
     /**
