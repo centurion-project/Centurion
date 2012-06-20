@@ -123,6 +123,16 @@ class Centurion_Collection extends Centurion_Access implements Countable, Iterat
      */
     public function contains($key)
     {
+        foreach ($this->_data as $val) {
+            if ($val == $key) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public function __isset($key)
+    {
         return isset($this->_data[$key]);
     }
 
