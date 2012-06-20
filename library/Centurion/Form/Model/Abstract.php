@@ -673,7 +673,7 @@ abstract class Centurion_Form_Model_Abstract extends Centurion_Form
 
             if(null != $instance){
                 $values[$referenceMap['columns']] = $instance->{$referenceMap['refColumns']};
-            } else{
+            } else {
                 //Reset the column
                 $values[$referenceMap['columns']] = null;
             }
@@ -1011,7 +1011,11 @@ abstract class Centurion_Form_Model_Abstract extends Centurion_Form
 
     protected function _buildOptions($table, $key, $nullable = false)
     {
-        if (method_exists($table, 'buildOptions')) {            return $table->buildOptions($nullable);        }        if (isset($this->_select[$key])) {
+        if (method_exists($table, 'buildOptions')) {
+            return $table->buildOptions($nullable);
+        }
+
+        if (isset($this->_select[$key])) {
             if ($this->_select[$key] instanceof Centurion_Db_Table_Select) {
                 $rowset = $table->fetchAll($this->_select[$key]);
             } else if (is_array($this->_select[$key]) && is_callable($this->_select[$key])) {

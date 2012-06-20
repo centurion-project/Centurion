@@ -39,6 +39,13 @@ class Media_Model_DbTable_Row_File extends Centurion_Db_Table_Row_Abstract
         return $this->filename;
     }
 
+    public function init()
+    {
+        $this->_specialGets['permalink'] = 'getStaticUrl';
+
+        return parent::init();
+    }
+
     public function getContent()
     {
         return file_get_contents(Centurion_Config_Manager::get('media.uploads_dir') . PATH_SEPARATOR . $this->local_filename);

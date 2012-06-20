@@ -80,8 +80,18 @@ abstract class Centurion_Db_Table_Abstract extends Zend_Db_Table_Abstract implem
 
     protected $_config = array();
 
+    /**
+     * Default options for cache backend defined in config ('resources.cachemanager.class')
+     * Setted by the main bootstrap in /application
+     * @var array
+     */
     protected static $_defaultBackendOptions = array();
 
+    /**
+     * Default options for cache frontent defined in config ('resources.cachemanager.class')
+     * Setted by the main bootstrap in /application
+     * @var array
+     */
     protected static $_defaultFrontendOptions = array();
 
     protected $_traitQueue;
@@ -837,11 +847,11 @@ abstract class Centurion_Db_Table_Abstract extends Zend_Db_Table_Abstract implem
                             );
                         }
 
-            /*
-            * Fix : Suround, in the implode, AND with withspaces because if the relation is build with several key            
-            * the implode returned : "myKey=XANDmySecondKey=Y" instead of "myKey=X AND mySecondKey=Y"
-            */
-                        foreach ($this->fetchAll(implode(' AND ', $where)) as $row) { 
+                        /*
+                        * Fix : Suround, in the implode, AND with withspaces because if the relation is build with several key            
+                        * the implode returned : "myKey=XANDmySecondKey=Y" instead of "myKey=X AND mySecondKey=Y"
+                        */
+                        foreach ($this->fetchAll(implode(' AND ', $where)) as $row) {
                             $rowsAffected += $row->delete();
                         }
 

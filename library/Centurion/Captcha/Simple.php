@@ -23,6 +23,7 @@
  * @copyright   Copyright (c) 2008-2011 Octave & Octave (http://www.octaveoctave.com)
  * @license     http://centurion-project.org/license/new-bsd     New BSD License
  * @author      Antoine Roesslinger <ar@octaveoctave.com>
+ * @todo move it to Centurion_Validate
  */
 class Centurion_Captcha_Simple extends Zend_Captcha_Word
 {
