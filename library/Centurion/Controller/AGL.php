@@ -24,7 +24,7 @@
  * @subpackage  AGL
  * @copyright   Copyright (c) 2008-2011 Octave & Octave (http://www.octaveoctave.com)
  * @license     http://centurion-project.org/license/new-bsd     New BSD License
- * @author      Laurent Chenay <lc@octaveoctave.com>
+ * @author      Laurent Chenay <lc@centurion-project.org>
  */
 
 /**
@@ -574,7 +574,7 @@ class Centurion_Controller_AGL extends Centurion_Controller_Action
             if ($filter->isValid($this->_request->getParams())) {
                 $select->filter($filter->getSqlFilter());
 
-                // GROUP BY pour éviter les doublons de row à cause des JOIN
+                // GROUP BY pour ï¿½viter les doublons de row ï¿½ cause des JOIN
                 //TODO : id en dur, utiliser la pk du model
                 if (!isset($this->_noUseGroupe))
                     $select->group($select->getTable()->info('name') . '.id');

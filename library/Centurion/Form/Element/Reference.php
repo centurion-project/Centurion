@@ -26,7 +26,7 @@
  * @license     http://centurion-project.org/license/new-bsd     New BSD License
  * @author      Florent Messa <florent.messa@gmail.com>
  * @author      Nicolas Duteil <nd@octaveoctave.com>
- * @author      Laurent Chenay <lchenay@gmail.com>
+ * @author      Laurent Chenay <lc@centurion-project.org>
  */
 class Centurion_Form_Element_Reference extends Centurion_Form_Element_Info
 {
