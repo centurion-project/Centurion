@@ -145,7 +145,7 @@ class Centurion_Form_DisplayGroup extends Zend_Form_DisplayGroup
                 $this->_orders = array_merge(array($elementName => null), $this->_orders);
                 break;
             case Centurion_Form::LAST:
-                $this->_orders = array_merge($this->_order, array($elementName => count($this->_orders)));
+                $this->_orders = array_merge($this->_orders, array($elementName => count($this->_orders)));
                 break;
             case Centurion_Form::BEFORE:
                 if (null === $pivotElementName) {
