@@ -84,4 +84,33 @@ class Centurion_Controller_Router_Rewrite extends Zend_Controller_Router_Rewrite
 
         return $this;
     }
+
+    /**
+     * Generates a URL path that can be used in URL creation, redirection, etc.
+     *
+     * @param  array $userParams Options passed by a user used to override parameters
+     * @param  mixed $name The name of a Route to use
+     * @param  bool $reset Whether to reset to the route defaults ignoring URL params
+     * @param  bool $encode Tells to encode URL parts on output
+     * @throws Zend_Controller_Router_Exception
+     * @return string Resulting absolute URL path
+     */
+    public function assemble($userParams, $name = null, $reset = false, $encode = true)
+    {
+        if ($name == null) {
+            try {
+                $name = $this->getCurrentRouteName();
+            } catch (Zend_Controller_Router_Exception $e) {
+                $name = 'default';
+            }
+        }
+
+        if ($name == 'default') {
+            if ($this->_useDefaultRoutes) {
+                $this->addDefaultRoutes();
+            }
+        }
+
+        parent::assemble($userParams, $name, $reset, $encode);
+    }
 }
