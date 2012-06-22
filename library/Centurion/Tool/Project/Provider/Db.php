@@ -242,7 +242,7 @@ class Centurion_Tool_Project_Provider_Db extends Centurion_Tool_Project_Provider
                         }
                     }
 
-                    touch($file->getPathname() '.' . APPLICATION_ENV . '.done');
+                    touch($file->getPathname() . '.' . APPLICATION_ENV . '.done');
                     echo "\n\n";
                 }
             }
