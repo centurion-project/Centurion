@@ -23,7 +23,7 @@
  * @subpackage  Centurion_Mail_Transport
  * @copyright   Copyright (c) 2008-2011 Octave & Octave (http://www.octaveoctave.com)
  * @license     http://centurion-project.org/license/new-bsd     New BSD License
- * @author      Laurent Chenay <lc@octaveoctave.com>
+ * @author      Laurent Chenay <lc@centurion-project.org>
  */
 
 class Centurion_Mail_Transport_Blackhole  extends Zend_Mail_Transport_Abstract
@@ -34,7 +34,7 @@ class Centurion_Mail_Transport_Blackhole  extends Zend_Mail_Transport_Abstract
      * @see Zend/Mail/Transport/Zend_Mail_Transport_Abstract::_sendMail()
      * @return bool true if the mail is sent. Here we always sent true.
      */
-    public function _sendMail()
+    protected function _sendMail()
     {
         //Do nothing
         return true;

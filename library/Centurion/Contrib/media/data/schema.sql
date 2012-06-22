@@ -59,6 +59,7 @@ CREATE TABLE IF NOT EXISTS `media_file` (
   KEY `fk_file__user_id___user__id` (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+ALTER TABLE  `media_file` ADD  `delete_original` INT( 1 ) NOT NULL DEFAULT  '1';
 
 -- --------------------------------------------------------
 
@@ -126,3 +127,19 @@ ALTER TABLE `media_duplicate`
 ALTER TABLE `media_file`
   ADD CONSTRAINT `fk_file__user_id___user__id` FOREIGN KEY (`user_id`) REFERENCES `auth_user` (`id`);
 SET FOREIGN_KEY_CHECKS=1;
+ALTER TABLE  `media_multiupload_ticket` ADD INDEX (  `proxy_pk` );
+ALTER TABLE  `media_file` ADD INDEX (  `proxy_model` );
+ALTER TABLE  `media_file` ADD INDEX (  `proxy_pk` );
+ALTER TABLE  `media_file` ADD INDEX (  `belong_model` );
+ALTER TABLE  `media_file` ADD INDEX (  `belong_pk` );
+ALTER TABLE  `media_file` ADD INDEX (  `file_id` );
+ALTER TABLE  `media_file` ADD INDEX (  `local_filename` );
+
+
+ALTER TABLE  `media_multiupload_ticket` ADD FOREIGN KEY (  `proxy_model_id` ) REFERENCES  `centurion_content_type` (
+`id`
+);
+
+ALTER TABLE  `media_multiupload_ticket` ADD FOREIGN KEY (  `form_class_model_id` ) REFERENCES  `centurion_content_type` (
+`id`
+);

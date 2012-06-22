@@ -24,7 +24,7 @@
  * @subpackage  Storage
  * @copyright   Copyright (c) 2008-2011 Octave & Octave (http://www.octaveoctave.com)
  * @license     http://centurion-project.org/license/new-bsd     New BSD License
- * @author      Laurent Chenay <lchenay@gmail.com>
+ * @author      Laurent Chenay <lc@centurion-project.org>
  */
 class Centurion_Auth_Storage_Session extends Zend_Auth_Storage_Session
 {
@@ -39,8 +39,9 @@ class Centurion_Auth_Storage_Session extends Zend_Auth_Storage_Session
     {
         $cookieDomain = Centurion_Config_Manager::get('session.domain', $_SERVER['SERVER_NAME']);
         
-        if ($cookieDomain !== null)
+        if ($cookieDomain !== null) {
             Zend_Session::setOptions(array('cookie_domain' => $cookieDomain));
+        }
             
         parent::__construct($namespace, $member);
     }

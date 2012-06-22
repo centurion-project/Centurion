@@ -43,13 +43,8 @@ class Admin_Form_Filter extends Centurion_Form
             'ViewHelper',
             array('Label', array('placement' => null)),
             array('HtmlTag', array('tag' => 'div', 'class' => 'in')),
-
             array(array('ElementContainer' => 'HtmlTag'), array('tag' => 'div')),
         );
-    public function __construct($options = null)
-    {
-        parent::__construct($options);
-    }
 
     public function init()
     {
@@ -95,14 +90,17 @@ class Admin_Form_Filter extends Centurion_Form
             $checkboxType = 'multiCheckbox';
             $element = null;
 
-            if (!isset($filterData['type']))
+            if (!isset($filterData['type'])) {
                 $filterData['type'] = Centurion_Controller_CRUD::FILTER_TYPE_TEXT;
+            }
 
-            if (!isset($filterData['column']))
+            if (!isset($filterData['column'])) {
                 $filterData['column'] = $key;
+            }
 
-            if (!isset($filterData['behavior']))
+            if (!isset($filterData['behavior'])) {
                 $filterData['behavior'] = Centurion_Controller_CRUD::FILTER_BEHAVIOR_CONTAINS;
+            }
 
             switch ($filterData['type']) {
                 case Centurion_Controller_CRUD::FILTER_TYPE_RADIO:
@@ -119,16 +117,32 @@ class Admin_Form_Filter extends Centurion_Form
                             $refRowSet = Centurion_Db::getSingletonByClassName($manyDependentTables[$key]['refTableClass'])->fetchAll();
                             $filterData['data'] = array();
                             foreach ($refRowSet as $refRow) {
-                                $filterData['data'][$refRow->id] = $refRow->__toString();
+                                //TODO: this doesn't work with multiple primary key
+                                $filterData['data'][$refRow->pk] = $refRow->__toString();
                             }
                             asort($filterData['data']);
+                            //Add before a joker to disable this filter
+                            $filterData['data'] = array('' => $this->_translate('All')) + $filterData['data'];
+                        }
+                    }
+                    else{
+                        //To allow rowset in the option "data" and not force developper to pass an array
+                        if($filterData['data'] instanceof Centurion_Db_Table_Rowset_Abstract){
+                            $_tmpData = array();
+                            foreach($filterData['data'] as $row)
+                                $_tmpData[$row->pk] = (string) $row;
+
+                            asort($_tmpData);
+                            //Add before a joker to disable this filter
+                            $filterData['data'] = array('' => $this->_translate('All')) + $_tmpData;
                         }
                     }
 
                     $element->addMultiOptions($filterData['data']);
                     $element->setSeparator('');
-                    if ($checkboxType === 'multiCheckbox')
+                    if ($checkboxType === 'multiCheckbox') {
                         $element->setIsArray(true);
+                    }
                     break;
                 case Centurion_Controller_CRUD::FILTER_TYPE_TEXT:
                 case Centurion_Controller_CRUD::FILTER_TYPE_NUMERIC:
@@ -141,10 +155,11 @@ class Admin_Form_Filter extends Centurion_Form
                 case Centurion_Controller_CRUD::FILTER_TYPE_BETWEEN_DATETIME:
                     $form = new self();
                     
-                    if ($filterData['type'] == Centurion_Controller_CRUD::FILTER_TYPE_BETWEEN_DATETIME)
+                    if ($filterData['type'] == Centurion_Controller_CRUD::FILTER_TYPE_BETWEEN_DATETIME) {
                         $class = 'field-datetimepicker';
-                    else
+                    } else {
                         $class = 'datepicker';
+                    }
                         
                     $element = $form->createElement('text', 'gt', array('class' => $class, 'belongsTo' => $key, 'label' => $this->_translate('From'), 'value' => '26/08/11 03:00'));
                     $form->addElement($element, 'gt');
@@ -224,6 +239,11 @@ class Admin_Form_Filter extends Centurion_Form
                 continue;
             }
             switch ($this->_filters[$key]['behavior']) {
+                case Centurion_Controller_CRUD::FILTER_BEHAVIOR_CALLBACK:
+                    $sqlSubFilter = array();
+                    call_user_func_array($this->_filters[$key]['callback'], array($subform->getValues(), &$sqlFilter));
+                    //TODO:
+                    break;
                 case Centurion_Controller_CRUD::FILTER_BEHAVIOR_BETWEEN:
                     $sqlSubFilter = array();
                     $lt = $subform->getElement('lt')->getValue();
@@ -237,12 +257,12 @@ class Admin_Form_Filter extends Centurion_Form
                         
                     if (trim($lt) !== '') {
                         $lt = new Zend_Date($lt, $format);
-                        $sqlSubFilter[$this->_filters[$key]['column'] . Centurion_Db_Table_Select::RULES_SEPARATOR . Centurion_Db_Table_Select::OPERATOR_LESS_EQUAL] = $lt->toString('yyyy-MM-dd HH:mm:ss');
+                        $sqlSubFilter[$this->_filters[$key]['column'] . Centurion_Db_Table_Select::RULES_SEPARATOR . Centurion_Db_Table_Select::OPERATOR_LESS_EQUAL] = $lt->toString(Centurion_Date::MYSQL_DATETIME);
                     }
                     
                     if (trim($gt) !== '') {
                         $gt = new Zend_Date($gt, $format);
-                        $sqlSubFilter[$this->_filters[$key]['column'] . Centurion_Db_Table_Select::RULES_SEPARATOR . Centurion_Db_Table_Select::OPERATOR_GREATER_EQUAL] = $gt->toString('yyyy-MM-dd HH:mm:ss');
+                        $sqlSubFilter[$this->_filters[$key]['column'] . Centurion_Db_Table_Select::RULES_SEPARATOR . Centurion_Db_Table_Select::OPERATOR_GREATER_EQUAL] = $gt->toString(Centurion_Date::MYSQL_DATETIME);
                     }
                     break;
                 default;

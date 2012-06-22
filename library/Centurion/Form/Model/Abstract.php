@@ -26,7 +26,7 @@
  * @license     http://centurion-project.org/license/new-bsd     New BSD License
  * @author      Florent Messa <florent.messa@gmail.com>
  * @author      Nicolas Duteil <nd@octaveoctave.com>
- * @author      Laurent Chenay <lchenay@gmail.com>
+ * @author      Laurent Chenay <lc@centurion-project.org>
  */
 abstract class Centurion_Form_Model_Abstract extends Centurion_Form
 {
@@ -52,6 +52,9 @@ abstract class Centurion_Form_Model_Abstract extends Centurion_Form
 
     protected $_dependentSubForms = array();
 
+    /**
+     * @var bool is the form for new instance or for an existing instance
+     */
     protected $_isNew = false;
 
     protected $_select = array();
@@ -62,6 +65,8 @@ abstract class Centurion_Form_Model_Abstract extends Centurion_Form
      * @var array
      */
     protected $_columnTypes = array(
+        'bit'           =>  'onOff',
+        'boolean'       =>  'onOff',
         'integer'       =>  'text',
         'int'           =>  'text',
         'smallint'      =>  'text',
@@ -72,10 +77,10 @@ abstract class Centurion_Form_Model_Abstract extends Centurion_Form
         'string'        =>  'text',
         'varchar'       =>  'text',
         'char'          =>  'text',
-        'boolean'       =>  'checkbox',
-        'timestamp'     =>  'datepicker',
+        'timestamp'     =>  'dateTimePicker',
+        'datetime'      =>  'dateTimePicker',
         'time'          =>  'text',
-        'date'          =>  'text',
+        'date'          =>  'datePicker',
         'enum'          =>  'select',
         'text'          =>  'textarea',
         'mediumtext'    =>  'textarea',
@@ -188,8 +193,9 @@ abstract class Centurion_Form_Model_Abstract extends Centurion_Form
 
         $this->addElements($this->_columnToElements());
 
-        if (!defined('PHPUNIT') || PHPUNIT == false)
+        if (!defined('PHPUNIT') || PHPUNIT == false) {
             $this->addElement('Hash', '_XSRF', array('salt' => $this->getAttrib('id')));
+        }
 
         // Extensions...
         $this->init();
@@ -217,7 +223,7 @@ abstract class Centurion_Form_Model_Abstract extends Centurion_Form
     /**
      * Retrieve instance of model form.
      *
-     * @return Centurion_Db_Table_Abstract
+     * @return Centurion_Db_Table_Row_Abstract
      */
     public function getInstance()
     {
@@ -332,20 +338,20 @@ abstract class Centurion_Form_Model_Abstract extends Centurion_Form
 
             foreach ($this->getElements() as $key => $val) {
                 $class = $val->getAttrib('class');
-                $value = $val->getValue();
-                if (is_string($value) && '' !== trim($value)) {
-                    if (false !== strpos($class, 'field-datetimepicker')) {
-                        //In the case the field is empty, else Zend_Date is current time
-                        $posted_at = new Zend_Date($value, 'YYYY-MM-dd HH:mm:ss');
-                        $val->setValue($posted_at->get($this->getDateFormat(true)));
-                    } else if (false !== strpos($class, 'field-datepicker')) {
-                        $posted_at = new Zend_Date($value, 'YYYY-MM-dd HH:mm:ss');
-                        $val->setValue($posted_at->get($this->getDateFormat()));
-                    }
+                if (false !== strpos($class, 'field-datetimepicker') 
+                    && '' != $val->getValue()) { //In the case the field is empty, else Zend_Date is current time
+                    $posted_at = new Zend_Date($val->getValue(), 'YYYY-MM-dd HH:mm:ss');
+                    $val->setValue($posted_at->get($this->getDateFormat(true)));
+                } else if (false !== strpos($class, 'field-datepicker') 
+                    && '' != $val->getValue()) {
+                    $posted_at = new Zend_Date($val->getValue(), 'YYYY-MM-dd HH:mm:ss');
+                    $val->setValue($posted_at->get($this->getDateFormat()));
                 }
             }
         }
-
+        
+        Centurion_Traits_Common::checkTraitOverload($this, 'setInstance', array($instance), false);
+        
         return $this;
     }
 
@@ -411,7 +417,7 @@ abstract class Centurion_Form_Model_Abstract extends Centurion_Form
      * Save the form and attached model.
      *
      * @todo implement multiple database
-     * @return Centurion_Db_Table_Abstract
+     * @return Centurion_Db_Table_Row_Abstract
      */
     public function save($adapter = null)
     {
@@ -618,6 +624,9 @@ abstract class Centurion_Form_Model_Abstract extends Centurion_Form
         return $result;
     }
 
+    /**
+     * @return bool
+     */
     public function isNew()
     {
         return $this->_isNew;
@@ -634,11 +643,19 @@ abstract class Centurion_Form_Model_Abstract extends Centurion_Form
         return $this;
     }
 
+    /**
+     * Trigger called before saving reference subforms to allow developpers to customize it
+     * @param mixed $values
+     */
+    protected function _preSaveReferenceSubForms($values){
+        Centurion_Signal::factory('on_form_pre_save_reference_subform')->send($this, array($this, $values));
+    }
     protected function _saveReferenceSubForms($values = null)
     {
         if (null === $values) {
             $values = $this->getValues();
         }
+        $this->_preSaveReferenceSubForms($values);
 
         $parentReferenceMap = $this->getModel()->getReferenceMap();
 
@@ -648,11 +665,18 @@ abstract class Centurion_Form_Model_Abstract extends Centurion_Form
             }
 
             $referenceMap = $parentReferenceMap[$form->getName()];
-
-            $form->saveInstance($values[$form->getName()]);
+            if(!empty($values[$form->getName()])){
+                //To not save an empty row to prevent error when the form return NULL instead of FALSE
+                $form->saveInstance($values[$form->getName()]);
+            }
             $instance = $form->getInstance();
 
-            $values[$referenceMap['columns']] = $instance->{$referenceMap['refColumns']};
+            if(null != $instance){
+                $values[$referenceMap['columns']] = $instance->{$referenceMap['refColumns']};
+            } else {
+                //Reset the column
+                $values[$referenceMap['columns']] = null;
+            }
         }
 
         return $values;
@@ -708,7 +732,7 @@ abstract class Centurion_Form_Model_Abstract extends Centurion_Form
     
     /**
      * 
-     * @param unknown_type $values
+     * @param array $values
      */
     public function processValues($values)
     {
@@ -740,10 +764,10 @@ abstract class Centurion_Form_Model_Abstract extends Centurion_Form
                 $class = $element->getAttrib('class');
                 if (false !== strpos($class, 'field-datetimepicker')) {
                     $posted_at = new Zend_Date($value, $this->getDateFormat(true));
-                    $values[$key] = $posted_at->get('yyyy-MM-dd HH:mm:ss');
+                    $values[$key] = $posted_at->get(Centurion_Date::MYSQL_DATETIME);
                 } else if (false !== strpos($class, 'field-datepicker')) {
                     $posted_at = new Zend_Date($value, $this->getDateFormat());
-                    $values[$key] = $posted_at->get('yyyy-MM-dd HH:mm:ss');
+                    $values[$key] = $posted_at->get(Centurion_Date::MYSQL_DATETIME);
                 }
             }
         }
@@ -756,7 +780,10 @@ abstract class Centurion_Form_Model_Abstract extends Centurion_Form
         $manyDependentTables = $this->getModel()->info(Centurion_Db_Table_Abstract::MANY_DEPENDENT_TABLES);
         foreach ($manyDependentTables as $key => $manyDependentTable) {
 
-            if ($this->isExcluded($key)) {
+            $el = $this->getElement($key);
+
+            if ($this->isExcluded($key)
+                && !($el instanceof Centurion_Form_Element_Info)) {
                 continue;
             }
 
@@ -766,7 +793,7 @@ abstract class Centurion_Form_Model_Abstract extends Centurion_Form
                 array_push($valuesSelected, $object->id);
             }
 
-            if ($el = $this->getElement($key)) {
+            if (null!= $el) {
                 $el->setValue($valuesSelected);
             } else if ($form = $this->getSubForm($key)) {
                 $form->setValue($valuesSelected);
@@ -797,7 +824,14 @@ abstract class Centurion_Form_Model_Abstract extends Centurion_Form
         $manyDependentTables = $this->getModel()->info(Centurion_Db_Table_Abstract::MANY_DEPENDENT_TABLES);
 
         foreach ($manyDependentTables as $key => $manyDependentTable) {
-            $objectsRelated = $this->getValue($key);
+            
+            if ($element = $this->getElement($key)) {
+                $objectsRelated = $element->getValue();
+            } else if ($subForm = $this->getSubForm($key)) {
+                $objectsRelated = $subForm->getValue($key);
+            } else {
+                $objectsRelated = null;
+            }
 
             if ($this->isExcluded($key) || null === $objectsRelated) {
                 continue;
@@ -866,8 +900,8 @@ abstract class Centurion_Form_Model_Abstract extends Centurion_Form
 
             if ($columnDetails['IDENTITY']) {
                 $config = array('hidden', array());
-            } elseif (substr($columnName, 0, 2) == 'is' || substr($columnName, 0, 6) == 'can_be') {
-                $config = array('checkbox', array());
+            } elseif (substr($columnName, 0, 2) == 'is' || substr($columnName, 0, 6) == 'can_be' || substr($columnName, 0, 3) == 'has') {
+                $config = array('onOff', array());
             } elseif (substr($columnName, 0, -3) == 'pwd' || $columnName == 'password') {
                 $config = array('password', array());
             } elseif (preg_match('/^enum/i', $columnDetails['DATA_TYPE'])) {
@@ -941,20 +975,28 @@ abstract class Centurion_Form_Model_Abstract extends Centurion_Form
                 continue;
             }
 
+
             $options = array(
                     'label'         =>  $this->_getElementLabel($key)
                 );
 
             //TODO: remove this Media_Model_DbTable_File reference from core
             if ($manyDependentTable['refTableClass'] !== 'Media_Model_DbTable_File') {
+                $table = Centurion_Db::getSingletonByClassName($manyDependentTable['refTableClass']);
+                $intersectionTable = Centurion_Db::getSingletonByClassName($manyDependentTable['intersectionTable']);
+                
                 $options['multioptions'] = $this->_buildOptions(
-                        Centurion_Db::getSingletonByClassName($manyDependentTable['refTableClass']),
+                        $table,
                         $key,
                         false,
                         true
                     );
 
                 $options['multioptions'][null] = '';
+
+                if ($intersectionTable->hasColumn('order')) {
+                    $options['class'] = 'sortable';
+                }
 
                 $elementName = 'multiselect';
             } else {
@@ -972,7 +1014,11 @@ abstract class Centurion_Form_Model_Abstract extends Centurion_Form
 
     protected function _buildOptions($table, $key, $nullable = false)
     {
-        if (method_exists($table, 'buildOptions')) {            return $table->buildOptions($nullable);        }        if (isset($this->_select[$key])) {
+        if (method_exists($table, 'buildOptions')) {
+            return $table->buildOptions($nullable);
+        }
+
+        if (isset($this->_select[$key])) {
             if ($this->_select[$key] instanceof Centurion_Db_Table_Select) {
                 $rowset = $table->fetchAll($this->_select[$key]);
             } else if (is_array($this->_select[$key]) && is_callable($this->_select[$key])) {

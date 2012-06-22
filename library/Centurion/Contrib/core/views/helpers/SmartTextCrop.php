@@ -101,14 +101,14 @@ class Centurion_View_Helper_SmartTextCrop
         }
     }
 
-    public function simpleTextCrop($text, $limit)
+    public function simpleTextCrop($text, $limit, $trailingString = '...')
     {
         $cleanText = html_entity_decode(strip_tags($text), null, 'UTF-8');
 
         $len = strlen($cleanText);
 
         if ($len > $limit) {
-            return sprintf('%s...', htmlentities(substr($cleanText, 0, $limit), null, 'UTF-8'));
+            return sprintf('%s%s', htmlentities(substr($cleanText, 0, $limit), null, 'UTF-8'), $trailingString);
         }
 
         return $cleanText;

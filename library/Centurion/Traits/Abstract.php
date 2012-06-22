@@ -16,18 +16,20 @@ abstract class Centurion_Traits_Abstract
      */
     public function defineMethod($methodName)
     {
-        if (method_exists($this, $methodName))
+        if (method_exists($this, $methodName)) {
             return true;
-        else
+        } else {
             return false;
+        }
     }
 
     public function defineProperty($propertyName)
     {
-        if (isset($this->{$propertyName}))
+        if (isset($this->{$propertyName})) {
             return true;
-        else
+        } else {
             return false;
+        }
     }
 
     public function init()

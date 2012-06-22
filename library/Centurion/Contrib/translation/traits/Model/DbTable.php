@@ -112,22 +112,22 @@ class Translation_Traits_Model_DbTable extends Core_Traits_Version_Model_DbTable
 
         $corellationName = 0;
         if (is_array($name)) {
-            // echo '<pre>';
-            // var_dump($name);
-            // echo "\n" . $select->__toString();
             $corellationName = key($name);
             $name = current($name);
         }
         
-        if (0 === $corellationName)
+        if (0 === $corellationName) {
             $corellationName = $name;
+        }
         
 
-        if ($name !== $this->_modelName)
+        if ($name !== $this->_modelName) {
             return;
+        }
             
-        if (!Centurion_Db_Table_Abstract::getFiltersStatus())
+        if (!Centurion_Db_Table_Abstract::getFiltersStatus()) {
             return;
+        }
 
         $childName = 'child_' . $corellationName;//$this->_modelName;
 
@@ -162,8 +162,6 @@ class Translation_Traits_Model_DbTable extends Core_Traits_Version_Model_DbTable
 //            }
 //        }
 
-        $dba = $this->getAdapter();
-
         $originalCols = array();
         $childCols = array();
 
@@ -174,10 +172,21 @@ class Translation_Traits_Model_DbTable extends Core_Traits_Version_Model_DbTable
             array_push($originalCols, sprintf('%s.%s', $this->_modelInfo[Centurion_Db_Table_Abstract::NAME], $col));
         }
 
-        if (!array_key_exists($this->_modelInfo[Centurion_Db_Table_Abstract::NAME], $select->getPart(Zend_Db_Select::FROM)))
+        $tableName = $this->_modelInfo[Centurion_Db_Table_Abstract::NAME];
+        $joined = false;
+        foreach ($select->getPart(Zend_Db_Select::FROM) as $key => $val) {
+            if (strcmp($val['tableName'], $tableName) === 0) {
+                $joined = true;
+                $alias = $key;
+            }
+        }
+        
+        if (!$joined) {
             $select->from($this->_modelInfo[Centurion_Db_Table_Abstract::NAME], new Zend_Db_Expr(implode(', ', $originalCols)));
+            $alias = $tableName;
+        }
 
-        $select->where(sprintf('%s.original_id IS NULL', $this->_modelInfo[Centurion_Db_Table_Abstract::NAME]));
+        $select->where(sprintf('%s.original_id IS NULL', $alias));
 
 //        if ($this->_model->ifNotExistsGetDefault())
             $method = 'joinLeft';
@@ -193,7 +202,7 @@ class Translation_Traits_Model_DbTable extends Core_Traits_Version_Model_DbTable
         
         try {
             $select->$method(sprintf('%s AS ' . $childName, $this->_modelInfo[Centurion_Db_Table_Abstract::NAME]),
-                             new Zend_Db_Expr(sprintf($childName . '.original_id = %s.id AND ' . $childName . '.language_id = %s', $this->_modelInfo[Centurion_Db_Table_Abstract::NAME], $currentLanguage['id'])),
+                             new Zend_Db_Expr(sprintf($childName . '.original_id = %s.id AND ' . $childName . '.language_id = %s', $alias, $currentLanguage['id'])),
                              new Zend_Db_Expr(implode(', ', $childCols)));
                              
         }catch (Exception $e) {
@@ -207,7 +216,7 @@ class Translation_Traits_Model_DbTable extends Core_Traits_Version_Model_DbTable
             die();
         }
         if (!$this->_model->ifNotExistsGetDefault()) {
-            $select->where(new Zend_Db_Expr(sprintf($childName . '.language_id = %u OR %s.language_id = %u', $currentLanguage['id'], $this->_modelInfo[Centurion_Db_Table_Abstract::NAME], $currentLanguage['id'])));
+            $select->where(new Zend_Db_Expr(sprintf($childName . '.language_id = %u OR %s.language_id = %u', $currentLanguage['id'], $alias, $currentLanguage['id'])));
         }
     }
 

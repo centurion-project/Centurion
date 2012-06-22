@@ -18,7 +18,7 @@
             </div>
             <div class="col col-title">
                 <input type="checkbox" value="<?php echo $id;?>" name="rowId[]">
-                <a href="<?php echo $this->url(array('id' => $row['row']->id, 'action' => 'get'));?>" class="edit"><?php echo $row['title']?></a>
+                <a href="<?php echo $this->url(array('id' => $row['row']->id, 'action' => 'get'));?>" class="edit"><?php echo $row['row']->filename; ?></a>
             </div>
             <div class="col col-actions">
             <?php

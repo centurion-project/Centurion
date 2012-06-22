@@ -18,6 +18,7 @@ class Translation_Traits_Controller_CRUD extends Translation_Traits_Controller
                     'label' => $this->view->translate('Missing translation'),
                     'type' => Centurion_Controller_CRUD::COLS_ROW_FUNCTION,
                     'function' => 'getMissingTranslation',
+                    'sort' => false
             );
             $this->_displays = $displays;
         } catch (Exception $e) {
@@ -88,8 +89,8 @@ class Translation_Traits_Controller_CRUD extends Translation_Traits_Controller
 
     public function _preRenderForm()
     {
-        
-        $this->view->formViewScript = $this->_formViewScript;
+        $this->view->formViewScript[] = $this->_formViewScript;
         $this->_formViewScript = 'traits/form.phtml';
+
     }
 }

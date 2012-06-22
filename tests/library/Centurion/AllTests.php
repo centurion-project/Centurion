@@ -5,7 +5,7 @@ if (! defined('PHPUnit_MAIN_METHOD')) {
 
 require_once dirname(__FILE__) . '/../../TestHelper.php';
 
-class Centurion_AllTests
+class Centurion_AllTests extends PHPUnit_Framework_TestSuite
 {
     public static function main ()
     {

@@ -26,6 +26,7 @@
  * @license     http://centurion-project.org/license/new-bsd     New BSD License
  * @author      Florent Messa <florent.messa@gmail.com>
  * @author      Mathias Desloges <m.desloges@gmail.com>
+ * @author      Laurent Chenay <lc@centurion-project.org>
  */
 class Media_Model_DbTable_File extends Centurion_Db_Table_Abstract
 {
@@ -73,9 +74,22 @@ class Media_Model_DbTable_File extends Centurion_Db_Table_Abstract
 
     public static function getPx()
     {
-        if (null == self::$_px)
-            self::$_px = Centurion_Db::getSingleton('media/file')->findOneByfile_id('88888888');
+        if (null == self::$_px) {
+
+            $data = array();
+            $data['id'] = '88888888';
+            $data['local_filename'] = '../../public/layouts/backoffice/images/px.png';
+            $data['delete_original'] = 0;
+
+            list(self::$_px, ) = Centurion_Db::getSingleton('media/file')->getOrCreate($data);
+        }
+
         return self::$_px;
+    }
+
+    public static function setPx(Media_Model_DbTable_Row_File $px = null)
+    {
+        self::$_px = $px;
     }
 
     /**
@@ -104,42 +118,27 @@ class Media_Model_DbTable_File extends Centurion_Db_Table_Abstract
         return $this->_dependentProxies;
     }
 
+    public function getFullPath($path = null)
+    {
+        if ($path == null) {
+            $path = $this->local_filename;
+        }
+
+        if (!is_file($path)) {
+            $path = Centurion_Config_Manager::get('media.uploads_dir')
+                . DIRECTORY_SEPARATOR
+                . $path;
+        }
+
+        return $path;
+    }
+
     public function insert(array $data)
     {
         $primary = $this->_primary;
+
         if (is_array($primary)) {
             $primary = $primary[1];
-        }
-
-        if (!isset($data[$primary])) {
-            $data[$primary] = md5(Centurion_Inflector::uniq(uniqid()));
-        }
-
-        if (!isset($data['sha1'])) {
-            $data['sha1'] = sha1_file(Centurion_Config_Manager::get('media.uploads_dir')
-                                      . DIRECTORY_SEPARATOR
-                                      . $data['local_filename']);
-        }
-
-        $row = $this->fetchRow(array('sha1=?' => $data['sha1'], 'filesize=?' => $data['filesize']));
-        //We want to be sure
-        if ($row !== null && sha1_file(Centurion_Config_Manager::get('media.uploads_dir') . DIRECTORY_SEPARATOR . $data['local_filename']) == $row->sha1
-                && filesize(Centurion_Config_Manager::get('media.uploads_dir') . DIRECTORY_SEPARATOR . $data['local_filename']) == $row->filesize) {
-
-            //We reuse the same local filename
-            unlink(Centurion_Config_Manager::get('media.uploads_dir') . DIRECTORY_SEPARATOR . $data['local_filename']);
-
-            $data['file_id'] = $row->file_id;
-            $data['local_filename'] = $row->local_filename;
-            $data['filesize'] = $row->filesize;
-            $data['proxy_model'] = $row->proxy_model;
-            $data['proxy_pk'] = $row->proxy_pk;
-            $data['belong_model'] = $row->belong_model;
-            $data['belong_pk'] = $row->belong_pk;
-        }
-
-        if (!isset($data['file_id'])) {
-            $data['file_id'] = $data[$primary];
         }
 
         if (!isset($data['proxy_pk'])) {
@@ -158,7 +157,7 @@ class Media_Model_DbTable_File extends Centurion_Db_Table_Abstract
                         continue;
                     }
 
-                   $proxyData[$key] = $value;
+                    $proxyData[$key] = $value;
                    unset($data[$key]);
                 }
 
@@ -193,15 +192,22 @@ class Media_Model_DbTable_File extends Centurion_Db_Table_Abstract
         return array(get_class($row->getTable()), $row->pk);
     }
 
+    protected function _populate(array $data)
+    {
+
+    }
+
     public function update(array $data, $where)
     {
+        $newProxyTableClass = null;
+
         $currentFileRow = $this->fetchRow($where);
 
         if (null !== $currentFileRow->proxy_model) {
             $oldProxyTableClass = $currentFileRow->proxy_model;
         }
 
-        foreach($currentFileRow->duplicates as $duplicate) {
+        foreach ($currentFileRow->duplicates as $duplicate) {
             $duplicate->delete();
         }
 
@@ -217,12 +223,6 @@ class Media_Model_DbTable_File extends Centurion_Db_Table_Abstract
                 $newProxyTableClass = $dependentProxy;
                 break;
             }
-        }
-
-        if (!isset($data['sha1'])) {
-            $data['sha1'] = sha1_file(Centurion_Config_Manager::get('media.uploads_dir')
-                                      . DIRECTORY_SEPARATOR
-                                      . $data['local_filename']);
         }
 
         if (isset($oldProxyTableClass) && $oldProxyTableClass != $newProxyTableClass) {
@@ -272,7 +272,7 @@ class Media_Model_DbTable_File extends Centurion_Db_Table_Abstract
             $select = $this->select(true);
         }
 
-        return $this->fetchAll($select->belong($object));
+        return $select->belong($object)->fetchAll();
     }
 
     public function getFileFor($fileId, $object, $select = null)
@@ -284,6 +284,13 @@ class Media_Model_DbTable_File extends Centurion_Db_Table_Abstract
         $select = $select->belong($object)
                          ->where('id = ?', $fileId);
 
-        return $this->fetchRow($select);
+        return $select->fetchRow();
+    }
+
+    public function ignoreForeignOnColumn()
+    {
+        return array(
+            'file_id',
+        );
     }
 }

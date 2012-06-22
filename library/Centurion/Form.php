@@ -393,6 +393,7 @@ class Centurion_Form extends Zend_Form implements Centurion_Traits_Traitsable
      */
     public function isValid($values)
     {
+        Centurion_Signal::factory('on_form_validation')->send($this, array($values));
         $this->setRecursivlyDisableTranslator(false);
         $valid = parent::isValid($values);
         $this->setRecursivlyDisableTranslator(true);
@@ -558,7 +559,9 @@ class Centurion_Form extends Zend_Form implements Centurion_Traits_Traitsable
         $this->_order[$name] = $this->_displayGroups[$name]->getOrder();
         $this->_orderUpdated = true;
 
-        $this->_displayGroups[$name]->setDecorators($this->defaultDisplayGroupDecorators);
+        if (!isset($options['decorators'])) {
+            $this->_displayGroups[$name]->setDecorators($this->defaultDisplayGroupDecorators);
+        }
 
         return $this;
     }
@@ -737,8 +740,14 @@ class Centurion_Form extends Zend_Form implements Centurion_Traits_Traitsable
      */
     public function render(Zend_View_Interface $view = null)
     {
-        if (null == $this->getElement('formId'))
+        if (null == $this->getElement('formId')){
             $this->addElement('hidden', 'formId', array('value' => $this->getFormId()));
+
+            //fix #6328 (hidden element bordered in dom)
+            $this->getElement('formId')->setDecorators(array('ViewHelper'));
+        }
+
+        Centurion_Signal::factory('on_form_rendering')->send($this);
         
         if ($this->_clear) {
             $this->renderError();

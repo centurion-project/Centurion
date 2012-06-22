@@ -17,9 +17,9 @@ abstract class Centurion_Test_DbTable extends Zend_Test_PHPUnit_DatabaseTestCase
         $this->_columns[] = $column;
     }
     
-    public function addColumns(array $colums)
+    public function addColumns(array $columns)
     {
-        foreach ($colums as $column) {
+        foreach ($columns as $column) {
             $this->addColumn($column);
         }
     }
@@ -27,7 +27,7 @@ abstract class Centurion_Test_DbTable extends Zend_Test_PHPUnit_DatabaseTestCase
     public function setColumns($columns)
     {
         $this->resetColumns();
-        $this->addColumns($colums);
+        $this->addColumns($columns);
     }
     
     public function resetColumns()
@@ -85,7 +85,8 @@ abstract class Centurion_Test_DbTable extends Zend_Test_PHPUnit_DatabaseTestCase
         
         foreach ($this->_columns as $column) {
             if (
-                0 === strncmp('is_', $column, 3) || 
+                0 === strncmp('is_', $column, 3) ||
+                0 === strncmp('has_', $column, 4) ||
                 0 === strncmp('can_be_', $column, 6) ||
                 substr($column, -3) == '_id'
                 ) {

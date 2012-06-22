@@ -22,7 +22,7 @@
  * @package     Centurion_Cache
  * @copyright   Copyright (c) 2008-2011 Octave & Octave (http://www.octaveoctave.com)
  * @license     http://centurion-project.org/license/new-bsd     New BSD License
- * @author      Laurent Chenay <lc@octaveoctave.com>
+ * @author      Laurent Chenay <lc@centurion-project.org>
  * @todo        Documentation
  */
 class Centurion_Cache_Manager extends Zend_Cache_Manager
@@ -197,8 +197,9 @@ class Centurion_Cache_Manager extends Zend_Cache_Manager
                     $this->_shutdownClean[$frontend][$mode] = true;
                     break;
                 case Zend_Cache::CLEANING_MODE_MATCHING_ANY_TAG:
-                    if (!isset($this->_shutdownClean[$frontend][$mode]))
+                    if (!isset($this->_shutdownClean[$frontend][$mode])) {
                         $this->_shutdownClean[$frontend][$mode] = array();
+                    }
 
                     foreach ($tags as $tag) {
                         $this->_shutdownClean[$frontend][$mode][$tag] = $tag;

@@ -26,7 +26,7 @@
  * @subpackage  Directory
  * @copyright   Copyright (c) 2008-2011 Octave & Octave (http://www.octaveoctave.com)
  * @license     http://centurion-project.org/license/new-bsd     New BSD License
- * @author      Laurent Chenay <lc@octaveoctave.com>
+ * @author      Laurent Chenay <lc@centurion-project.org>
  * @todo        Documentation
  */
 class Centurion_Config_Directory
@@ -58,8 +58,9 @@ class Centurion_Config_Directory
             $iterator = new Centurion_Iterator_Directory($path);
             $tabFile = array();
             foreach ($iterator as $file) {
-                if ($file->isDot())
+                if ($file->isDot()) {
                     continue;
+                }
                 $tabFile[] = $file->getPathName();
             }
 
@@ -70,7 +71,7 @@ class Centurion_Config_Directory
             sort($tabFile);
 
             $backendOptions = array('cache_dir' => APPLICATION_PATH . '/../data/cache/config/' );
-            $frontendOptions = array('master_files' => array_values($tabFile), 'automatic_serialization' => true);
+            $frontendOptions = array('master_files' => array_values($tabFile), 'automatic_serialization' => true, 'cache_id_prefix' => str_replace('-', '_', $environment));
             $cacheConfig = Zend_Cache::factory('File', 'File', $frontendOptions, $backendOptions);
 
             if (!($config = $cacheConfig->load(md5(implode('|', $tabFile))))) {
@@ -86,7 +87,6 @@ class Centurion_Config_Directory
                         case 'inc':
                             $result = self::_loadConfig($file);
                             $config = self::mergeArrays($config, $result);
-                            //$config = array_merge_recursive($config, $result);
                     }
                 }
 
@@ -112,10 +112,15 @@ class Centurion_Config_Directory
 
             return $config;
         }
-        throw new Exception('Path must be a directory', 500);
+        throw new Centurion_Exception('Path must be a directory', 500);
     }
 
-
+    /**
+     * @static
+     * @param $file
+     * @return false|mixed|Zend_Config_Ini|Zend_Config_Xml
+     * @deprecated
+     */
     protected static function _loadConfigCached($file)
     {
         $backendOptions = array('cache_dir' => APPLICATION_PATH . '/../data/cache/config/' );

@@ -2,33 +2,44 @@
 
 require_once dirname(__FILE__) . '/../../TestHelper.php';
 
+/**
+ * @TODO: Test all service
+ */
 class Centurion_VideopianTest extends PHPUnit_Framework_TestCase
 {
     protected $_services = array(
-        'vimeo'         =>  array(
-            'url' => array('2884813'    =>  'http://www.vimeo.com/2884813',
-                           '7022191'    =>  'http://vimeo.com/moogaloop.swf?clip_id=7022191')
-        ),
-        'youtube'       =>  array(
-            'url' => array('NCauq7LFOAQ'    =>  'http://www.youtube.com/watch?v=NCauq7LFOAQ',
-                           'SToOccPytl8'    =>  'http://www.youtube.com/watch?v=SToOccPytl8')
-        ),
-        'dailymotion'   =>  array(
-            'url' => array('xbcrrc'             =>  'http://www.dailymotion.com/swf/xbcrrc',
-                           'x2bein_vwater_ads'  =>  'http://www.dailymotion.com/video/x2bein_vwater_ads')
-        )
+        array('vimeo', 'http://vimeo.com/35323174'),
+        array('vimeo', 'http://vimeo.com/moogaloop.swf?clip_id=35323174'),
+        array('youtube', 'http://www.youtube.com/watch?v=NCauq7LFOAQ'),
+        array('youtube', 'http://www.youtube.com/watch?v=SToOccPytl8'),
+        array('dailymotion', 'http://www.dailymotion.com/swf/x2bein_vwater_ads'),
+        array('dailymotion', 'http://www.dailymotion.com/video/x2bein_vwater_ads'),
     );
-    
-    public function testService()
+
+    public function getServices()
     {
-        foreach ($this->_services as $key => $value) {
-            foreach ($value['url'] as $id => $url) {
+        return $this->_services;
+    }
+
+    /**
+     * @dataProvider getServices
+     */
+
+    public function testService($key, $url)
+    {
+            try {
                 $data = Centurion_Videopian::get($url);
-                $this->assertTrue($data instanceof stdClass);
-                $this->assertEquals($key, $data->site);
-                $this->assertEquals($url, $data->url);
+            } catch (PHPUnit_Framework_Error_Warning $e) {
+                if (strpos($e->getMessage(), 'HTTP/1.0 404 Not Found')) {
+                    //TODO: this not appear. We should use mock object.
+                    $this->markTestSkipped('404 error can appear with Vimeo when too much request.');
+                } else {
+                    throw $e;
+                }
             }
-        }
+            $this->assertTrue($data instanceof stdClass);
+            $this->assertEquals($key, $data->site);
+            $this->assertEquals($url, $data->url);
     }
     
     public function testException()

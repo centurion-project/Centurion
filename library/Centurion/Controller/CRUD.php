@@ -24,7 +24,7 @@
  * @subpackage  Admin
  * @copyright   Copyright (c) 2008-2011 Octave & Octave (http://www.octaveoctave.com)
  * @license     http://centurion-project.org/license/new-bsd     New BSD License
- * @author      Laurent Chenay <lc@octaveoctave.com>
+ * @author      Laurent Chenay <lc@centurion-project.org>
  */
 
 class Centurion_Controller_CRUD extends Centurion_Controller_AGL
@@ -36,6 +36,16 @@ class Centurion_Controller_CRUD extends Centurion_Controller_AGL
      * @var Centurion_Form_Model_Abstract
      */
     protected $_form = null;
+
+    /**
+     * @var bool
+     */
+    protected $_useTicket = true;
+
+    /**
+     * @var string The name of class to instantiate
+     */
+    protected $_formClassName = null;
 
     protected $_formViewScript;
 
@@ -51,6 +61,10 @@ class Centurion_Controller_CRUD extends Centurion_Controller_AGL
     
     public function init()
     {
+        $this->view->infos = array();
+        $this->view->errors = array();
+        $this->view->formViewScript = array();
+
 //        $this->getHelper('ContextAutoSwitch')->direct();
 //        $this->_request->setParams($this->getHelper('params')->direct());
 
@@ -66,9 +80,9 @@ class Centurion_Controller_CRUD extends Centurion_Controller_AGL
                                                      )
         );
 
-        $this->view->sortable = $this->_sortable;
+        $this->view->sortable = $this->isSortable();
 
-        if ($this->_sortable && $this->_defaultOrder == null)
+        if ($this->isSortable() && $this->_defaultOrder == null)
             $this->_defaultOrder = 'order asc';
 
         $this->_formViewScript = sprintf('%s/form.phtml', $this->_request->getControllerName());
@@ -76,7 +90,7 @@ class Centurion_Controller_CRUD extends Centurion_Controller_AGL
         parent::init();
         
         if ($this->_getParam('saving') == 'done') {
-            $this->view->infos = $this->view->translate('Saving has been done.');
+            $this->view->infos[] = $this->view->translate('Saving has been done.');
         }
     }
 
@@ -112,7 +126,10 @@ class Centurion_Controller_CRUD extends Centurion_Controller_AGL
     {
         if ($this->getRequest()->isPost()) {
             $posts = $this->_request->getPost();
-            $this->_getForm()->removeElement('id');
+            $_form = $this->_getForm();
+            $_form->removeElement('id');
+            //To simulate prePopulate before validate value fixx  #6317
+            Centurion_Signal::factory('post_form_pre_validate')->send($_form, array($posts));
             $this->_processValues($posts);
         }
     }
@@ -128,9 +145,21 @@ class Centurion_Controller_CRUD extends Centurion_Controller_AGL
         return parent::generateList();
     }
 
+    /**
+     * @return bool
+     */
+    public function isSortable()
+    {
+        if ($this->_getModel() instanceof Core_Traits_Order_Model_DbTable_Interface) {
+            return true;
+        }
+
+        return $this->_sortable;
+    }
+
     public function orderAction($rowset = null)
     {
-        if ($this->_sortable) {
+        if ($this->isSortable()) {
             $order = 0;
             foreach ($rowset as $row) {
                 $row->order = $order++;
@@ -148,8 +177,8 @@ class Centurion_Controller_CRUD extends Centurion_Controller_AGL
             $rowset = $this->_getModel()->find($id);
         }
         
-        if (!$this->view->ticket()->isValid()) {
-            $this->view->error = $this->view->translate('Invalid ticket');
+        if ($this->_useTicket && !$this->view->ticket()->isValid()) {
+            $this->view->errors[] = $this->view->translate('Invalid ticket');
             return $this->_forward('index', null, null, array('errors' => array()));
         }
         
@@ -171,6 +200,12 @@ class Centurion_Controller_CRUD extends Centurion_Controller_AGL
         }
 
         $this->_cleanCache();
+
+        if ($this->_hasParam('_next', false)) {
+            $url = urldecode($this->_getParam('_next', null));
+            return $this->_response->setRedirect($url);
+        }
+
         $this->getHelper('redirector')->gotoRoute(array_merge(array(
             'controller' => $this->_request->getControllerName(),
             'module'     => $this->_request->getModuleName(),
@@ -199,6 +234,15 @@ class Centurion_Controller_CRUD extends Centurion_Controller_AGL
      * @return Centurion_Form_Model_Abstract
      */
     protected function _getForm()
+    {
+        return $this->getForm();
+    }
+
+    /**
+     * @return Centurion_Form_Model_Abstract|null
+     * @throws Centurion_Controller_Action_Exception
+     */
+    public function getForm()
     {
         if (null === $this->_form) {
             if (!$this->_formClassName || !is_string($this->_formClassName))
@@ -289,7 +333,14 @@ class Centurion_Controller_CRUD extends Centurion_Controller_AGL
                     throw new Exception('Column is not in the row');
                 }
 
-                $object->{$column} =  !((int)$this->_getParam('value'));
+                $value = (int) $this->_getParam('value');
+                if ($value == 1) {
+                    $value = 0;
+                } else {
+                    $value = 1;
+                }
+
+                $object->{$column} =  $value;
                 $object->save();
 
                 $this->_postSwitch($object);
@@ -364,7 +415,7 @@ class Centurion_Controller_CRUD extends Centurion_Controller_AGL
     protected function _renderForm($form)
     {
         $this->view->form = $form;
-        $this->view->formViewScript = 'grid/_form.phtml';
+        $this->view->formViewScript[] = 'grid/_form.phtml';
 
         $this->_preRenderForm();
 
@@ -390,7 +441,7 @@ class Centurion_Controller_CRUD extends Centurion_Controller_AGL
 
         $form = $this->_getForm();
         if (!$form->hasInstance()) {
-                throw new Zend_Controller_Dispatcher_Exception(sprintf('Invalide id specified'));
+                throw new Zend_Controller_Dispatcher_Exception(sprintf('Invalid id specified'));
             }
 
         $this->_postGet();
@@ -481,9 +532,9 @@ class Centurion_Controller_CRUD extends Centurion_Controller_AGL
             }
         } else {
             if (null != ($element = $this->_getForm()->getElement('_XSRF')) && $element->hasErrors()) {
-                $this->view->error = $this->view->translate('Form hasn\'t been save. Maybe you have waiting to much time. Try again.');
+                $this->view->errors[] = $this->view->translate('Form hasn\'t been save. Maybe you have waiting to much time. Try again.');
             } else {
-                $this->view->error = $this->view->translate('An error occur when validating the form. See below.');
+                $this->view->errors[] = $this->view->translate('An error occur when validating the form. See below.');
             }
         }
 
@@ -505,7 +556,7 @@ class Centurion_Controller_CRUD extends Centurion_Controller_AGL
     
     public function generateCsvAction($itemPerPage = 0, $page = 0)
     {
-    	Centurion_Traits_Common::checkTraitOverload($this, 'indexAction', array(), false);
+        Centurion_Traits_Common::checkTraitOverload($this, 'indexAction', array(), false);
 
         $this->_getParams();
 
@@ -520,32 +571,32 @@ class Centurion_Controller_CRUD extends Centurion_Controller_AGL
         $naturals = $modelTable->info(Centurion_Db_Table_Abstract::COLS);
         
         $tabKeyUnset = array();
-        foreach ($this->_displays as $key => $options) {	
-        	if (is_array($options) && $options['type'] !== self::COLS_ROW_COL)
-        		$tabKeyUnset[] =  $key;
-        	else
-				$headers[] = $options;
+        foreach ($this->_displays as $key => $options) {    
+            if (is_array($options) && $options['type'] !== self::COLS_ROW_COL)
+                $tabKeyUnset[] =  $key;
+            else
+                $headers[] = $options;
         }
         
         $select = $this->generateList();
         
         //unset useless columns
         foreach ($select as $key => $row) {
-        	unset($row['checkbox']);
-        	unset($row['row']);
-        	foreach ($tabKeyUnset as $keyUnset => $rowUnset)
-        	{
-        		unset($row[$rowUnset]);
-        		
-        	}
-        	$rowSet[] = $row;
+            unset($row['checkbox']);
+            unset($row['row']);
+            foreach ($tabKeyUnset as $keyUnset => $rowUnset)
+            {
+                unset($row[$rowUnset]);
+                
+            }
+            $rowSet[] = $row;
         }        
 
         //generate csv
-   		if (null !== $rowSet) {		
-	    	$this->getHelper('Csv')->direct($rowSet, $headers);
-	    	
-   		}
-    	
+       if (null !== $rowSet) {
+        $this->getHelper('Csv')->direct($rowSet, $headers);
+
+       }
+        
     }
 }

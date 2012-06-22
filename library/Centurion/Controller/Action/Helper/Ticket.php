@@ -24,16 +24,64 @@
  * @subpackage  Helper
  * @copyright   Copyright (c) 2008-2011 Octave & Octave (http://www.octaveoctave.com)
  * @license     http://centurion-project.org/license/new-bsd     New BSD License
- * @author      Laurent Chenay <lchenay@gmail.com>
+ * @author      Laurent Chenay <lc@centurion-project.org>
+ * @todo        allow to use a specific lifetime
+ * @todo        pass the lifetime in url
+ * @todo        add testunit
+ */
+
+/**
+ * This class allow you to protect an access to a page/action with a token.
+ * Anyone who has the url will access to the page.
+ * It's perfect for given a preview to an article that is currently not published.
+ *
+ * How to use it:
+ *
+ * In a controller, by exemple in admin, use this code to generate a url with ticket:
+ * <code>
+ * //$myPage as a $page that we want to generate a valid ticket
+ *
+ * $url = $this->view->url(array('id' => $), 'show_page');
+ * $urlWithTicket = $this->_helper->ticket($url);
+ * </code>
+ *
+ * In the front controller use this code:
+ * <code>
+ * public function show()
+ * {
+ *
+ *     $id = $this->getRequest()->getParam('id');
+ *     $page = $this->_getPageFromDb($id);
+ *
+ *     if (!$page->isOnline()) {
+ *         if (!$this->_helper->ticket()->isValid()) {
+ *             throw new Exception('You can not access this page');
+ *         }
+ *     }
+ *
+ *     //If we are here, it is only if the page is online, or the visitor have the full url with ticket
+ * }
+ * </code>
  */
 class Centurion_Controller_Action_Helper_Ticket extends Zend_Controller_Action_Helper_Abstract
 {
+    /**
+     * @param string|array|null $actionUrl the url
+     * @param null|int|Zend_Date $mktime the time to use for generate the key. It is usefull for saving time if you generate many key at the same time.
+     * @return string the final url with a valid ticket.
+     */
     public function direct($actionUrl = null, $mktime = null)
     {
         $actionUrl = $this->_getActionUrl($actionUrl);
         return $actionUrl . '?ticket=' . $this->getkey($actionUrl, $mktime);
     }
 
+    /**
+     * Return the url of a given action
+     * @todo if is_string, remove the ticket from the request
+     * @param $actionUrl
+     * @return array
+     */
     protected function _getActionUrl($actionUrl)
     {
         if (null === $actionUrl) {
@@ -41,50 +89,87 @@ class Centurion_Controller_Action_Helper_Ticket extends Zend_Controller_Action_H
         }
 
         if (is_array($actionUrl)) {
-            if (isset($actionUrl['ticket']))
+            //We remove the ticket from current request param
+            //If we don't it will false the ticket generation
+            if (isset($actionUrl['ticket'])) {
                 unset($actionUrl['ticket']);
-            $route = null;
-            $actionUrl = $this->getActionController()->view->url($actionUrl, $route);
+            }
+
+            //We rebuild the url without ticket param
+            $actionUrl = $this->getActionController()->view->url($actionUrl, null);
         }
+
         return $actionUrl;
     }
 
+    /**
+     * @return Zend_Date current date, with unit reset depending of current lifetime.
+     * @todo lifetime should be a parameter
+     */
+    protected function _getDate()
+    {
+        $lifetime = Centurion_Config_Manager::get('ticket.lifetime');
+        list(, $lifetimeUnit) = sscanf($lifetime, '%d%s');
+
+        $date = new Zend_Date();
+
+        //We reset all unit that are below the ticket lifetime
+        //Ex: if the lifetime if 1d, we reset hours, minute, second
+        switch ($lifetimeUnit) {
+            case 'j':
+            case 'd':
+                $date->setHour(0);
+            case 'h':
+                $date->setMinute(0);
+            case 'm':
+            default:
+                $date->setSecond(0);
+        }
+
+        return $date;
+    }
+
+    /**
+     * @param string|array|null $actionUrl the url
+     * @param null|int|Zend_Date $mktime the time to use for generate the key. It is usefull for saving time if you generate many key at the same time.
+     * @return string
+     */
     public function getkey($actionUrl = null, $mktime = null)
     {
+        //We generate the url
         $actionUrl = $this->_getActionUrl($actionUrl);
 
         if ($mktime == null) {
-            $lifetime = Centurion_Config_Manager::get('ticket.lifetime');
-            list($lifetimeValue, $lifetimeUnit) = sscanf($lifetime, '%d%s');
-
-            $mktime = new Zend_Date();
-
-            switch ($lifetimeUnit) {
-                case 'j':
-                case 'd':
-                    $mktime->setHour(0);
-                case 'h':
-                    $mktime->setMinute(0);
-                case 'm':
-                default:
-                    $mktime->setSecond(0);
-            }
+            $mktime = $this->_getDate();
         }
 
-        if ($mktime instanceof Zend_Date)
+        if ($mktime instanceof Zend_Date) {
             $date = $mktime->toString('MMddYYYY-HH:mm');
-        else
+        } else {
             $date = date('mdY-H:i', $mktime);
+        }
 
         $salt = Centurion_Config_Manager::get('ticket.salt');
 
-        return md5($actionUrl . $date);
+        //Just a simple hash with salt and the current date
+        return sha1($salt . $actionUrl . $date);
     }
 
+    /**
+     * Test if a given ticket is valid for a given url and a given lifetime.
+     *
+     * @param null|string $ticket the ticket to test
+     * @param string|array|null $actionUrl the url
+     * @param null $lifeTime
+     * @return bool if valid or not
+     * @TODO test $ticket before. it's a sha1 so only hexa and 40 string lenght
+     */
     public function isValid($ticket = null, $actionUrl = null, $lifeTime = null)
     {
         if (null === $ticket) {
             $ticket = $this->getRequest()->getParam('ticket');
+
+            //If not ticket in request, it could only be false
             if (null === $ticket) {
                 return false;
             }
@@ -99,23 +184,18 @@ class Centurion_Controller_Action_Helper_Ticket extends Zend_Controller_Action_H
         list($lifetimeValue, $lifetimeUnit) = sscanf($lifeTime, '%d%s');
 
         $lifetimeUnit = strtolower($lifetimeUnit);
-        $date = new Zend_Date();
+        $date = $this->_getDate();
 
-        switch($lifetimeUnit) {
-            case 'j':
-            case 'd':
-                $date->setHour(0);
-            case 'h':
-                $date->setMinute(0);
-            case 'm':
-            default:
-                $date->setSecond(0);
-        }
-
+        //In order to test if current ticket is valid, we will generate all ticket from now to maximum lifetime
+        //and test if we find the current
         for ($i = 0; $i < $lifetimeValue; $i++) {
-            if ($ticket === $this->getKey($actionUrl, $date)) {
+            $key = $this->getKey($actionUrl, $date);
+
+            if ($ticket === $key) {
                 return true;
             }
+
+            //We decrement the date by 1 unit
             switch($lifetimeUnit) {
                 case 'j':
                     $date->subDay(1);

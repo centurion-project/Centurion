@@ -26,7 +26,7 @@
  * @license     http://centurion-project.org/license/new-bsd     New BSD License
  * @author      Florent Messa <florent.messa@gmail.com>
  * @author      Mathias Desloges <m.desloges@gmail.com>
- * @author      Laurent Chenay <lc@octaveoctave.com>
+ * @author      Laurent Chenay <lc@centurion-project.org>
  */
 class Media_Model_DbTable_Image extends Centurion_Db_Table_Abstract
 {
@@ -96,8 +96,11 @@ class Media_Model_DbTable_Image extends Centurion_Db_Table_Abstract
 
     protected function _getImageSize($filename)
     {
+        if (!is_file($filename)) {
+            $filename = Centurion_Config_Manager::get('media.uploads_dir') . DIRECTORY_SEPARATOR . $filename;
+        }
         $adapter = Centurion_Image::factory();
-        $adapter->open(Centurion_Config_Manager::get('media.uploads_dir') . DIRECTORY_SEPARATOR . $filename);
+        $adapter->open($filename);
 
         return array(
             'height'    =>  $adapter->getSourceHeight(),

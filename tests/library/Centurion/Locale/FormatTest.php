@@ -4,45 +4,60 @@ require_once dirname(__FILE__) . '/../../../../tests/TestHelper.php';
 
 class Centurion_Locale_FormatTest extends PHPUnit_Framework_TestCase
 {
-    protected $tabDatePicker = array(
-            'dd/MM/yy' => 'dd/MMMM/yyyy',
-            'DD' => 'EEEE',
+    protected $_tabDatePicker = array(
+                array(null, null),
+                array('dd/MM/yy', 'dd/MMMM/yyyy'),
+                array('DD', 'EEEE'),
             );
     
-    protected $tabPhp2Iso = array(
-            'd/m/y' => 'dd/MM/yy',
+    protected $_tabPhp2Iso = array(
+            array(null, null),
+            array('d/m/y', 'dd/MM/yy'),
             );
-    
-    public function testConvertDatepickerToIsoFormat()
+
+    public function getDataTabDatePicker()
     {
-        foreach ($this->tabDatePicker as $key => $val) {
-            $result = Centurion_Locale_Format::convertDatepickerToIsoFormat($key);
-            $this->assertEquals($val, $result);
-        }
-        
+        return $this->_tabDatePicker;
     }
-    
-    public function testConvertIsoToDatepickerFormat()
+
+    public function getDataTabPhp2Iso()
     {
-        foreach ($this->tabDatePicker as $key => $val) {
-            $result = Centurion_Locale_Format::convertIsoToDatepickerFormat($val);
-            $this->assertEquals($key, $result);
-        }
+        return $this->_tabPhp2Iso;
     }
-    
-    public function testConvertPhpToIsoFormat()
+
+    /**
+     * @dataProvider getDataTabDatePicker
+     */
+    public function testConvertDatepickerToIsoFormat($key, $val)
     {
-        foreach ($this->tabPhp2Iso as $key => $val) {
-            $result = Centurion_Locale_Format::convertPhpToIsoFormat($key);
-            $this->assertEquals($val, $result);
-        }
+        $result = Centurion_Locale_Format::convertDatepickerToIsoFormat($key);
+        $this->assertEquals($val, $result);
     }
-    
-    public function testConvertIsoToPhpFormat()
+
+    /**
+     * @dataProvider getDataTabDatePicker
+     */
+    public function testConvertIsoToDatepickerFormat($key, $val)
     {
-        foreach ($this->tabPhp2Iso as $key => $val) {
-            $result = Centurion_Locale_Format::convertIsoToPhpFormat($val);
-            $this->assertEquals($key, $result);
-        }
+        $result = Centurion_Locale_Format::convertIsoToDatepickerFormat($val);
+        $this->assertEquals($key, $result);
+    }
+
+    /**
+     * @dataProvider getDataTabPhp2Iso
+     */
+    public function testConvertPhpToIsoFormat($key, $val)
+    {
+        $result = Centurion_Locale_Format::convertPhpToIsoFormat($key);
+        $this->assertEquals($val, $result);
+    }
+
+    /**
+     * @dataProvider getDataTabPhp2Iso
+     */
+    public function testConvertIsoToPhpFormat($key, $val)
+    {
+        $result = Centurion_Locale_Format::convertIsoToPhpFormat($val);
+        $this->assertEquals($key, $result);
     }
 }

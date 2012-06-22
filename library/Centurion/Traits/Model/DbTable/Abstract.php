@@ -1,6 +1,9 @@
 <?php
 abstract class Centurion_Traits_Model_DbTable_Abstract extends Centurion_Traits_Abstract
 {
+    /**
+     * @var Centurion_Db_Table_Abstract
+     */
     protected $_model;
     protected $_modelInfo;
 

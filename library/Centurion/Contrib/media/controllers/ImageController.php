@@ -23,7 +23,7 @@
  * @copyright   Copyright (c) 2008-2011 Octave & Octave (http://www.octaveoctave.com)
  * @license     http://centurion-project.org/license/new-bsd     New BSD License
  * @author      Florent Messa <florent.messa@gmail.com>
- * @author      Laurent Chenay <lc@octaveoctave.com>
+ * @author      Laurent Chenay <lc@centurion-project.org>
  */
 class Media_ImageController extends Centurion_Controller_Action
 {
@@ -75,6 +75,7 @@ class Media_ImageController extends Centurion_Controller_Action
                                                        $effectPath),
                             sprintf("key '%s' for file '%s' is not valid or expired", $key, $fileRow->pk));
 
+        // TODO : modifier le file exist sur le bon chemin (cf getFullpath)
         if (!file_exists($media['uploads_dir']
                             . DIRECTORY_SEPARATOR
                             . $fileRow->local_filename)) {

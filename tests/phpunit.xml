@@ -1,18 +1,24 @@
-<phpunit bootstrap="./application/bootstrap.php"  colors="true">
-    <testsuite name="Centurion">
-        <directory>../</directory>
-    </testsuite>
-    <filter>
-        <whitelist>
-        <directory suffix=".php">../library/Centurion/</directory>
-        <directory suffix=".php">../application</directory>
-            <exclude>
-                <file>../application/Bootstrap.php</file>
-                <file>../application/controllers/ErrorController.php</file>
-                <directory suffix=".phtml">../application/</directory>
-        <directory>../library/Zend</directory>
-        <directory suffix="Controller.php">../</directory>
-            </exclude>
-        </whitelist>
-    </filter>
+<phpunit bootstrap="TestHelper.php"  colors="true">
+    <testsuites>
+        <testsuite name="Application">
+            <directory>../application</directory>
+        </testsuite>
+
+        <testsuite name="Centurion">
+            <directory>../</directory>
+        </testsuite>
+        <filter>
+            <whitelist>
+                <directory suffix=".php">../library/Centurion/</directory>
+                <directory suffix=".php">../application</directory>
+                <exclude>
+                    <file>../application/Bootstrap.php</file>
+                    <file>../application/controllers/ErrorController.php</file>
+                    <directory suffix=".phtml">../application/</directory>
+                    <directory>../library/Zend</directory>
+                    <directory suffix="Controller.php">../</directory>
+                </exclude>
+            </whitelist>
+        </filter>
+    </testsuites>
 </phpunit>
