@@ -107,10 +107,11 @@ class Centurion_Controller_Router_Rewrite extends Zend_Controller_Router_Rewrite
 
         if ($name == 'default') {
             if ($this->_useDefaultRoutes) {
+                var_dump($name);
                 $this->addDefaultRoutes();
             }
         }
 
-        parent::assemble($userParams, $name, $reset, $encode);
+        return parent::assemble($userParams, $name, $reset, $encode);
     }
 }
