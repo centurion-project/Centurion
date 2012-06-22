@@ -188,7 +188,7 @@ class Centurion_Tool_Project_Provider_Db extends Centurion_Tool_Project_Provider
 
                     $choice = null;
 
-                    if (file_exists($file->getPathname() . '.done')) {
+                    if (file_exists($file->getPathname() . '.' . APPLICATION_ENV . '.done')) {
                         if ($ignoreLaunched) {
                             continue;
                         }
@@ -242,7 +242,7 @@ class Centurion_Tool_Project_Provider_Db extends Centurion_Tool_Project_Provider
                         }
                     }
 
-                    touch($file->getPathname() . '.done');
+                    touch($file->getPathname() . '.' . APPLICATION_ENV . '.done');
                     echo "\n\n";
                 }
             }
