@@ -881,11 +881,12 @@ class Centurion_Controller_AGL extends Centurion_Controller_Action
     {
         $dirs = $this->view->getScriptPaths();
         $renderScript = false;
+        $viewSuffix = Zend_Controller_Action_HelperBroker::getStaticHelper('viewRenderer')->getViewSuffix();
         $viewFile = $this->getRequest()->getControllerName()
                   . DIRECTORY_SEPARATOR
                   . $this->getRequest()->getActionName()
-                  . '.' . $this->viewSuffix;
-                  
+                  . '.' . $viewSuffix;
+        
         foreach ($dirs as $dir) {
             if (is_readable($dir . $viewFile)) {
                 $renderScript = true;
