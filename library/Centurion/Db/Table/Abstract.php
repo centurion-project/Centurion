@@ -321,12 +321,14 @@ abstract class Centurion_Db_Table_Abstract extends Zend_Db_Table_Abstract implem
             if ($withFromPart == self::SELECT_WITH_FROM_PART) {
                 $select->from($this->info(self::NAME), Zend_Db_Table_Select::SQL_WILDCARD, $this->info(self::SCHEMA));
             } else {
-                if (null === $applyDefaultFilters)
+                if (null === $applyDefaultFilters) {
                     $applyDefaultFilters = self::FILTERS_OFF;
+                }
             }
 
-            if (null === $applyDefaultFilters)
+            if (null === $applyDefaultFilters) {
                 $applyDefaultFilters = self::$_filtersOn;
+            }
 
             Centurion_Signal::factory('on_dbTable_select')->send($this, array($select, $applyDefaultFilters));
 

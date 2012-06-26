@@ -137,7 +137,9 @@ class Translation_Traits_Model_DbTable
             );
 
         $this->_referenceMap = $referenceMap;
+        
         Centurion_Signal::factory('on_dbTable_select')->connect(array($this, 'onSelect'), $this->_model);
+        Centurion_Signal::factory('on_select_joinInner')->connect(array($this, 'onJoinInner'));
     }
 
 
@@ -159,4 +161,102 @@ class Translation_Traits_Model_DbTable
         Centurion_Traits_Common::injectTraitIn($select, 'Translation_Traits_Model_DbTable_Select');
     }
 
+    /**
+     * add filters to the default select query
+     * @see Centurion/Contrib/core/traits/Version/Model/Core_Traits_Version_Model_DbTable::onSelect()
+     */
+    public function onJoinInner($signal, $sender, $select, $name)
+    {
+        if (!$select instanceof Centurion_Db_Table_Select) {
+            return;
+        }
+
+        $corellationName = 0;
+        if (is_array($name)) {
+            $corellationName = key($name);
+            $name = current($name);
+        }
+
+        if (0 === $corellationName) {
+            $corellationName = $name;
+        }
+
+
+        if ($name !== $this->_modelName) {
+            return;
+        }
+
+        if (!Centurion_Db_Table_Abstract::getFiltersStatus()) {
+            return;
+        }
+
+        $childName = 'child_' . $corellationName;//$this->_modelName;
+
+        if (array_key_exists($childName, $select->getPart(Centurion_Db_Table_Select::FROM))) {
+            return;
+        }
+
+        $select->setIntegrityCheck(false);
+
+
+        $currentLanguage = Translation_Model_DbTable_Language::getCurrentLanguageInfo();
+
+        $originalCols = array();
+        $childCols = array();
+
+        $spec = $this->getTranslationSpec();
+        //foreach ($this->_modelInfo[Centurion_Db_Table_Abstract::COLS] as $col) {
+        foreach ($spec[Translation_Traits_Model_DbTable::TRANSLATED_FIELDS] as $col) {
+            array_push($childCols, sprintf('%s.%s AS %s%s', $childName, $col, $this->_localizedColsPrefix, $col));
+            array_push($originalCols, sprintf('%s.%s', $this->_modelInfo[Centurion_Db_Table_Abstract::NAME], $col));
+        }
+
+        $tableName = $this->_modelInfo[Centurion_Db_Table_Abstract::NAME];
+        $joined = false;
+        foreach ($select->getPart(Zend_Db_Select::FROM) as $key => $val) {
+            if (strcmp($val['tableName'], $tableName) === 0) {
+                $joined = true;
+                $alias = $key;
+            }
+        }
+        
+        if (!$joined) {
+            $select->from($this->_modelInfo[Centurion_Db_Table_Abstract::NAME], new Zend_Db_Expr(implode(', ', $originalCols)));
+            $alias = $tableName;
+        }
+
+        $select->where(sprintf('%s.original_id IS NULL', $alias));
+
+        //        if ($this->_model->ifNotExistsGetDefault())
+        $method = 'joinLeft';
+        //        else
+        //            $method = 'joinInner';
+
+        
+        if (in_array($childName, $select->getPart(Centurion_Db_Table_Select::FROM))) {
+            echo '<pre>';
+            $e = new Exception();
+            print_r($e->getTraceAsString());
+            die();
+        }
+
+        try {
+            $select->$method(array($childName => $this->_modelInfo[Centurion_Db_Table_Abstract::NAME]),
+                             new Zend_Db_Expr(sprintf($childName . '.original_id = %s.id AND ' . $childName . '.language_id = %s', $alias, $currentLanguage['id'])),
+                             new Zend_Db_Expr(implode(', ', $childCols)));
+                             
+        }catch (Exception $e) {
+//                        var_dump(array_key_exists($childName, $select->getPart(Centurion_Db_Table_Select::FROM)));
+//                        var_dump($select->getPart(Centurion_Db_Table_Select::FROM));
+            echo '<pre>';
+            echo $e->getMessage();
+            echo "\n";
+            echo $e->getTraceAsString();
+            echo $select->__toString()."\n";
+            die();
+        }
+        if (!$this->_model->ifNotExistsGetDefault()) {
+            $select->where(new Zend_Db_Expr(sprintf($childName . '.language_id = %u OR %s.language_id = %u', $currentLanguage['id'], $alias, $currentLanguage['id'])));
+        }
+    }
 }

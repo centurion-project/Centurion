@@ -60,7 +60,7 @@ class Translation_Traits_Model_DbTable_Select
      * @return bool
      */
     protected function _tableImplementsTranslation(){
-        if(null == $this->_tableImplementsTraits){
+        if (null == $this->_tableImplementsTraits) {
             //To record if the model is translatable or not. (Do not this operation several times
             $this->_tableImplementsTraits =
                 ($this->getTable() instanceof Translation_Traits_Model_DbTable_Interface);
@@ -136,7 +136,7 @@ class Translation_Traits_Model_DbTable_Select
     {
         // - avoid updating sql query if concerned model is not translated
         if (!$this->_tableImplementsTranslation()
-            || null === $this->_getSelectTableName()) {
+        || null === $this->_getSelectTableName()) {
             return;
         }
 
@@ -163,7 +163,7 @@ class Translation_Traits_Model_DbTable_Select
         }
 
         $childName = self::CHILD_PREFIX . $corellationName;//$this->_modelName;
-
+        
         //This table is already translated in the request, exit
         if (array_key_exists($childName, $this->getPart(Centurion_Db_Table_Select::FROM))) {
             return;
@@ -203,7 +203,7 @@ class Translation_Traits_Model_DbTable_Select
         //Join to the original row the translated row
         $this->where($this->_getSelectTableName().'.original_id IS NULL');
         $method = 'joinLeft';
-
+    
         try {
             //Add the related join and translated columns
             $this->{$method}(
@@ -310,8 +310,7 @@ class Translation_Traits_Model_DbTable_Select
             //$this->_value if already quote by filter
             return '( if('.$b.' '.$operand.' '.$_values
                             .' , '.$b.', if('.$a.' '.$operand.' '.$_values.', '.$a.', ('.$request.') ) ) )';
-        }
-        else{
+        } else {
             $this->_replacementColumnAlreadyFetched[$columnName] =
                 '(ifnull(`'.self::CHILD_PREFIX . $this->_getSelectTableName().'`.`'.$columnName
                                                     .'`,`'.$this->_getSelectTableName().'`.`'.$columnName.'`))';
@@ -327,8 +326,8 @@ class Translation_Traits_Model_DbTable_Select
      * @param null|string $value
      * @return mixed
      */
-    public function addSupportOfLocalisation($condition, $value=null){
-
+    public function addSupportOfLocalisation($condition, $value=null)
+    {
         /* this is the regex we apply to the condition we get.
             0. nothing interesting
             1. leading opening parenthesis
@@ -342,15 +341,14 @@ class Translation_Traits_Model_DbTable_Select
             && null !== $this->_getSelectTableName()){
 
             //Store the value to allows _checkWhereTranslation to access it
-            if(!empty($value)){
+            if (!empty($value)) {
                 $this->_value = $this->_adapter->quote($value);
                 $this->_request = $condition;
-            }
-            else{
+            } else {
                 $this->_value = $condition;
                 $this->_request = $condition;
             }
-
+            
             //Find all column, check if they are translatable, and if it's the case,
             //add a condition to test with also with the translated field
             $condition = preg_replace_callback(
@@ -376,7 +374,6 @@ class Translation_Traits_Model_DbTable_Select
      **/
     public function _where($condition, $value = null, $type = null, $bool = true){
         if (count($this->_parts[Centurion_Db_Table_Select::UNION])) {
-            require_once 'Zend/Db/Select/Exception.php';
             throw new Zend_Db_Select_Exception(
                     "Invalid use of where clause with ".Centurion_Db_Table_Select::SQL_UNION
                 );

@@ -70,11 +70,11 @@ class Translation_Traits_Form_Model extends Centurion_Traits_Form_Model_Abstract
         $this->addElement($f, Translation_Traits_Model_DbTable::ORIGINAL_FIELD);
 
         $this->addElement($this->_generateInfoField(Translation_Traits_Model_DbTable::ORIGINAL_FIELD,
-                                                    $this->getView()->translate('Translated from'),
+                                                    $this->_translate('Translated from'),
                                                     ''));
 
         $this->addElement($this->_generateInfoField(Translation_Traits_Model_DbTable::LANGUAGE_FIELD,
-                                                    $this->getView()->translate('Language'),
+                                                    $this->_translate('Language'),
                                                     (string) Translation_Traits_Common::getDefaultLanguage()->name));
 
 

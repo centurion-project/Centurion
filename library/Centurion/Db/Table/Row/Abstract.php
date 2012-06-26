@@ -1226,6 +1226,9 @@ abstract class Centurion_Db_Table_Row_Abstract extends Zend_Db_Table_Row_Abstrac
     protected function _preSave()
     {
         Centurion_Signal::factory('pre_save')->send($this);
+        if ($this->getTable()->hasColumn('content_type_id') && null == $this->content_type_id) {
+            $this->content_type_id = $this->getContentTypeId();
+        }
         $this->_notifyCacheForRelated();
     }
 
