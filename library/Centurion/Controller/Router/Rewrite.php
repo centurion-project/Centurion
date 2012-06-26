@@ -111,6 +111,6 @@ class Centurion_Controller_Router_Rewrite extends Zend_Controller_Router_Rewrite
             }
         }
 
-        parent::assemble($userParams, $name, $reset, $encode);
+        return parent::assemble($userParams, $name, $reset, $encode);
     }
 }
