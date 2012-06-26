@@ -330,6 +330,7 @@ abstract class Centurion_Form_Model_Abstract extends Centurion_Form
     {
         $this->_instance = $instance;
         if (null !== $instance) {
+            $this->addElement('Hash', '_XSRF', array('salt' => $this->getAttrib('id') . '_' . $instance->id));
             $this->populate($instance->toArray());
 
             $this->setSubInstance()
