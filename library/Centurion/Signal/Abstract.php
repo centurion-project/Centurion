@@ -140,7 +140,8 @@ abstract class Centurion_Signal_Abstract extends Centurion_Collection
         $args = (array) $args;
 
         if (null !== $sender) {
-            $args = array_unshift($args, array($this, $sender));
+            array_unshift($args, $this, $sender);
+            
         }
 
         $receiver = $this->_getReceivers($sender);
