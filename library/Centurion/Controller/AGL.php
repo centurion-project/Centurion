@@ -734,6 +734,11 @@ class Centurion_Controller_AGL extends Centurion_Controller_Action
                                 $value = $date->toString(Zend_Date::DATE_MEDIUM);
                             }
                         }
+                        if (isset($filter['filterClass'])) {
+                            $filter = new $filter['filterClass']($filter['options']);
+                            
+                            $value = $filter->filter($value);
+                        }
                     }
                 }
 
