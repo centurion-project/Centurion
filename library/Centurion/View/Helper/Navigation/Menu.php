@@ -28,7 +28,17 @@
  */
 class Centurion_View_Helper_Navigation_Menu extends Zend_View_Helper_Navigation_Menu
 {
+    /**
+     * Separator to use between menu elements
+     * @var string|null
+     */
     protected $_separator = null;
+
+    /**
+     * Prefix to use for id in menu
+     * @var string|null
+     */
+    protected $_menuPrefix = null;
 
     /**
      * Returns an HTML string containing an 'a' element for the given page if
@@ -190,14 +200,64 @@ class Centurion_View_Helper_Navigation_Menu extends Zend_View_Helper_Navigation_
         return $html;
     }
 
+
+    /**
+     * To define Seperator between LI element
+     * @param null|string $separator
+     * @return Centurion_View_Helper_Navigation_Menu
+     */
     public function setSeparator($separator = null)
     {
         $this->_separator = $separator;
         return $this;
     }
 
+    /**
+     * Seperator between LI element
+     * @return null|string
+     */
     public function getSeparator()
     {
         return $this->_separator;
+    }
+
+    /**
+     * To define the current prefix to use to generate ids
+     * @param null|string $prefix
+     * @return Centurion_View_Helper_Navigation_Menu
+     */
+    public function setPrefix($prefix = null){
+        $this->_menuPrefix = $prefix;
+        return $this;
+    }
+
+    /**
+     * To get the current prefix to use to generate id
+     * @return null|string
+     */
+    public function getPrefix(){
+        return $this->_menuPrefix;
+    }
+
+    /**
+     * Normalize an ID
+     *
+     * Overrides {@link Zend_View_Helper_HtmlElement::_normalizeId()}.
+     *
+     * @param  string $value
+     * @return string
+     */
+    protected function _normalizeId($value)
+    {
+        $prefix = null;
+        if(null === $this->_menuPrefix){
+            $prefix = get_class($this);
+            $prefix = strtolower(trim(substr($prefix, strrpos($prefix, '_')), '_'));
+        }
+        else{
+            $prefix = $this->_menuPrefix;
+        }
+
+        return $prefix . '-' . $value;
     }
 }
