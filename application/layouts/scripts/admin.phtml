@@ -1,7 +1,7 @@
 <?php
     $baseUrl = $this->baseUrl();
-    $this->headMeta()->appendHttpEquiv('Content-Type', 'text/html; charset=UTF-8')
-                     ->appendHttpEquiv('Content-Language', 'fr-FR');
+    $this->headMeta()->appendHttpEquiv('Content-Type', 'text/html; charset=UTF-8');
+                     //->appendHttpEquiv('Content-Language', 'fr-FR');
     $this->headLink()->headLink(array('rel' => 'favicon' , 'href' => $baseUrl.'/images/favicon.ico'), 'PREPEND');
     $this->headScript()->prependFile($baseUrl.'/layouts/backoffice/js/all.js');
     $this->headScript()->prependFile($baseUrl.'/cui/jquery.CUI.js');
