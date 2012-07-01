@@ -23,6 +23,6 @@ class Core_Traits_Version_Model_DbTable extends Centurion_Traits_Model_DbTable_A
 
     public function onSelect($signal, $sender, $select, $applyDefaultFilters)
     {
-        throw new Centurion_Traits_Exception("Not implemented yet");
+        throw new Centurion_Traits_Exception('Not implemented yet');
     }
 }

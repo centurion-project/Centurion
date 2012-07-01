@@ -29,7 +29,7 @@
  * @todo        refactor filter method, add more unit tests
  * @TODO        Make a contain function that check if a row is in a select
  */
-class Centurion_Db_Table_Select extends Zend_Db_Table_Select
+class Centurion_Db_Table_Select extends Zend_Db_Table_Select implements Countable
 {
     const RULES_SEPARATOR = '__';
 
@@ -211,16 +211,18 @@ class Centurion_Db_Table_Select extends Zend_Db_Table_Select
         $fromParts = $this->getPart(self::FROM);
         
         try {
-            if (in_array($tableName, array_keys($fromParts))) {
-                if (null == $joinCond) {
-                    return true;
+            
+            foreach ($fromParts as $from) {
+                if (strcmp($from['tableName'], $tableName) == 0) {
+                    if (null == $joinCond) {
+                        return true;
+                    }
+
+                    //TODO: this should be foreach
+                    if ($this->_isConditionEquals($from['joinCondition'], $joinCond)) {
+                        return true;
+                    }
                 }
-                
-                //TODO: this should be foreach
-                if ($this->_isConditionEquals($fromParts[$tableName]['joinCondition'], $joinCond)) {
-                    return true;
-                }
-                
             }
         } catch (Exception $e) {
             return false;

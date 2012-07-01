@@ -163,8 +163,7 @@ class Centurion_Social_Service_Facebook extends Centurion_Social_Service_Abstrac
 //                elseif (strpos($data['error']['message'],'#506')) {
 //                    throw new Centurion_Social_Exception($data['error']['message']); 
 //                }
-            }
-            elseif ($data['error']['type'] == 'OAuthException') {
+            }  elseif ($data['error']['type'] == 'OAuthException') {
                 throw new Centurion_Social_NoTokenException($data['error']['message']);
             }
         }        

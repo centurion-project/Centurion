@@ -24,7 +24,7 @@
  * @subpackage  Admin
  * @copyright   Copyright (c) 2008-2011 Octave & Octave (http://www.octaveoctave.com)
  * @license     http://centurion-project.org/license/new-bsd     New BSD License
- * @author      Laurent Chenay <lc@octaveoctave.com>
+ * @author      Laurent Chenay <lc@centurion-project.org>
  */
 class Admin_AdminNavigationController extends Centurion_Controller_Mptt implements Translation_Traits_Controller_CRUD_Interface
 {
@@ -94,7 +94,7 @@ class Admin_AdminNavigationController extends Centurion_Controller_Mptt implemen
             foreach ($types as $type) {
                 if (isset($type['className']) && $row->proxy->getTable() instanceof $type['className']) {
                     if (isset($type['urlEdit'])) {
-                        $type['urlEdit']['_next'] = urlencode($this->view->url(array('action' => 'index')));
+                        $type['urlEdit']['_next'] = $this->view->url(array('action' => 'index'));
                         $type['urlEdit']['id'] = $row->proxy->id;
                         $this->_redirect($this->view->url($type['urlEdit']));
                         die();

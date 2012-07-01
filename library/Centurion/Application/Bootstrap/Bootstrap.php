@@ -25,7 +25,7 @@
  * @copyright   Copyright (c) 2008-2011 Octave & Octave (http://www.octaveoctave.com)
  * @license     http://centurion-project.org/license/new-bsd     New BSD License
  * @author      Florent Messa <florent.messa@gmail.com>
- * @author      Laurent Chenay <lchenay@gmail.com>
+ * @author      Laurent Chenay <lc@centurion-project.org>
  */
 abstract class Centurion_Application_Bootstrap_Bootstrap extends Zend_Application_Bootstrap_Bootstrap
 {

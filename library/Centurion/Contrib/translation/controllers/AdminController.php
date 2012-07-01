@@ -25,7 +25,7 @@
  * @copyright   Copyright (c) 2008-2011 Octave & Octave (http://www.octaveoctave.com)
  * @license     http://centurion-project.org/license/new-bsd     New BSD License
  * @author      Florent Messa <florent.messa@gmail.com>
- * @author      Laurent Chenay <lc@octaveoctave.com>
+ * @author      Laurent Chenay <lc@centurion-project.org>
  */
 class Translation_AdminController extends Centurion_Controller_CRUD
 {
@@ -35,6 +35,7 @@ class Translation_AdminController extends Centurion_Controller_CRUD
     {
         $sqlFilter[] = new Zend_Db_Expr(Centurion_Db_Table_Abstract::getDefaultAdapter()->quoteInto('uid like ? COLLATE utf8_general_ci', '%' . $value . '%'));
     }
+
     public function putAction()
     {
         parent::putAction();
@@ -90,8 +91,10 @@ class Translation_AdminController extends Centurion_Controller_CRUD
             if (isset($filter['reference'])) {
                 $languageReference = Centurion_Db::getSingleton('translation/language')->findOneById($filter['reference']);
             }
-            if ($languageReference === false)
+
+            if ($languageReference === false) {
                 $languageReference = Translation_Traits_Common::getDefaultLanguage();
+            }
         }
 
         return $languageReference;
@@ -109,6 +112,7 @@ class Translation_AdminController extends Centurion_Controller_CRUD
             $flag = '';
             $locale = 'Original';
         }
+
         return '<div class="text-wrapper">'.$flag.'<a href="' .$this->view->url(array('action' => 'get', 'id' => $row->id)). '" class="edit">' . $translation . '</a></div>';
     }
 
@@ -157,9 +161,10 @@ class Translation_AdminController extends Centurion_Controller_CRUD
                 'label' => $this->view->translate('Reference text'),
                 'type' => self::COLS_CALLBACK,
             ),
-        	'translations' => array(
-        	   'label' => $this->view->translate('Translations'),
-        	   'type' => self::COLS_CALLBACK,
+            'translations' => array(
+               'label' => $this->view->translate('Translations'),
+               'type' => self::COLS_CALLBACK,
+                'sortable' => false,
             ),
         );
 

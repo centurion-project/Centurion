@@ -24,7 +24,7 @@
  * @subpackage  Helper
  * @copyright   Copyright (c) 2008-2011 Octave & Octave (http://www.octaveoctave.com)
  * @license     http://centurion-project.org/license/new-bsd     New BSD License
- * @author      Laurent Chenay <lchenay@gmail.com>
+ * @author      Laurent Chenay <lc@centurion-project.org>
  */
 class Centurion_Controller_Action_Helper_WidgetRenderer extends Zend_Controller_Action_Helper_ActionStack
 {
