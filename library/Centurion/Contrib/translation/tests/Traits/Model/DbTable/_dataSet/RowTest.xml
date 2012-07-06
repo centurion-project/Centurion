@@ -280,22 +280,4 @@
             <value>0</value>
         </row>
     </table>
-    <table name="translation_language">
-        <column>id</column>
-        <column>locale</column>
-        <column>name</column>
-        <column>flag</column>
-        <row>
-            <value>1</value>
-            <value>fr</value>
-            <value>Français</value>
-            <value>layouts/backoffice/images/flags/fr.png</value>
-        </row>
-        <row>
-            <value>2</value>
-            <value>en</value>
-            <value>English</value>
-            <value>layouts/backoffice/images/flags/uk.png</value>
-        </row>
-    </table>
 </dataset>

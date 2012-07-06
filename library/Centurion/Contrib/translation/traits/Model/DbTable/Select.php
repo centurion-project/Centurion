@@ -60,7 +60,7 @@ class Translation_Traits_Model_DbTable_Select
      * @return bool
      */
     protected function _tableImplementsTranslation(){
-        if (null == $this->_tableImplementsTraits) {
+        if(null == $this->_tableImplementsTraits){
             //To record if the model is translatable or not. (Do not this operation several times
             $this->_tableImplementsTraits =
                 ($this->getTable() instanceof Translation_Traits_Model_DbTable_Interface);
@@ -163,7 +163,7 @@ class Translation_Traits_Model_DbTable_Select
         }
 
         $childName = self::CHILD_PREFIX . $corellationName;//$this->_modelName;
-        
+
         //This table is already translated in the request, exit
         if (array_key_exists($childName, $this->getPart(Centurion_Db_Table_Select::FROM))) {
             return;
@@ -203,7 +203,7 @@ class Translation_Traits_Model_DbTable_Select
         //Join to the original row the translated row
         $this->where($this->_getSelectTableName().'.original_id IS NULL');
         $method = 'joinLeft';
-    
+
         try {
             //Add the related join and translated columns
             $this->{$method}(
@@ -258,7 +258,7 @@ class Translation_Traits_Model_DbTable_Select
 
         //If it is the slug name, we do another operation
         //(we not take the original if the child col is null, we test two value)
-        if('slug' == $columnName
+        if (false && 'slug' == $columnName
             && null !== $this->_value){
 
             $_value = trim($this->_value);
@@ -326,8 +326,8 @@ class Translation_Traits_Model_DbTable_Select
      * @param null|string $value
      * @return mixed
      */
-    public function addSupportOfLocalisation($condition, $value=null)
-    {
+    public function addSupportOfLocalisation($condition, $value=null){
+
         /* this is the regex we apply to the condition we get.
             0. nothing interesting
             1. leading opening parenthesis
@@ -339,7 +339,7 @@ class Translation_Traits_Model_DbTable_Select
         if (Centurion_Db_Table_Abstract::getFiltersStatus()
             && $this->_tableImplementsTranslation()
             && null !== $this->_getSelectTableName()){
-
+            
             //Store the value to allows _checkWhereTranslation to access it
             if (!empty($value)) {
                 $this->_value = $this->_adapter->quote($value);
@@ -414,7 +414,7 @@ class Translation_Traits_Model_DbTable_Select
 
         $quoteIdentifier = $this->_adapter->getQuoteIdentifierSymbol();
         //Build the pattern with the list of relations
-        return '#(?:' . $quoteIdentifier . '?('.$relationsRegex.')'.$quoteIdentifier . '?\.)?'
+        return '#^(?:' . $quoteIdentifier . '?('.$relationsRegex.')'.$quoteIdentifier . '?\.)?'
                                        . $quoteIdentifier . '?('.$columnRegex.')' . $quoteIdentifier . '?#S';
     }
 }

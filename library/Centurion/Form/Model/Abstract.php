@@ -77,6 +77,7 @@ abstract class Centurion_Form_Model_Abstract extends Centurion_Form
         'string'        =>  'text',
         'varchar'       =>  'text',
         'char'          =>  'text',
+        'boolean'       =>  'checkbox',
         'timestamp'     =>  'dateTimePicker',
         'datetime'      =>  'dateTimePicker',
         'time'          =>  'text',
@@ -650,6 +651,7 @@ abstract class Centurion_Form_Model_Abstract extends Centurion_Form
     protected function _preSaveReferenceSubForms($values){
         Centurion_Signal::factory('on_form_pre_save_reference_subform')->send($this, array($this, $values));
     }
+	
     protected function _saveReferenceSubForms($values = null)
     {
         if (null === $values) {
@@ -1095,6 +1097,8 @@ abstract class Centurion_Form_Model_Abstract extends Centurion_Form
                 $rowset = $table->select(true)
                     ->filter($this->_select[$key])
                     ->fetchAll();
+            } else if ($this->_select[$key] instanceof Zend_Db_Table_Rowset_Abstract) {
+                $rowset = $this->_select[$key];
             }
         } else {
             Centurion_Db_Table_Abstract::setFiltersStatus(true);

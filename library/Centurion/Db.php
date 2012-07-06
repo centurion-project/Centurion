@@ -93,15 +93,14 @@ class Centurion_Db extends Zend_Db
      */
     public static function getModel($modelClass = '', $arguments = array())
     {
-        $className = self::getClassName($modelClass);
-        if (!class_exists($className)) {
-            throw new Centurion_Db_Exception(sprintf('Model class name "%s" does not exists', $className));
+        if (!class_exists($modelClass)) {
+            throw new Centurion_Db_Exception(sprintf('Model class name "%s" does not exists', $modelClass));
         }
 
-        $object = new $className($arguments);
+        $object = new $modelClass($arguments);
 
-        if (array_key_exists($className, self::$_references)) {
-            $object->setDependentTables(array_merge($object->getDependentTables(), self::$_references[$className]));
+        if (array_key_exists($modelClass, self::$_references)) {
+            $object->setDependentTables(array_merge($object->getDependentTables(), self::$_references[$modelClass]));
         }
 
         return $object;
@@ -133,7 +132,6 @@ class Centurion_Db extends Zend_Db
                . substr($className, strrpos($className, '_', 1) - strlen($className) + 1);
     }
 
-
     /**
      * Retrieve model object singleton.
      *
@@ -144,12 +142,8 @@ class Centurion_Db extends Zend_Db
      */
     public static function getSingleton($registryName = '', array $arguments = array())
     {
-        $registryKey = strtolower('_singleton/' . $registryName);
-        if (! self::registry($registryKey)) {
-            self::register($registryKey, self::getModel($registryName, $arguments));
-        }
-
-        return self::registry($registryKey);
+        $registryName = self::getClassName($registryName);
+        return self::getSingletonByClassName($registryName, $arguments);
     }
 
     /**
@@ -161,7 +155,12 @@ class Centurion_Db extends Zend_Db
      */
     public static function getSingletonByClassName($className = '', array $arguments = array())
     {
-        return self::getSingleton(self::getRegistryName($className), $arguments);
+        $registryKey = strtolower('_singleton/' . $className);
+        if (! self::registry($registryKey)) {
+            self::register($registryKey, self::getModel($className, $arguments));
+        }
+
+        return self::registry($registryKey);
     }
 
     public static function setReferences($references)

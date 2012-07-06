@@ -62,6 +62,12 @@ class Translation_Traits_Model_DbTable
 
     protected $_originalForcedToDefaultLanguage = true;
 
+    /**
+     * To store getTranslationSpec of this table
+     * @var array
+     */
+    protected $_translationSpec = null;
+    
     public function __construct($model)
     {
         $this->_modelName = $model->info('name');
@@ -81,8 +87,12 @@ class Translation_Traits_Model_DbTable
     public function ifNotExistsGetDefault()
     {
         // maintain backward compatibility
-        if (null == $this->_notExistsGetDefault)
-            $this->_notExistsGetDefault = $this->_originalNotExistsGetDefault = (bool) Centurion_Config_Manager::get(Translation_Traits_Common::GET_DEFAULT_CONFIG_KEY, Translation_Traits_Common::NOT_EXISTS_GET_DEFAULT);
+        if (null == $this->_notExistsGetDefault){
+            $this->_notExistsGetDefault =
+                $this->_originalNotExistsGetDefault =
+                    (bool) Centurion_Config_Manager::get(   Translation_Traits_Common::GET_DEFAULT_CONFIG_KEY,
+                                                            Translation_Traits_Common::NOT_EXISTS_GET_DEFAULT);
+        }
             
         return $this->_model->delegateGet($this, '_notExistsGetDefault');
     }
@@ -114,8 +124,9 @@ class Translation_Traits_Model_DbTable
         parent::init();
         $this->_localizedColsPrefix .= $this->_modelName . '_';
 
-        if (false === Centurion_Config_Manager::get('translation.default_language', false))
+        if (false === Centurion_Config_Manager::get('translation.default_language', false)) {
             throw new Centurion_Traits_Exception('no default language have been set in the configuration. Please add a \'translation.default_language\' entry');
+        }
 
         $this->_languageRefRule = $this->_addReferenceMapRule('language', 'language_id', 'Translation_Model_DbTable_Language');
 
@@ -132,17 +143,41 @@ class Translation_Traits_Model_DbTable
                 'columns' => 'language_id',
                 'refColumns' => 'id',
                 'refTableClass' => 'Translation_Model_DbTable_Language',
-            	'onDelete' => Zend_Db_Table_Abstract::CASCADE,
+                'onDelete' => Zend_Db_Table_Abstract::CASCADE,
                 'onUpdate' => Zend_Db_Table_Abstract::CASCADE,
             );
 
         $this->_referenceMap = $referenceMap;
-        
+
         Centurion_Signal::factory('on_dbTable_select')->connect(array($this, 'onSelect'), $this->_model);
         Centurion_Signal::factory('on_select_joinInner')->connect(array($this, 'onJoinInner'));
     }
 
+    /**
+     * To return the list of translatable field
+     * @return string[]
+     */
+    protected function _getTranslationSpec(){
+        //Get translation information for the current table
+        if(null == $this->_translationSpec){
+            $_translationSpec = $this->getTranslationSpec();
+            //To remove translatable relations
+            $_tableColumns = $this->info(Centurion_Db_Table_Abstract::COLS);
 
+            if(!empty($_translationSpec[Translation_Traits_Model_DbTable::TRANSLATED_FIELDS])){
+                $this->_translationSpec = array_intersect(
+                    $_translationSpec[Translation_Traits_Model_DbTable::TRANSLATED_FIELDS],
+                    $_tableColumns
+                );
+            }
+            else{
+                $this->_translationSpec = array();
+            }
+        }
+
+        return $this->_translationSpec;
+    }
+    
     /**
      * Get the prefix to rename localized fields in request
      * @return string
@@ -204,12 +239,21 @@ class Translation_Traits_Model_DbTable
         $originalCols = array();
         $childCols = array();
 
-        $spec = $this->getTranslationSpec();
+        //Generate translated fields for this table
+        $spec = array_merge(
+                $this->_getTranslationSpec(),
+                $this->info(Centurion_Db_Table_Abstract::PRIMARY), //Add localized id
+                array(
+                    Translation_Traits_Model_DbTable::ORIGINAL_FIELD,
+                    Translation_Traits_Model_DbTable::LANGUAGE_FIELD
+                ) //To return the language of the localized row
+            );
         //foreach ($this->_modelInfo[Centurion_Db_Table_Abstract::COLS] as $col) {
-        foreach ($spec[Translation_Traits_Model_DbTable::TRANSLATED_FIELDS] as $col) {
+        foreach ($spec as $col) {
             array_push($childCols, sprintf('%s.%s AS %s%s', $childName, $col, $this->_localizedColsPrefix, $col));
             array_push($originalCols, sprintf('%s.%s', $this->_modelInfo[Centurion_Db_Table_Abstract::NAME], $col));
         }
+
 
         $tableName = $this->_modelInfo[Centurion_Db_Table_Abstract::NAME];
         $joined = false;
@@ -232,31 +276,13 @@ class Translation_Traits_Model_DbTable
         //        else
         //            $method = 'joinInner';
 
-        
-        if (in_array($childName, $select->getPart(Centurion_Db_Table_Select::FROM))) {
-            echo '<pre>';
-            $e = new Exception();
-            print_r($e->getTraceAsString());
-            die();
-        }
-
-        try {
-            $select->$method(array($childName => $this->_modelInfo[Centurion_Db_Table_Abstract::NAME]),
+        $select->$method(array($childName => $this->_modelInfo[Centurion_Db_Table_Abstract::NAME]),
                              new Zend_Db_Expr(sprintf($childName . '.original_id = %s.id AND ' . $childName . '.language_id = %s', $alias, $currentLanguage['id'])),
                              new Zend_Db_Expr(implode(', ', $childCols)));
-                             
-        }catch (Exception $e) {
-//                        var_dump(array_key_exists($childName, $select->getPart(Centurion_Db_Table_Select::FROM)));
-//                        var_dump($select->getPart(Centurion_Db_Table_Select::FROM));
-            echo '<pre>';
-            echo $e->getMessage();
-            echo "\n";
-            echo $e->getTraceAsString();
-            echo $select->__toString()."\n";
-            die();
-        }
+        
         if (!$this->_model->ifNotExistsGetDefault()) {
             $select->where(new Zend_Db_Expr(sprintf($childName . '.language_id = %u OR %s.language_id = %u', $currentLanguage['id'], $alias, $currentLanguage['id'])));
         }
     }
+    
 }

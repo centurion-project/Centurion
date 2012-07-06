@@ -1,28 +1,75 @@
 <?php
-class Translation_Traits_Model_DbTable_Row extends Centurion_Traits_Model_DbTable_Row_Abstract
-{
-    protected $_localBeforeSave;
+/**
+ * @class Translation_Traits_Model_DbTable_Row
+ * Trait to support translation  versionning
+ *
+ * @package Centurion
+ * @subpackage Transaltion
+ * @author Mathias Desloges, Laurent Chenay, Richard DELOGE, rd@octaveoctave.com
+ * @copyright Octave & Octave
+ */
+class Translation_Traits_Model_DbTable_Row
+        extends Centurion_Traits_Model_DbTable_Row_Abstract{
+
+    /**
+     * used to prefix localized columns
+     * @var string
+     */
     protected $_prefix = null;
 
     /**
      * @var Centurion_Db_Table_Row_Abstract
      */
     protected $_original_row = null;
-    public function init()
-    {
-        Centurion_Signal::factory('pre_save')->connect(array($this, 'preSave'), $this->_row, Centurion_Signal::BEHAVIOR_CAN_STOP);
+
+    /**
+     * Initialize this trait, connect it on preSave and postSave triggers of the row to complete action
+     */
+    public function init(){
+        Centurion_Signal::factory('pre_save')->connect(
+            array($this, 'preSave'),
+            $this->_row,
+            Centurion_Signal::BEHAVIOR_CAN_STOP
+        );
+
+        //To set the compliance with "save and continue" button
+        Centurion_Signal::factory('post_save')->connect(
+            array($this, 'postSave'),
+            $this->_row,
+            Centurion_Signal::BEHAVIOR_STOP_PROPAGATION
+        );
+
+
         $this->_prefix = $this->getTable()->getLocalizedColsPrefix();
+
+        //Change the behavior of permalink to support localization and add support of original row
         $special = $this->_specialGets;
         $special['original'] = array($this, 'getOriginal');
         $special['permalink'] = array($this, 'getLocalizedAbsoluteUrl');
         $this->_specialGets = $special;
     }
 
+    /**
+     * Return the permalink of the row
+     * @return string
+     */
     public function getLocalizedAbsoluteUrl() 
     {
         return $this->_getAbsoluteUrl($this->getAbsoluteUrl());
     }
-    
+
+    /**
+     * Return arguments to build the permalink of the current row with the support of the language
+     * @return array
+     */
+    public function getAbsoluteUrl()
+    {
+        $returnValue = $this->_row->getAbsoluteUrl();
+        $returnValue[0]['language'] = Zend_Registry::get('Zend_Translate')->getLocale();
+        
+        return $returnValue;
+    }
+
     /**
      * Return the original row for localized row
      * @return Centurion_Db_Table_Row_Abstract|null
@@ -47,6 +94,12 @@ class Translation_Traits_Model_DbTable_Row extends Centurion_Traits_Model_DbTabl
         return $this->_original_row;
     }
 
+    /**
+     * Return the value for a column. If a value is translatable, this method return the localized value
+     * instead of the original value
+     * @param string $col
+     * @return mixed
+     */
     public function _getRawData($col)
     {
         $spec = $this->getTable()->getTranslationSpec();
@@ -57,14 +110,19 @@ class Translation_Traits_Model_DbTable_Row extends Centurion_Traits_Model_DbTabl
             $this->getOriginal()->{$col};
         }
 
-        if (!array_key_exists($this->_prefix.$col, $this->_data)
-            || !in_array($col, $spec[Translation_Traits_Model_DbTable::TRANSLATED_FIELDS]))
-            return $this->_data[$col];
+        //Add to translated field, the original id and the language id to return value of the localized value
+        //instaed of the original value
+        $_translatableCols = array_merge(
+                $spec[Translation_Traits_Model_DbTable::TRANSLATED_FIELDS],
+                array(
+                    Translation_Traits_Model_DbTable::LANGUAGE_FIELD,
+                    Translation_Traits_Model_DbTable::ORIGINAL_FIELD
+                )
+            );
 
-        if (Centurion_Config_Manager::get(Translation_Traits_Common::GET_DEFAULT_CONFIG_KEY,
-                                          Translation_Traits_Common::NOT_EXISTS_GET_DEFAULT)) {
-            if (null == $this->_data[$this->_prefix.$col])
-                return $this->_data[$col];
+        if (!array_key_exists($this->_prefix.$col, $this->_data)
+            || !in_array($col, $_translatableCols)){
+            return $this->_data[$col];
         }
 
         //Return the localized value if exist, else return the otiringal value
@@ -82,36 +140,67 @@ class Translation_Traits_Model_DbTable_Row extends Centurion_Traits_Model_DbTabl
     public function preSave()
     {
         $behavior = Centurion_Signal::BEHAVIOR_CONTINUE;
+
+        if (method_exists($this->_row, 'translationPreSaveTraitBehavior')){
+            //If a specific behavior is defined for the current row for this operation, retrieve it
+            $behavior = $this->_row->translationPreSaveTraitBehavior();
+        }
+
         $spec = $this->getTable()->getTranslationSpec();
 
         if ($this->{Translation_Traits_Model_DbTable::ORIGINAL_FIELD}) {
-
+            //Clean non translatable fields with original value
             $parent = $this->getTable()->find($this->{Translation_Traits_Model_DbTable::ORIGINAL_FIELD})->current();
-
-            $this->_processSpecialFields($spec[Translation_Traits_Model_DbTable::DUPLICATED_FIELDS], $parent);
-
+            $this->_processSpecialFields($spec[Translation_Traits_Model_DbTable::DUPLICATED_FIELDS], $parent, null, false);
             $this->_processSpecialFields($spec[Translation_Traits_Model_DbTable::SET_NULL_FIELDS]);
-
             $behavior = Centurion_Signal::BEHAVIOR_STOP_PROPAGATION;
 
-        } else {
-            if (!$this->{Translation_Traits_Model_DbTable::LANGUAGE_FIELD})
-                $this->{Translation_Traits_Model_DbTable::LANGUAGE_FIELD} = Translation_Traits_Common::getDefaultLanguage()->pk;
-
-            $translations = $this->getTable()->filter(array(Translation_Traits_Model_DbTable::ORIGINAL_FIELD => $this->pk));
-
-            foreach ($translations as $translation) {
-                $this->_processSpecialFields($spec[Translation_Traits_Model_DbTable::DUPLICATED_FIELDS], $this, $translation);
-                //@todo do we reset translated field if original data changes ?
-                //$this->_processSpecialFields($spec[Translation_Traits_Model_DbTable::TRANSLATED_FIELDS], $this, $translation);
+        }
+        else {
+            //If the original row has not a defiend language, set the default language
+            if (!$this->{Translation_Traits_Model_DbTable::LANGUAGE_FIELD}){
+                $this->{Translation_Traits_Model_DbTable::LANGUAGE_FIELD}
+                                    = Translation_Traits_Common::getDefaultLanguage()->pk;
             }
+
         }
 
         return $behavior;
     }
 
+    /**
+     * Called to update duplicated field of localized rows when the original row is updated
+     */
+    public function postSave(){
+        if (empty($this->_row->{Translation_Traits_Model_DbTable::ORIGINAL_FIELD})) {
+            //If it is an original row
+
+            //Get all localized value
+            Centurion_Db_Table::setFiltersStatus(false);
+            $translations = $this->getTable()->filter(array(Translation_Traits_Model_DbTable::ORIGINAL_FIELD => $this->pk));
+            Centurion_Db_Table::restoreFiltersStatus();
+
+            //Update each loaclized velu
+            $spec = $this->getTable()->getTranslationSpec();
+            foreach ($translations as $translation) {
+                $this->_processSpecialFields(
+                        $spec[Translation_Traits_Model_DbTable::DUPLICATED_FIELDS],
+                        $this,
+                        $translation,
+                        false
+                    );
+
+                //@todo do we reset translated field if original data changes ?
+                //$this->_processSpecialFields($spec[Translation_Traits_Model_DbTable::TRANSLATED_FIELDS], $this, $translation);
+
+                $translation->save();
+            }
+        }
+    }
+
     public function getMissingTranslation()
     {
+        //@todo method useless ?
         $row = $this;
 
         if (null !== $this->original_id) {
@@ -128,7 +217,13 @@ class Translation_Traits_Model_DbTable_Row extends Centurion_Traits_Model_DbTabl
 
         $str = array();
         foreach ($languages as $language) {
-            $str[] = '<img src="' . $language->flag . '" />';
+            if(null !== $this->_usePermissions && $this->_usePermissions == true) {
+                if(Centurion_Auth::getCurrent()->isAllowed('translation_manage_view') && Centurion_Auth::getCurrent()->isAllowed(sprintf('translation_country_%s', $language->locale))) {
+                    $str[] = '<img src="' . $language->flag . '" />';
+                }
+            } else {
+                $str[] = '<img src="' . $language->flag . '" />';
+            }
         }
 
         return implode($str, ' ');
@@ -141,7 +236,7 @@ class Translation_Traits_Model_DbTable_Row extends Centurion_Traits_Model_DbTabl
      * @param Centurion_Db_Table_Row_Abstract|null $target if null, the target is the current row
      * @param bool $forceCopy : to force the copy when if the column does not exist
      */
-    protected function _processSpecialFields($fieldList, $reference = null, $target = null)
+    protected function _processSpecialFields($fieldList, $reference = null, $target = null, $forceCopy=true)
     {
         if (null === $target){
             //By default the target is the current row
@@ -149,10 +244,15 @@ class Translation_Traits_Model_DbTable_Row extends Centurion_Traits_Model_DbTabl
         }
 
         foreach ($fieldList as $field) {
-            if (null !== $reference)
-                $target->$field = $reference->{$field};
-            else
-                $target->$field = null;
+        	if($reference && $reference->columnsExists($field) || $forceCopy){
+                //If there target owns the field to duplicate (or if the copy is forced)
+	            if (null !== $reference){
+	                $target->$field = $reference->{$field};
+                }
+	            else{
+	                $target->$field = null;
+                }
+        	}
         }
     }
 

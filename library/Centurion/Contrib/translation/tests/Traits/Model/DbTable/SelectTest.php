@@ -17,23 +17,29 @@ require_once dirname(__FILE__) . '/../../../../../../../../tests/TestHelper.php'
 class Translation_Test_Traits_Model_DbTable_SelectTest
         extends Translation_Test_Traits_Model_DbTable_Row_Abstract{
 
+    public function setUp()
+    {
+        parent::setUp();
+        $this->_switchLocale('en');
+    }
     /**
      * Check if the trait translation not on the select request the relation to selection also the translation
      * of a row even if we are in the original language.
      * (In the absolute, it is possible to translate a french row in drench)
      */
     public function testSelectJoinInDefaultLanguage(){
+        Centurion_Db_Table_Abstract::setFiltersStatus(true);
         $this->_switchLocale('fr');
-        $firstModel = Centurion_Db::getSingleton('translatable/first_model');
+        $firstModel = new Translation_Test_Traits_Model_DbTable_FirstModel();
 
         //Build an empty request
         $selectObject = $firstModel->select(true);
         $formParts = $selectObject->getPart(Zend_Db_Select::FROM);
 
         //Check if the trait has added the relation to select transaltions
-        $this->assertEquals(
+        $this->assertCount(
             2,
-            count($formParts),
+            $formParts,
             'The "FromPart" of the select request must contains only two elements : '
                 .'the original relation, its translations'
         );
@@ -109,7 +115,7 @@ class Translation_Test_Traits_Model_DbTable_SelectTest
      */
     public function testSelectJoinInAnotherLanguage(){
         $this->_switchLocale('en');
-        $firstModel = Centurion_Db::getSingleton('translatable/first_model');
+        $firstModel = new Translation_Test_Traits_Model_DbTable_FirstModel();
 
         //Build an empty request
         $selectObject = $firstModel->select(true);
@@ -211,7 +217,7 @@ class Translation_Test_Traits_Model_DbTable_SelectTest
      */
     protected  function _testSelectTranslatableFields($language){
         $this->_switchLocale($language);
-        $firstModel = Centurion_Db::getSingleton('translatable/first_model');
+        $firstModel = new Translation_Test_Traits_Model_DbTable_FirstModel();
 
         //Build an empty request
         $selectObject = $firstModel->select(true);
@@ -268,7 +274,7 @@ class Translation_Test_Traits_Model_DbTable_SelectTest
 
     public function testSelectTranslationSupportInWhereConditions(){
         $this->_switchLocale('fr');
-        $firstModel = Centurion_Db::getSingleton('translatable/first_model');
+        $firstModel = new Translation_Test_Traits_Model_DbTable_FirstModel();
 
         //Do the request SELECT * FROM first_mode WHERE second1_id = 1 (in FR)
         $selectObject = $firstModel->select(true);

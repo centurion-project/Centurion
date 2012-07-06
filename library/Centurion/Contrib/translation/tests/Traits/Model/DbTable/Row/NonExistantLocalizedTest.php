@@ -14,6 +14,11 @@ class Translation_Test_Traits_Model_DbTable_Row_NonExistantLocalizedTest
     extends Translation_Test_Traits_Model_DbTable_Row_Abstract{
 
 
+    public function setUp()
+    {
+        parent::setUp();
+        $this->_switchLocale('en');
+    }
     /**
      * Check if a translatable field returns the good value (aka translated content
      * if there has been translated) for an localized row
@@ -21,13 +26,9 @@ class Translation_Test_Traits_Model_DbTable_Row_NonExistantLocalizedTest
     public function testGetTranslatableContentFromNonExistantLocalizedRow(){
         $this->_switchLocale('en');
 
-        //Switch to another language
-        Zend_Registry::get('Zend_Translate')->setLocale('en');
-        Zend_Locale::setDefault('en');
-        Zend_Registry::set('Zend_Locale', 'en');
-
         //Retrieve the localized row
-        $localizedRow = Centurion_Db::getSingleton('translatable/first_model')
+        $table = new Translation_Test_Traits_Model_DbTable_FirstModel();
+        $localizedRow = $table
             ->select(true)
             ->filter(array('id' => 3))
             ->fetchRow();
@@ -59,7 +60,8 @@ class Translation_Test_Traits_Model_DbTable_Row_NonExistantLocalizedTest
         Zend_Registry::set('Zend_Locale', 'en');
 
         //Retrieve the localized row
-        $localizedRow = Centurion_Db::getSingleton('translatable/second_model')
+        $table = new Translation_Test_Traits_Model_DbTable_SecondModel();
+        $localizedRow = $table
             ->select(true)
             ->filter(array('id' => 3))
             ->fetchRow();
@@ -92,7 +94,8 @@ class Translation_Test_Traits_Model_DbTable_Row_NonExistantLocalizedTest
         Zend_Registry::set('Zend_Locale', 'en');
 
         //$localizedRow the localized row
-        $localizedRow = Centurion_Db::getSingleton('translatable/third_model')
+        $table = new Translation_Test_Traits_Model_DbTable_ThirdModel();
+        $localizedRow = $table
             ->select(true)
             ->filter(array('id' => 3))
             ->fetchRow();
@@ -119,7 +122,8 @@ class Translation_Test_Traits_Model_DbTable_Row_NonExistantLocalizedTest
         $this->_switchLocale('en');
 
         //Retrieve the original row
-        $localizedRow = Centurion_Db::getSingleton('translatable/first_model')
+        $table = new Translation_Test_Traits_Model_DbTable_FirstModel();
+        $localizedRow = $table
             ->select(true)
             ->filter(array('id' => 3))
             ->fetchRow();
@@ -155,7 +159,8 @@ class Translation_Test_Traits_Model_DbTable_Row_NonExistantLocalizedTest
         $this->_switchLocale('en');
 
         //Retrieve the localized row
-        $localizedRow = Centurion_Db::getSingleton('translatable/first_model')
+        $table = new Translation_Test_Traits_Model_DbTable_FirstModel();
+        $localizedRow = $table
             ->select(true)
             ->filter(array('id' => 3))
             ->fetchRow();
@@ -170,10 +175,10 @@ class Translation_Test_Traits_Model_DbTable_Row_NonExistantLocalizedTest
         //Check if the parent row is good
         $second1 = $localizedRow->second1;
         $this->assertInstanceOf(
-            'Translatable_Model_DbTable_Row_SecondModel',
+            'Translation_Test_Traits_Model_DbTable_Row_SecondModel',
             $second1,
             'Error, the translated parent row from an localized row is not valid row '
-                .'of type Translatable_Model_DbTable_Row_SecondModel'
+                .'of type Translation_Test_Traits_Model_DbTable_Row_SecondModel'
         );
 
         $this->assertSame(
@@ -196,7 +201,8 @@ class Translation_Test_Traits_Model_DbTable_Row_NonExistantLocalizedTest
         $this->_switchLocale('en');
 
         //Retrieve the localizerd row
-        $localizedRow = Centurion_Db::getSingleton('translatable/first_model')
+        $table = new Translation_Test_Traits_Model_DbTable_FirstModel();
+        $localizedRow = $table
             ->select(true)
             ->filter(array('id' => 3))
             ->fetchRow();
@@ -211,10 +217,10 @@ class Translation_Test_Traits_Model_DbTable_Row_NonExistantLocalizedTest
         //Check if the parent row is good
         $second2 = $localizedRow->second2;
         $this->assertInstanceOf(
-            'Translatable_Model_DbTable_Row_SecondModel',
+            'Translation_Test_Traits_Model_DbTable_Row_SecondModel',
             $second2,
             'Error, the non-translatable parent row from a localized row is not valid row '
-                .'of type Translatable_Model_DbTable_Row_SecondModel'
+                .'of type Translation_Test_Traits_Model_DbTable_Row_SecondModel'
         );
 
         $this->assertSame(
@@ -236,9 +242,11 @@ class Translation_Test_Traits_Model_DbTable_Row_NonExistantLocalizedTest
      */
     public function testMethodGetTranslatedDependentRowFromNonExistantLocalizedRow(){
         $this->_switchLocale('en');
-
+        Centurion_Db_Table_Abstract::setFiltersStatus(true);
+        
         //Retrieve the original row
-        $localizedRow = Centurion_Db::getSingleton('translatable/first_model')
+        $table = new Translation_Test_Traits_Model_DbTable_FirstModel();
+        $localizedRow = $table
             ->select(true)
             ->filter(array('id' => 3))
             ->fetchRow();
@@ -262,7 +270,7 @@ class Translation_Test_Traits_Model_DbTable_Row_NonExistantLocalizedTest
         );
 
         $this->assertInstanceOf(
-            'Translatable_Model_DbTable_FourthModel',
+            'Translation_Test_Traits_Model_DbTable_FourthModel',
             $fourths->getTable(),
             'Error, the translated dependent rowset from the non-existant localized row '
                 .'was not retrieved from the good model'
@@ -294,7 +302,8 @@ class Translation_Test_Traits_Model_DbTable_Row_NonExistantLocalizedTest
         $this->_switchLocale('fr');
 
         //Retrieve the localized row
-        $localizedRow = Centurion_Db::getSingleton('translatable/first_model')
+        $table = new Translation_Test_Traits_Model_DbTable_FirstModel();
+        $localizedRow = $table
             ->select(true)
             ->filter(array('id' => 3))
             ->fetchRow();
@@ -318,7 +327,7 @@ class Translation_Test_Traits_Model_DbTable_Row_NonExistantLocalizedTest
         );
 
         $this->assertInstanceOf(
-            'Translatable_Model_DbTable_ThirdModel',
+            'Translation_Test_Traits_Model_DbTable_ThirdModel',
             $thirds->getTable(),
             'Error, the non-translatable dependent rowset from the non-existant localized row was '
                 .'not retrieved from the good model'

@@ -21,12 +21,15 @@ abstract class Translation_Test_Traits_Common_Abstract extends Zend_Test_PHPUnit
      * @return null|Zend_Test_PHPUnit_Db_Connection
      */
     public function getConnection(){
-        if(null === $this->_connection){
+        if (null === $this->_connection){
             //Build the connection in first call
 
             //get DB Resource to get the DB adapter for this instance
-            $_front = Zend_Controller_Front::getInstance();
-            $_dbResource = $_front->getParam('bootstrap')
+            global $application;
+
+            $bootstrap = $application->getBootstrap();
+            $_dbResource = $bootstrap
+                                  ->bootstrap('db')
                                   ->getPluginResource('db');
             $_dbAdapter = $_dbResource->getDbAdapter();
 
@@ -78,5 +81,6 @@ abstract class Translation_Test_Traits_Common_Abstract extends Zend_Test_PHPUnit
         Zend_Locale::setDefault($locale);
         Zend_Registry::set('Zend_Locale', $locale);
         Centurion_Config_Manager::set(Translation_Traits_Common::DEFAULT_LOCALE_KEY, $locale);
+        Centurion_Config_Manager::set('translation.default_language', $locale);
     }
 }

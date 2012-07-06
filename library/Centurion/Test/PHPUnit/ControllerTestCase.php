@@ -66,6 +66,63 @@ class Centurion_Test_PHPUnit_ControllerTestCase extends Zend_Test_PHPUnit_Contro
         Centurion_Auth::getInstance()->getStorage()->write($user);
     }
 
+    
+    public function reset()
+    {
+        parent::reset();
+        
+        //Centurion_Config_Manager::clear();
+        Centurion_Db_Table_Row_Abstract::cleanLocalReferenceCache();
+    }
+    
+    public function is200($url)
+    {
+        $this->reset();
+        
+        Centurion_Controller_Front::getInstance()->resetInstance();
+        
+        $application = new Centurion_Application(
+            APPLICATION_ENV,
+            Centurion_Config_Directory::loadConfig(APPLICATION_PATH . '/configs/', APPLICATION_ENV, true)
+        );
+
+        $application->bootstrap();
+
+        try {
+            $this->dispatch($url);
+
+            $exceptions = $this->getResponse()->getException();
+            
+            if (200 !== $this->getResponse()->getHttpResponseCode()) {
+                return false;
+            }
+            
+            if (isset($exceptions[0])) {
+                return false;
+            }
+            
+        } catch (Centurion_Controller_Action_Exception $e) {
+            return false;
+        }
+
+        return true;
+    }
+
+    public function assert200($url)
+    {
+        if (!$this->is200($url)) {
+            $e = $this->getResponse()->getException();
+            $this->fail('The action not raised the 200 code' . $e[0]->getMessage());
+        }
+    }
+
+    public function assertNot200($url)
+    {
+        if ($this->is200($url)) {
+            $this->fail('The action raised 200 code. It should not.');
+        }
+    }
+    
     public function is404($url)
     {
         $this->resetResponse();
@@ -73,7 +130,7 @@ class Centurion_Test_PHPUnit_ControllerTestCase extends Zend_Test_PHPUnit_Contro
 
         try {
             $this->dispatch($url);
-
+            
             $exceptions = $this->getResponse()->getException();
             if (!isset($exceptions[0]) || 404 !== $exceptions[0]->getCode()) {
                 return false;
@@ -85,35 +142,6 @@ class Centurion_Test_PHPUnit_ControllerTestCase extends Zend_Test_PHPUnit_Contro
         }
 
         return true;
-    }
-
-    public function is200($url)
-    {
-        $this->resetResponse();
-        $this->resetRequest();
-
-        try {
-            $this->dispatch($url);
-            if ($this->getResponse()->getHttpResponseCode() != 200) {
-                return false;
-            }
-        } catch (Centurion_Controller_Action_Exception $e) {
-            return false;
-        }
-
-        return true;
-    }
-
-    public function assert200($url) {
-        if (!$this->is200($url)) {
-            $this->fail('The action not raised the 200 code');
-        }
-    }
-
-    public function assertNot200($url) {
-        if ($this->is200($url)) {
-            $this->fail('The action raised the 200 code. It should not');
-        }
     }
 
     public function assert404($url)

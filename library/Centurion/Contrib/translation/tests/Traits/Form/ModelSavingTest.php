@@ -16,6 +16,11 @@ require_once dirname(__FILE__) . '/../../../../../../../tests/TestHelper.php';
 class Translation_Test_Traits_Form_ModelSavingTest
         extends Translation_Test_Traits_Common_Abstract{
 
+    public function setUp()
+    {
+        parent::setUp();
+        $this->_switchLocale('en');
+    }
     /**
      * To initialize the DB of test with a db whom contains only two languages FR and EN
      * @return PHPUnit_Extensions_Database_DataSet_IDataSet
@@ -66,7 +71,7 @@ class Translation_Test_Traits_Form_ModelSavingTest
      */
     public function testSavingNewOriginalRow(){
         $this->_switchLocale('fr');
-        $form = $this->_getForm('Translatable_Form_Model_ThirdModel');
+        $form = $this->_getForm('Translation_Test_Traits_Form_Model_ThirdModel');
 
         //Value for a new instnace
         $_dataSet = array(
@@ -81,7 +86,7 @@ class Translation_Test_Traits_Form_ModelSavingTest
         $instance = $form->save();
 
         $this->assertInstanceOf(
-                'Translatable_Model_DbTable_Row_ThirdModel',
+                'Translation_Test_Traits_Model_DbTable_Row_ThirdModel',
                 $instance,
                 'The default behavior of Centurion Form is broken when we must save a new original row'
             );
@@ -118,7 +123,7 @@ class Translation_Test_Traits_Form_ModelSavingTest
     public function testSavingExistantOriginalRow(){
         $this->_switchLocale('fr');
         //Load a form with an instance
-        $form = $this->_getForm('Translatable_Form_Model_ThirdModel', 2);
+        $form = $this->_getForm('Translation_Test_Traits_Form_Model_ThirdModel', 2);
 
         $_dataSet = array(
             'title'     => 'test saving original 2 title',
@@ -130,7 +135,7 @@ class Translation_Test_Traits_Form_ModelSavingTest
         $instance = $form->save();
 
         $this->assertInstanceOf(
-            'Translatable_Model_DbTable_Row_ThirdModel',
+            'Translation_Test_Traits_Model_DbTable_Row_ThirdModel',
             $instance,
             'The default behavior of Centurion Form is broken when we must save an existant original row'
         );
@@ -169,7 +174,7 @@ class Translation_Test_Traits_Form_ModelSavingTest
     public function testSavingNewLocalizedRow(){
         $this->_switchLocale('fr');
         //Initialize the form like the CRUD for a new localized row
-        $form = $this->_getForm('Translatable_Form_Model_ThirdModel');
+        $form = $this->_getForm('Translation_Test_Traits_Form_Model_ThirdModel');
         $form->populate(array(
             Translation_Traits_Model_DbTable::ORIGINAL_FIELD => 3,
             Translation_Traits_Model_DbTable::LANGUAGE_FIELD => 2
@@ -180,7 +185,7 @@ class Translation_Test_Traits_Form_ModelSavingTest
         $instance = $form->save();
 
         $this->assertInstanceOf(
-            'Translatable_Model_DbTable_Row_ThirdModel',
+            'Translation_Test_Traits_Model_DbTable_Row_ThirdModel',
             $instance,
             'Error, the saving failed and not return a row instance when we save a new localized row'
         );
@@ -220,14 +225,14 @@ class Translation_Test_Traits_Form_ModelSavingTest
     public function testSavingExistantLocalizedRow(){
         $this->_switchLocale('fr');
         //Initialize the form with an existant localized row like the CRUD for a new localized row
-        $form = $this->_getForm('Translatable_Form_Model_ThirdModel', 4);
+        $form = $this->_getForm('Translation_Test_Traits_Form_Model_ThirdModel', 4);
 
         $form->isValidPartial(array('title' => 'test saving localized row 1', 'first_id' => 3));
         $instance = $form->save();
 
         //Update value of the form like an user (not use isValid because we not reset all fields like a normal request)
         $this->assertInstanceOf(
-            'Translatable_Model_DbTable_Row_ThirdModel',
+            'Translation_Test_Traits_Model_DbTable_Row_ThirdModel',
             $instance,
             'Error, the saving failed and not return a row instance when we save an existant localized row'
         );
@@ -269,8 +274,8 @@ class Translation_Test_Traits_Form_ModelSavingTest
      */
     public function testSavingNewOriginalRowWithSubForm(){
         $this->_switchLocale('fr');
-        $form = $this->_getForm('Translatable_Form_Model_FirstModel');
-        Translatable_Model_DbTable_Row_FirstModel::cleanLocalReferenceCache();
+        $form = $this->_getForm('Translation_Test_Traits_Form_Model_FirstModel');
+        Translation_Test_Traits_Model_DbTable_Row_FirstModel::cleanLocalReferenceCache();
 
         //Value for a new instnace
         $_dataSet = array(
@@ -294,7 +299,7 @@ class Translation_Test_Traits_Form_ModelSavingTest
         $instance = $form->save();
 
         $this->assertInstanceOf(
-            'Translatable_Model_DbTable_Row_FirstModel',
+            'Translation_Test_Traits_Model_DbTable_Row_FirstModel',
             $instance,
             'Error, the saving failed and not return a row instance when we save a new original row'
         );
@@ -317,6 +322,7 @@ class Translation_Test_Traits_Form_ModelSavingTest
             'title'     => 'test saving original 1 title',
             'content'   => 'test saving original 1 content',
             'is_active' => 1,
+            'slug' => null,
         );
 
         ksort($_exceptedResult);
@@ -332,7 +338,7 @@ class Translation_Test_Traits_Form_ModelSavingTest
 
         $second1 = $_resultRow->second1;
         $this->assertInstanceOf(
-                'Translatable_Model_DbTable_Row_SecondModel',
+                'Translation_Test_Traits_Model_DbTable_Row_SecondModel',
                 $second1,
                 'Error, the dependant row of the original row after the save is not good'
             );
@@ -345,7 +351,7 @@ class Translation_Test_Traits_Form_ModelSavingTest
 
         $second2 = $_resultRow->second2;
         $this->assertInstanceOf(
-                'Translatable_Model_DbTable_Row_SecondModel',
+                'Translation_Test_Traits_Model_DbTable_Row_SecondModel',
                 $second2,
                 'Error, the non translatable dependant row after the save is not good'
             );
@@ -363,9 +369,10 @@ class Translation_Test_Traits_Form_ModelSavingTest
      * to prevent deletion if this subinstance is used in some localized rows
      */
     public function testSavingExistantOriginalRowWithSubForm(){
+        
         $this->_switchLocale('fr');
-        $form = $this->_getForm('Translatable_Form_Model_FirstModel', 1);
-        Translatable_Model_DbTable_Row_FirstModel::cleanLocalReferenceCache();
+        $form = $this->_getForm('Translation_Test_Traits_Form_Model_FirstModel', 1);
+        Translation_Test_Traits_Model_DbTable_Row_FirstModel::cleanLocalReferenceCache();
 
         //Value for a new instnace
         $_dataSet = array(
@@ -380,7 +387,7 @@ class Translation_Test_Traits_Form_ModelSavingTest
         $instance = $form->save();
 
         $this->assertInstanceOf(
-            'Translatable_Model_DbTable_Row_FirstModel',
+            'Translation_Test_Traits_Model_DbTable_Row_FirstModel',
             $instance,
             'Error, the saving failed and not return a row instance when we edit an original row'
         );
@@ -405,6 +412,7 @@ class Translation_Test_Traits_Form_ModelSavingTest
             'title'     => 'test saving original 2 title',
             'content'   => 'content FR',
             'is_active' => 1,
+            'slug' => null,
         );
 
         ksort($_exceptedResult);
@@ -420,7 +428,7 @@ class Translation_Test_Traits_Form_ModelSavingTest
 
         $second1 = $_resultRow->second1;
         $this->assertInstanceOf(
-            'Translatable_Model_DbTable_Row_SecondModel',
+            'Translation_Test_Traits_Model_DbTable_Row_SecondModel',
             $second1,
             'Error, the dependant row after the save is not good'
         );
@@ -433,7 +441,7 @@ class Translation_Test_Traits_Form_ModelSavingTest
 
         $second2 = $_resultRow->second2;
         $this->assertInstanceOf(
-            'Translatable_Model_DbTable_Row_SecondModel',
+            'Translation_Test_Traits_Model_DbTable_Row_SecondModel',
             $second2,
             'Error, the dependant row after the save is not good'
         );
@@ -445,13 +453,14 @@ class Translation_Test_Traits_Form_ModelSavingTest
         );
 
         //Check is the previous subinstance already exist
-        $_second1Row = Centurion_Db::getSingleton('translatable/second_model')
+        $table = new Translation_Test_Traits_Model_DbTable_SecondModel();
+        $_second1Row = $table
                             ->select(true)
                             ->filter(array('id' => 1))
                             ->fetchRow();
 
         $this->assertInstanceOf(
-                'Translatable_Model_DbTable_Row_SecondModel',
+                'Translation_Test_Traits_Model_DbTable_Row_SecondModel',
                 $_second1Row,
                 'Error, the previous subinstance must was not updated'
             );
@@ -471,8 +480,8 @@ class Translation_Test_Traits_Form_ModelSavingTest
     public function testSavingNewLocalizedRowWithSubForm(){
         $this->_switchLocale('fr');
         //Initialize the form like the CRUD for a new localized row
-        $form = $this->_getForm('Translatable_Form_Model_FirstModel');
-        Translatable_Model_DbTable_Row_FirstModel::cleanLocalReferenceCache();
+        $form = $this->_getForm('Translation_Test_Traits_Form_Model_FirstModel');
+        Translation_Test_Traits_Model_DbTable_Row_FirstModel::cleanLocalReferenceCache();
 
         $form->populate(array(
             Translation_Traits_Model_DbTable::ORIGINAL_FIELD => 3,
@@ -496,7 +505,7 @@ class Translation_Test_Traits_Form_ModelSavingTest
         $instance = $form->save();
 
         $this->assertInstanceOf(
-            'Translatable_Model_DbTable_Row_FirstModel',
+            'Translation_Test_Traits_Model_DbTable_Row_FirstModel',
             $instance,
             'Error, the saving failed and not return a row instance when we save a new localized row'
         );
@@ -519,6 +528,7 @@ class Translation_Test_Traits_Form_ModelSavingTest
             'second1_id'    => $instance->second1_id,
             'second2_id'    => 7,
             'is_active'     => 1,
+            'slug'          => null,
             'translation_localized_test_m_translation_first_model_title'        => 'test saving localized row 1',
             'translation_localized_test_m_translation_first_model_content'      => 'content 3 FR',
             'translation_localized_test_m_translation_first_model_second1_id'   => $instance->second1_id,
@@ -527,9 +537,9 @@ class Translation_Test_Traits_Form_ModelSavingTest
             'translation_localized_test_m_translation_first_model_language_id'  => 2
         );
 
-        ksort($_exceptedResult);
+        //ksort($_exceptedResult);
         $_rawResultRow = $_resultRow->toArray();
-        ksort($_rawResultRow);
+        //ksort($_rawResultRow);
 
         $this->assertEquals(
             $_exceptedResult,
@@ -555,6 +565,7 @@ class Translation_Test_Traits_Form_ModelSavingTest
             'second1_id'    => 6,
             'second2_id'    => 7,
             'is_active'     => 1,
+            'slug'          => null,
             'translation_localized_test_m_translation_first_model_title'        => null,
             'translation_localized_test_m_translation_first_model_content'      => null,
             'translation_localized_test_m_translation_first_model_second1_id'   => null,
@@ -595,8 +606,8 @@ class Translation_Test_Traits_Form_ModelSavingTest
      */
     public function testSavingExistantLocalizedRowWithSubForm(){
         $this->_switchLocale('fr');
-        $form = $this->_getForm('Translatable_Form_Model_FirstModel', 4);
-        Translatable_Model_DbTable_Row_FirstModel::cleanLocalReferenceCache();
+        $form = $this->_getForm('Translation_Test_Traits_Form_Model_FirstModel', 4);
+        Translation_Test_Traits_Model_DbTable_Row_FirstModel::cleanLocalReferenceCache();
 
         //Value for a new instnace
         $_dataSet = array(
@@ -611,7 +622,7 @@ class Translation_Test_Traits_Form_ModelSavingTest
         $instance = $form->save();
 
         $this->assertInstanceOf(
-            'Translatable_Model_DbTable_Row_FirstModel',
+            'Translation_Test_Traits_Model_DbTable_Row_FirstModel',
             $instance,
             'Error, the saving failed and not return a row instance when we save a new original row'
         );
@@ -634,6 +645,7 @@ class Translation_Test_Traits_Form_ModelSavingTest
             'second1_id'    => $instance->second1_id,
             'second2_id'    => 2,
             'is_active'     => 1,
+            'slug'          => null,
             'translation_localized_test_m_translation_first_model_title'        => 'test saving localized 5 title',
             'translation_localized_test_m_translation_first_model_content'      => '',
             'translation_localized_test_m_translation_first_model_second1_id'   => $instance->second1_id,
@@ -670,6 +682,7 @@ class Translation_Test_Traits_Form_ModelSavingTest
             'second1_id'    => 1,
             'second2_id'    => 2,
             'is_active'     => 1,
+            'slug'          => null,
             'translation_localized_test_m_translation_first_model_title'        => null,
             'translation_localized_test_m_translation_first_model_content'      => null,
             'translation_localized_test_m_translation_first_model_second1_id'   => null,

@@ -8,7 +8,12 @@ class Translation_Traits_Common
 
     public static function getDefaultLanguage()
     {
-        return Centurion_Db::getSingleton('translation/language')->fetchRow(array('locale = ?' => Centurion_Config_Manager::get(self::DEFAULT_LOCALE_KEY)));
+        return Centurion_Db::getSingleton('translation/language')
+                                ->getCache()
+                                ->fetchRow(
+                                   array(
+                                       'locale = ?' => Centurion_Config_Manager::get(self::DEFAULT_LOCALE_KEY
+                                   )
+                                ));
     }
-
 }

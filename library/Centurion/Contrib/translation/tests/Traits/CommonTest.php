@@ -44,10 +44,9 @@ class Translation_Test_Traits_CommonTest extends Translation_Test_Traits_Common_
         $frFound = false;
         $enFound = false;
         foreach($languagesRowSet as $languageRow){
-            if('fr' == $languageRow->locale){
+            if ('fr' == $languageRow->locale){
                 $frFound = true;
-            }
-            elseif('en' == $languageRow->locale){
+            } elseif ('en' == $languageRow->locale){
                 $enFound = true;
             }
         }
@@ -133,15 +132,20 @@ class Translation_Test_Traits_CommonTest extends Translation_Test_Traits_Common_
     /**
      * Test the behavior of the method Translation_Traits_Common::getDefaultLanguage()
      *  when there are no language defined in the configuration
+     * @backupStaticAttributes
      */
     public function testGetDefaultLanguageBehaviorForNonConfiguration(){
+        $save = Centurion_Config_Manager::getAll();
         try{
+            
             Centurion_Config_Manager::clear();
             $_defaultLanguageRow = Translation_Traits_Common::getDefaultLanguage();
         }
         catch(Exception $e){
+            Centurion_Config_Manager::add($save);
             return;
         }
+        Centurion_Config_Manager::add($save);
 
         $this->fail('Error, the method did not throw an exception when there are no configuration');
     }

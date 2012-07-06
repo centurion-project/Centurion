@@ -22,6 +22,12 @@ require_once dirname(__FILE__) . '/../../../../../../../tests/TestHelper.php';
 class Translation_Test_Traits_Model_DbTableTest
         extends Translation_Test_Traits_Common_Abstract{
 
+    public function setUp()
+    {
+        parent::setUp();
+        $this->_switchLocale('en');
+    }
+    
     /**
      * To initialize the DB of test with a db whom contains only two languages FR and EN
      * @return PHPUnit_Extensions_Database_DataSet_IDataSet
@@ -71,7 +77,7 @@ class Translation_Test_Traits_Model_DbTableTest
      */
     public function testMethodModelInitialization(){
         //Get a new model...
-        $model = new Translatable_Model_DbTable_FirstModel();
+        $model = new Translation_Test_Traits_Model_DbTable_FirstModel();
 
         //And check if the trait has added new reference map in this model
         $language = $model->getReferenceMap('language', false);
@@ -157,7 +163,7 @@ class Translation_Test_Traits_Model_DbTableTest
 
         //Overwrite the configuration manually to be sure of the result
         Centurion_Config_Manager::set(Translation_Traits_Common::GET_DEFAULT_CONFIG_KEY, true);
-        $model = new Translatable_Model_DbTable_FirstModel();
+        $model = new Translation_Test_Traits_Model_DbTable_FirstModel();
 
         $this->assertTrue(
                 $model->ifNotExistsGetDefault(),
@@ -168,7 +174,7 @@ class Translation_Test_Traits_Model_DbTableTest
 
         //Overwrite the configuration manually to be sure of the result
         Centurion_Config_Manager::set(Translation_Traits_Common::GET_DEFAULT_CONFIG_KEY, false);
-        $model = new Translatable_Model_DbTable_FirstModel();
+        $model = new Translation_Test_Traits_Model_DbTable_FirstModel();
 
         $this->assertFalse(
             $model->ifNotExistsGetDefault(),
@@ -180,7 +186,7 @@ class Translation_Test_Traits_Model_DbTableTest
 
         //Check with a model whom overload the method ifNotExistsGetDefault
         unset($model);
-        $model = new Translatable_Model_DbTable_ThirdModel();
+        $model = new Translation_Test_Traits_Model_DbTable_ThirdModel();
 
         $this->assertTrue(
             $model->ifNotExistsGetDefault(),
@@ -188,7 +194,7 @@ class Translation_Test_Traits_Model_DbTableTest
         );
 
         unset($model);
-        $model = new Translatable_Model_DbTable_FourthModel();
+        $model = new Translation_Test_Traits_Model_DbTable_FourthModel();
 
         $this->assertFalse(
             $model->ifNotExistsGetDefault(),
@@ -208,7 +214,7 @@ class Translation_Test_Traits_Model_DbTableTest
 
         //Overwrite the configuration manually to be sure of the result
         Centurion_Config_Manager::set(Translation_Traits_Common::GET_DEFAULT_CONFIG_KEY, null);
-        $model = new Translatable_Model_DbTable_FirstModel();
+        $model = new Translation_Test_Traits_Model_DbTable_FirstModel();
 
         $this->assertFalse(
             $model->ifNotExistsGetDefault(),
@@ -223,7 +229,7 @@ class Translation_Test_Traits_Model_DbTableTest
      * Check if the method isOriginalForcedToDefaultLanguage return a boolean
      */
     public function testMethodIsOriginalForcedToDefaultLanguageBehavior(){
-        $model = new Translatable_Model_DbTable_FirstModel();
+        $model = new Translation_Test_Traits_Model_DbTable_FirstModel();
         $this->assertInternalType('bool', $model->isOriginalForcedToDefaultLanguage());
     }
 
@@ -233,7 +239,7 @@ class Translation_Test_Traits_Model_DbTableTest
      */
     public function testMethodGetLanguageRefRuleBehavior(){
         //Get a new model...
-        $model = new Translatable_Model_DbTable_FirstModel();
+        $model = new Translation_Test_Traits_Model_DbTable_FirstModel();
 
         //And check if the trait has added new reference map in this model
         $language = $model->getLanguageRefRule();
@@ -251,7 +257,7 @@ class Translation_Test_Traits_Model_DbTableTest
      */
     public function testMethodGetLocalizedColsPrefixBehavior(){
         //Get a new model...
-        $model = new Translatable_Model_DbTable_FirstModel();
+        $model = new Translation_Test_Traits_Model_DbTable_FirstModel();
 
         $_goodPrefix = 'translation_localized_'.$model->info(Centurion_Db_Table::NAME).'_';
         $this->assertSame(
@@ -267,7 +273,7 @@ class Translation_Test_Traits_Model_DbTableTest
      */
     public function testMethodOnSelectBehavior(){
         //Get a new model...
-        $model = new Translatable_Model_DbTable_FirstModel();
+        $model = new Translation_Test_Traits_Model_DbTable_FirstModel();
 
         $selectObject = $model->select();
         $traitQueue = $selectObject->getTraitQueue();

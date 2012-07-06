@@ -16,6 +16,11 @@ require_once dirname(__FILE__) . '/../../../../../../../tests/TestHelper.php';
 class Translation_Test_Traits_Form_ModelGenerateTest
         extends Translation_Test_Traits_Common_Abstract{
 
+    public function setUp()
+    {
+        parent::setUp();
+        $this->_switchLocale('en');
+    }
     /**
      * To initialize the DB of test with a db whom contains only two languages FR and EN
      * @return PHPUnit_Extensions_Database_DataSet_IDataSet
@@ -39,7 +44,7 @@ class Translation_Test_Traits_Form_ModelGenerateTest
      * @return Centurion_Form_Model_Abstract
      */
     protected function _getForm($form, $instance=null, $options=array()){
-        if(!class_exists($form)){
+        if (!class_exists($form)){
             throw new Exception('Error, the form "'.$form.'" does not exist');
         }
 
@@ -69,7 +74,7 @@ class Translation_Test_Traits_Form_ModelGenerateTest
      */
     public function testMethodOnFormGetToolbar(){
         //First check if language group does not exist
-        $form = $this->_getForm('Translatable_Form_Model_FirstModel', 1);
+        $form = $this->_getForm('Translation_Test_Traits_Form_Model_FirstModel', 1);
         $form->getToolbar();
 
         $elements = $form->getElements();
@@ -81,7 +86,7 @@ class Translation_Test_Traits_Form_ModelGenerateTest
             );
 
         //Recreate a form, but, we add the group "language_group", the trait must build the button
-        $form = $this->_getForm('Translatable_Form_Model_FirstModel', 1);
+        $form = $this->_getForm('Translation_Test_Traits_Form_Model_FirstModel', 1);
         $form->addDisplayGroup(array('info_'.Translation_Traits_Model_DbTable::LANGUAGE_FIELD), 'language_group');
         $form->getToolbar();
         $language_group = $form->getDisplayGroup('language_group');
@@ -182,8 +187,9 @@ class Translation_Test_Traits_Form_ModelGenerateTest
      * Test the method "preGenerate" of the form
      */
     public function testBehaviorOfMethodPreGenerateWithOriginalForcedDfaultLanguageAtTrue(){
-        Centurion_Db::getSingleton('translatable/third_model')->setOriginalForcedDefaultLanguage(true);
-        $form = $this->_getForm('Translatable_Form_Model_ThirdModel');
+        $table = new Translation_Test_Traits_Model_DbTable_ThirdModel();
+        $table->setOriginalForcedDefaultLanguage(true);
+        $form = $this->_getForm('Translation_Test_Traits_Form_Model_ThirdModel');
         $this->_commonTestsForMethodPreGenerated($form);
 
         //Check if field language_id was added
@@ -210,8 +216,9 @@ class Translation_Test_Traits_Form_ModelGenerateTest
      * Test the method "preGenerate" of the form when the model is originalForcedDefaultLanguage at false
      */
     public function testBehaviorOfMethodPreGenerateWithOriginalForcedDfaultLanguageAtFalse(){
-        Centurion_Db::getSingleton('translatable/third_model')->setOriginalForcedDefaultLanguage(false);
-        $form = $this->_getForm('Translatable_Form_Model_ThirdModel');
+        $table = new Translation_Test_Traits_Model_DbTable_FirstModel();
+        $table->setOriginalForcedDefaultLanguage(false);
+        $form = $this->_getForm('Translation_Test_Traits_Form_Model_ThirdModel', null, array('model' => $table));
         $this->_commonTestsForMethodPreGenerated($form);
 
         //Check if field language_id was added
@@ -261,7 +268,7 @@ class Translation_Test_Traits_Form_ModelGenerateTest
      * Test the behavior of the form with the mode defined by displayModeOriginalAsText()
      */
     public function testFormDisplayModeOriginalAsText(){
-        $thirdForm = $this->_getForm('Translatable_Form_Model_ThirdModel');
+        $thirdForm = $this->_getForm('Translation_Test_Traits_Form_Model_ThirdModel');
 
         $this->assertFalse(
             $thirdForm->displayModeOriginalAsText(),
@@ -374,8 +381,9 @@ class Translation_Test_Traits_Form_ModelGenerateTest
      * Check the behavior of the method prePopulate for new original row (called when the submission of the form failed)
      */
     public function testBehaviorOfMethodPrePopulateForANewOriginalRow(){
-        Centurion_Db::getSingleton('translatable/third_model')->setOriginalForcedDefaultLanguage(true);
-        $thirdForm = $this->_getForm('Translatable_Form_Model_ThirdModel');
+        $table = new Translation_Test_Traits_Model_DbTable_ThirdModel();
+        $table->setOriginalForcedDefaultLanguage(true);
+        $thirdForm = $this->_getForm('Translation_Test_Traits_Form_Model_ThirdModel');
         $thirdForm->setDisplayModeOriginalAsText(false);
 
         $this->_commonTestForPrepropulateAnOriginalRow(
@@ -394,8 +402,9 @@ class Translation_Test_Traits_Form_ModelGenerateTest
      * Check if the trait translation does not alter the behavior of the Centurion Form Model for original row
      */
     public function testBehaviorOfMethodPrePopulateToEditAnOriginalRow(){
-        Centurion_Db::getSingleton('translatable/third_model')->setOriginalForcedDefaultLanguage(true);
-        $thirdForm = $this->_getForm('Translatable_Form_Model_ThirdModel', 1);
+        $table = new Translation_Test_Traits_Model_DbTable_ThirdModel();
+        $table->setOriginalForcedDefaultLanguage(true);
+        $thirdForm = $this->_getForm('Translation_Test_Traits_Form_Model_ThirdModel', 1);
         $thirdForm->setDisplayModeOriginalAsText(false);
 
         $this->_commonTestForPrepropulateAnOriginalRow(
@@ -410,9 +419,10 @@ class Translation_Test_Traits_Form_ModelGenerateTest
      * and when we recall populate after setInstance
      */
     public function testBehaviorOfMethodPrePopulateToEditAnOriginalRowIfWeRePopulate(){
-        Centurion_Db::getSingleton('translatable/third_model')->setOriginalForcedDefaultLanguage(true);
+        $table = new Translation_Test_Traits_Model_DbTable_ThirdModel();
+        $table->setOriginalForcedDefaultLanguage(true);
         //Here check only the result of prePopulate called by setInstance of the form (by passing in populate() method)
-        $thirdForm = $this->_getForm('Translatable_Form_Model_ThirdModel', 1);
+        $thirdForm = $this->_getForm('Translation_Test_Traits_Form_Model_ThirdModel', 1);
         $thirdForm->setDisplayModeOriginalAsText(false);
 
         $this->_commonTestForPrepropulateAnOriginalRow(
@@ -555,9 +565,10 @@ class Translation_Test_Traits_Form_ModelGenerateTest
      * The trait must populate with original value all translatable field and remove all other fields
      */
     public function testBehaviorOfMethodPrePopulateToEditANewTranslation(){
-        Centurion_Db::getSingleton('translatable/third_model')->setOriginalForcedDefaultLanguage(true);
+        $table = new Translation_Test_Traits_Model_DbTable_ThirdModel();
+        $table->setOriginalForcedDefaultLanguage(true);
         //Here check only the result of prePopulate called by setInstance of the form (by passing in populate() method)
-        $thirdForm = $this->_getForm('Translatable_Form_Model_ThirdModel', 1);
+        $thirdForm = $this->_getForm('Translation_Test_Traits_Form_Model_ThirdModel', 1);
         $thirdForm->setDisplayModeOriginalAsText(false);
 
         $_testSet = array(
@@ -574,9 +585,10 @@ class Translation_Test_Traits_Form_ModelGenerateTest
      * same behavior for tow differents languages
      */
     public function testBehaviorOfMethodPrePopulateToEditANewTranslationInSameLanguage(){
-        Centurion_Db::getSingleton('translatable/third_model')->setOriginalForcedDefaultLanguage(true);
+        $table = new Translation_Test_Traits_Model_DbTable_ThirdModel();
+        $table->setOriginalForcedDefaultLanguage(true);
         //Here check only the result of prePopulate called by setInstance of the form (by passing in populate() method)
-        $thirdForm = $this->_getForm('Translatable_Form_Model_ThirdModel', 1);
+        $thirdForm = $this->_getForm('Translation_Test_Traits_Form_Model_ThirdModel', 1);
         $thirdForm->setDisplayModeOriginalAsText(false);
 
         $_testSet = array(
@@ -592,10 +604,11 @@ class Translation_Test_Traits_Form_ModelGenerateTest
      * Only, it must display only translatable field and info field (not language_id because it is not translatable)
      */
     public function testBehaviorOfMethodPrePopulateToEditAnExistantTranslation(){
-        Centurion_Db::getSingleton('translatable/third_model')->setOriginalForcedDefaultLanguage(true);
+        $table = new Translation_Test_Traits_Model_DbTable_ThirdModel();
+        $table->setOriginalForcedDefaultLanguage(true);
         //Here check only the result of prePopulate called by setInstance of the form (by passing in populate() method)
         //(Normally, the trait must do nothing)
-        $thirdForm = $this->_getForm('Translatable_Form_Model_ThirdModel', 4);
+        $thirdForm = $this->_getForm('Translation_Test_Traits_Form_Model_ThirdModel', 4);
         $thirdForm->setDisplayModeOriginalAsText(false);
 
         $this->_commonTestForPrepropulateALocalizedRow($thirdForm, array(), true);
@@ -607,10 +620,11 @@ class Translation_Test_Traits_Form_ModelGenerateTest
      * Check if this behavior not change is we recall populate after
      */
     public function testBehaviorOfMethodPrePopulateToEditAnExistantTranslationIfWeRepopulate(){
-        Centurion_Db::getSingleton('translatable/third_model')->setOriginalForcedDefaultLanguage(true);
+        $table = new Translation_Test_Traits_Model_DbTable_ThirdModel();
+        $table->setOriginalForcedDefaultLanguage(true);
         //Here check only the result of prePopulate called by setInstance of the form (by passing in populate() method)
         //(Normally, the trait must do nothing)
-        $thirdForm = $this->_getForm('Translatable_Form_Model_ThirdModel', 4);
+        $thirdForm = $this->_getForm('Translation_Test_Traits_Form_Model_ThirdModel', 4);
         $thirdForm->setDisplayModeOriginalAsText(false);
 
         $_testSet = array('first_id' => 3);
@@ -621,8 +635,9 @@ class Translation_Test_Traits_Form_ModelGenerateTest
      * Check the behavior of the method prePopulate for new original row (called when the submission of the form failed)
      */
     public function testBehaviorOfMethodPrePopulateForANewOriginalRowInOriginalAsText(){
-        Centurion_Db::getSingleton('translatable/third_model')->setOriginalForcedDefaultLanguage(true);
-        $thirdForm = $this->_getForm('Translatable_Form_Model_ThirdModel');
+        $table = new Translation_Test_Traits_Model_DbTable_ThirdModel();
+        $table->setOriginalForcedDefaultLanguage(true);
+        $thirdForm = $this->_getForm('Translation_Test_Traits_Form_Model_ThirdModel');
         $thirdForm->setDisplayModeOriginalAsText(true);
 
         $this->_commonTestForPrepropulateAnOriginalRow(
@@ -642,8 +657,9 @@ class Translation_Test_Traits_Form_ModelGenerateTest
      * Check if the trait translation does not alter the behavior of the Centurion Form Model for original row
      */
     public function testBehaviorOfMethodPrePopulateToEditAnOriginalRowInOriginalAsText(){
-        Centurion_Db::getSingleton('translatable/third_model')->setOriginalForcedDefaultLanguage(true);
-        $thirdForm = $this->_getForm('Translatable_Form_Model_ThirdModel', 1);
+        $table = new Translation_Test_Traits_Model_DbTable_ThirdModel();
+        $table->setOriginalForcedDefaultLanguage(true);
+        $thirdForm = $this->_getForm('Translation_Test_Traits_Form_Model_ThirdModel', 1);
         $thirdForm->setDisplayModeOriginalAsText(true);
 
         $this->_commonTestForPrepropulateAnOriginalRow(
@@ -659,9 +675,10 @@ class Translation_Test_Traits_Form_ModelGenerateTest
      * and when we recall populate after setInstance
      */
     public function testBehaviorOfMethodPrePopulateToEditAnOriginalRowIfWeRePopulateInOriginalAsText(){
-        Centurion_Db::getSingleton('translatable/third_model')->setOriginalForcedDefaultLanguage(true);
+        $table = new Translation_Test_Traits_Model_DbTable_ThirdModel();
+        $table->setOriginalForcedDefaultLanguage(true);
         //Here check only the result of prePopulate called by setInstance of the form (by passing in populate() method)
-        $thirdForm = $this->_getForm('Translatable_Form_Model_ThirdModel', 1);
+        $thirdForm = $this->_getForm('Translation_Test_Traits_Form_Model_ThirdModel', 1);
         $thirdForm->setDisplayModeOriginalAsText(true);
 
         $this->_commonTestForPrepropulateAnOriginalRow(
@@ -682,9 +699,10 @@ class Translation_Test_Traits_Form_ModelGenerateTest
      * The trait must populate with original value all translatable field and remove all other fields
      */
     public function testBehaviorOfMethodPrePopulateToEditANewTranslationInOriginalAsText(){
-        Centurion_Db::getSingleton('translatable/third_model')->setOriginalForcedDefaultLanguage(true);
+        $table = new Translation_Test_Traits_Model_DbTable_ThirdModel();
+        $table->setOriginalForcedDefaultLanguage(true);
         //Here check only the result of prePopulate called by setInstance of the form (by passing in populate() method)
-        $thirdForm = $this->_getForm('Translatable_Form_Model_ThirdModel', 1);
+        $thirdForm = $this->_getForm('Translation_Test_Traits_Form_Model_ThirdModel', 1);
         $thirdForm->setDisplayModeOriginalAsText(true);
 
         $_testSet = array(
@@ -701,9 +719,10 @@ class Translation_Test_Traits_Form_ModelGenerateTest
      * same behavior for tow differents languages
      */
     public function testBehaviorOfMethodPrePopulateToEditANewTranslationInSameLanguageInOriginalAsText(){
-        Centurion_Db::getSingleton('translatable/third_model')->setOriginalForcedDefaultLanguage(true);
+        $table = new Translation_Test_Traits_Model_DbTable_ThirdModel();
+        $table->setOriginalForcedDefaultLanguage(true);
         //Here check only the result of prePopulate called by setInstance of the form (by passing in populate() method)
-        $thirdForm = $this->_getForm('Translatable_Form_Model_ThirdModel', 1);
+        $thirdForm = $this->_getForm('Translation_Test_Traits_Form_Model_ThirdModel', 1);
         $thirdForm->setDisplayModeOriginalAsText(true);
 
         $_testSet = array(
@@ -719,11 +738,12 @@ class Translation_Test_Traits_Form_ModelGenerateTest
      * Only, it must display only translatable field and info field (not language_id because it is not translatable)
      */
     public function testBehaviorOfMethodPrePopulateToEditAnExistantTranslationInOriginalAsText(){
-        Centurion_Db::getSingleton('translatable/third_model')->setOriginalForcedDefaultLanguage(true);
+        $table = new Translation_Test_Traits_Model_DbTable_ThirdModel();
+        $table->setOriginalForcedDefaultLanguage(true);
         //Here check only the result of prePopulate called by setInstance of the form (by passing in populate() method)
         //(Normally, the trait must do nothing)
         $thirdForm = $this->_getForm(
-            'Translatable_Form_Model_ThirdModel',
+            'Translation_Test_Traits_Form_Model_ThirdModel',
             4,
             array('displayModeOriginalAsText' => true)
         );
@@ -737,11 +757,12 @@ class Translation_Test_Traits_Form_ModelGenerateTest
      * Check if this behavior not change is we recall populate after
      */
     public function testBehaviorOfMethodPrePopulateToEditAnExistantTranslationIfWeRepopulateInOriginalAsText(){
-        Centurion_Db::getSingleton('translatable/third_model')->setOriginalForcedDefaultLanguage(true);
+        $table = new Translation_Test_Traits_Model_DbTable_ThirdModel();
+        $table->setOriginalForcedDefaultLanguage(true);
         //Here check only the result of prePopulate called by setInstance of the form (by passing in populate() method)
         //(Normally, the trait must do nothing)
         $thirdForm = $this->_getForm(
-                'Translatable_Form_Model_ThirdModel',
+                'Translation_Test_Traits_Form_Model_ThirdModel',
                 4,
                 array('displayModeOriginalAsText' => true)
             );

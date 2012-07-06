@@ -1200,8 +1200,13 @@ class Centurion_Db_Table_Select extends Zend_Db_Table_Select implements Countabl
             return call_user_func_array(array($this, '_joinUsingVia'), $args);
         }
 
-        require_once 'Zend/Db/Select/Exception.php';
-        throw new Zend_Db_Select_Exception("Unrecognized method '$method()'");
+        list($found, $retVal) = Centurion_Traits_Common::checkTraitOverload($this, $method, $args);
+
+        if (!$found) {
+            throw new Zend_Db_Select_Exception("Unrecognized method '$method()'");
+        }
+
+        return $retVal;
     }
 
      /**

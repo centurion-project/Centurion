@@ -12,12 +12,18 @@ require_once dirname(__FILE__) . '/../../../../../../../../../tests/TestHelper.p
 class Translation_Test_Traits_Model_DbTable_Row_OriginalTest
     extends Translation_Test_Traits_Model_DbTable_Row_Abstract{
 
+    public function setUp()
+    {
+        parent::setUp();
+        $this->_switchLocale('en');
+    }
     /**
      * Check if the trait Translation_Traits_Model_DbTable_Row has goodly initliazed the row
      */
     public function testRowTranslationReferenceForOriginalRow(){
         //Check the behavior of new relations on a original row
-        $_newRow = Centurion_Db::getSingleton('translatable/first_model')->createRow();
+        $table = new Translation_Test_Traits_Model_DbTable_FirstModel();
+        $_newRow = $table->createRow();
         $this->assertNull($_newRow->original, 'Error, the specialget "original" is defined without ref in original_id');
 
         //The language was not set in the row, the relation must return null
@@ -31,7 +37,8 @@ class Translation_Test_Traits_Model_DbTable_Row_OriginalTest
         $this->_switchLocale('fr');
 
         //Retrieve the original row
-        $originalRow = Centurion_Db::getSingleton('translatable/first_model')
+        $table = new Translation_Test_Traits_Model_DbTable_FirstModel();
+        $originalRow = $table
             ->select(true)
             ->filter(array('id' => 1))
             ->fetchRow();
@@ -58,7 +65,8 @@ class Translation_Test_Traits_Model_DbTable_Row_OriginalTest
         $this->_switchLocale('fr');
 
         //Retrieve the original row
-        $originalRow = Centurion_Db::getSingleton('translatable/second_model')
+        $table = new Translation_Test_Traits_Model_DbTable_SecondModel();
+        $originalRow = $table
             ->select(true)
             ->filter(array('id' => 1))
             ->fetchRow();
@@ -85,7 +93,8 @@ class Translation_Test_Traits_Model_DbTable_Row_OriginalTest
         $this->_switchLocale('fr');
 
         //Retrieve the original row
-        $originalRow = Centurion_Db::getSingleton('translatable/third_model')
+        $table = new Translation_Test_Traits_Model_DbTable_ThirdModel();
+        $originalRow = $table
             ->select(true)
             ->filter(array('id' => 1))
             ->fetchRow();
@@ -112,7 +121,8 @@ class Translation_Test_Traits_Model_DbTable_Row_OriginalTest
         $this->_switchLocale('fr');
 
         //Retrieve the original row
-        $originalRow = Centurion_Db::getSingleton('translatable/first_model')
+        $table = new Translation_Test_Traits_Model_DbTable_FirstModel();
+        $originalRow = $table
             ->select(true)
             ->filter(array('id' => 1))
             ->fetchRow();
@@ -147,7 +157,8 @@ class Translation_Test_Traits_Model_DbTable_Row_OriginalTest
         $this->_switchLocale('fr');
 
         //Retrieve the original row
-        $originalRow = Centurion_Db::getSingleton('translatable/first_model')
+        $table = new Translation_Test_Traits_Model_DbTable_FirstModel();
+        $originalRow = $table
             ->select(true)
             ->filter(array('id' => 1))
             ->fetchRow();
@@ -171,8 +182,9 @@ class Translation_Test_Traits_Model_DbTable_Row_OriginalTest
     public function testMethodGetTranslatableParentRowFromOriginalRow(){
         $this->_switchLocale('fr');
 
+        $table = new Translation_Test_Traits_Model_DbTable_FirstModel();
         //Retrieve the original row
-        $originalRow = Centurion_Db::getSingleton('translatable/first_model')
+        $originalRow = $table
             ->select(true)
             ->filter(array('id' => 1))
             ->fetchRow();
@@ -187,10 +199,10 @@ class Translation_Test_Traits_Model_DbTable_Row_OriginalTest
         //Check if the parent row is good
         $second1 = $originalRow->second1;
         $this->assertInstanceOf(
-            'Translatable_Model_DbTable_Row_SecondModel',
+            'Translation_Test_Traits_Model_DbTable_Row_SecondModel',
             $second1,
             'Error, the translatable parent row from an original row is not valid '
-                .'row of type Translatable_Model_DbTable_Row_SecondModel'
+                .'row of type Translation_Test_Traits_Model_DbTable_Row_SecondModel'
         );
 
         $this->assertSame(
@@ -213,7 +225,8 @@ class Translation_Test_Traits_Model_DbTable_Row_OriginalTest
         $this->_switchLocale('fr');
 
         //Retrieve the original row
-        $originalRow = Centurion_Db::getSingleton('translatable/first_model')
+        $table = new Translation_Test_Traits_Model_DbTable_FirstModel();
+        $originalRow = $table
             ->select(true)
             ->filter(array('id' => 1))
             ->fetchRow();
@@ -228,10 +241,10 @@ class Translation_Test_Traits_Model_DbTable_Row_OriginalTest
         //Check if the parent row is good
         $second2 = $originalRow->second2;
         $this->assertInstanceOf(
-            'Translatable_Model_DbTable_Row_SecondModel',
+            'Translation_Test_Traits_Model_DbTable_Row_SecondModel',
             $second2,
             'Error, the non-translatable parent row from an original row is not valid row '
-                .'of type Translatable_Model_DbTable_Row_SecondModel'
+                .'of type Translation_Test_Traits_Model_DbTable_Row_SecondModel'
         );
 
         $this->assertSame(
@@ -255,7 +268,8 @@ class Translation_Test_Traits_Model_DbTable_Row_OriginalTest
         $this->_switchLocale('fr');
 
         //Retrieve the original row
-        $originalRow = Centurion_Db::getSingleton('translatable/first_model')
+        $table = new Translation_Test_Traits_Model_DbTable_FirstModel();
+        $originalRow = $table
             ->select(true)
             ->filter(array('id' => 1))
             ->fetchRow();
@@ -279,7 +293,7 @@ class Translation_Test_Traits_Model_DbTable_Row_OriginalTest
         );
 
         $this->assertInstanceOf(
-            'Translatable_Model_DbTable_FourthModel',
+            'Translation_Test_Traits_Model_DbTable_FourthModel',
             $fourths->getTable(),
             'Error, the translatable dependent rowset from the original row was not retrieved from the good model'
         );
@@ -319,7 +333,8 @@ class Translation_Test_Traits_Model_DbTable_Row_OriginalTest
         $this->_switchLocale('fr');
 
         //Retrieve the original row
-        $originalRow = Centurion_Db::getSingleton('translatable/first_model')
+        $table = new Translation_Test_Traits_Model_DbTable_FirstModel();
+        $originalRow = $table
             ->select(true)
             ->filter(array('id' => 1))
             ->fetchRow();
@@ -343,7 +358,7 @@ class Translation_Test_Traits_Model_DbTable_Row_OriginalTest
         );
 
         $this->assertInstanceOf(
-            'Translatable_Model_DbTable_ThirdModel',
+            'Translation_Test_Traits_Model_DbTable_ThirdModel',
             $thirds->getTable(),
             'Error, the non-translatable dependent rowset from the original row was not retrieved from the good model'
         );
@@ -382,7 +397,7 @@ class Translation_Test_Traits_Model_DbTable_Row_OriginalTest
     public function testPreSaveBehaviorForInsertWithoutLanguageIdFromOriginalRow(){
         $this->_switchLocale('fr');
 
-        $firstModel = Centurion_Db::getSingleton('translatable/first_model');
+        $firstModel = new Translation_Test_Traits_Model_DbTable_FirstModel();
 
         //To keep the compliance with trait configuration if its changes
         $languageField = Translation_Traits_Model_DbTable::LANGUAGE_FIELD;
@@ -415,7 +430,8 @@ class Translation_Test_Traits_Model_DbTable_Row_OriginalTest
             'content'       => 'test content original presave 1',
             'second1_id'    => 1,
             'second2_id'    => 3,
-            'is_active'     => 1
+            'is_active'     => 1,
+            'slug'          => null,
         );
 
         //sort them (because PHPUnit considere as not equals two array in differents orders
@@ -436,7 +452,7 @@ class Translation_Test_Traits_Model_DbTable_Row_OriginalTest
     public function testPreSaveBehaviorForInsertWithLanguageIdFromOriginalRow(){
         $this->_switchLocale('fr');
 
-        $firstModel = Centurion_Db::getSingleton('translatable/first_model');
+        $firstModel = new Translation_Test_Traits_Model_DbTable_FirstModel();
 
         $languageField = Translation_Traits_Model_DbTable::LANGUAGE_FIELD;
         $originalField = Translation_Traits_Model_DbTable::ORIGINAL_FIELD;
@@ -469,7 +485,8 @@ class Translation_Test_Traits_Model_DbTable_Row_OriginalTest
             'content'       => 'test content original presave 2',
             'second1_id'    => 1,
             'second2_id'    => 3,
-            'is_active'     => 1
+            'is_active'     => 1,
+            'slug'          => null,
         );
 
         //sort them (because PHPUnit considere as not equals two array in differents orders
@@ -490,7 +507,7 @@ class Translation_Test_Traits_Model_DbTable_Row_OriginalTest
     public function testPreSaveBehaviorForUpdateFromOriginalRow(){
         $this->_switchLocale('fr');
 
-        $firstModel = Centurion_Db::getSingleton('translatable/first_model');
+        $firstModel = new Translation_Test_Traits_Model_DbTable_FirstModel();
 
         //To keep the compliance with trait configuration if its changes
         $languageField = Translation_Traits_Model_DbTable::LANGUAGE_FIELD;
@@ -515,7 +532,8 @@ class Translation_Test_Traits_Model_DbTable_Row_OriginalTest
             'content'       => 'test content original update presave 1',
             'second1_id'    => 1,
             'second2_id'    => null,
-            'is_active'     => 1
+            'is_active'     => 1,
+            'slug'          => null
         );
 
         $originalRow->save();

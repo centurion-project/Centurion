@@ -17,9 +17,9 @@ class Admin_View_Helper_GridRowActions extends Zend_View_Helper_HtmlElement
             } else {
                 $url = $options['url'];
             }
-            
+
             $this->_row = $this->view->row;
-            $url = preg_replace_callback('`/___(.*)___(/|\?|$)`', array(&$this, '_replaceRowCallback'), $url);
+            $url = preg_replace_callback('`/___([^/\\]*)___(/|\?|$)`', array(&$this, '_replaceRowCallback'), $url);
             $this->_row = null;
 
             $url = $url . '?ticket=' . $this->view->ticket()->getKey($url);

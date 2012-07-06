@@ -1561,10 +1561,9 @@ abstract class Centurion_Db_Table_Row_Abstract extends Zend_Db_Table_Row_Abstrac
 
     protected function _refresh()
     {
-        $initialStatus = Centurion_Db_Table_Abstract::getFiltersStatus();
         Centurion_Db_Table_Abstract::setFiltersStatus(Centurion_Db_Table_Abstract::FILTERS_OFF);
         parent::_refresh();
-        Centurion_Db_Table_Abstract::setFiltersStatus($initialStatus);
+        Centurion_Db_Table_Abstract::restoreFiltersStatus();
     }
 
     public function reset()
@@ -1590,5 +1589,13 @@ abstract class Centurion_Db_Table_Row_Abstract extends Zend_Db_Table_Row_Abstrac
     public function getContentTypeId()
     {
         return Centurion_Db::getSingleton('core/contentType')->getContentTypeIdOf($this);
+    }
+
+    /**
+     * @static
+     * Added to clean relationship cache to execute suite test (needed because the dbms is restored before each cache)
+     */
+    public static function cleanLocalReferenceCache(){
+        self::$_relationship = array();
     }
 }
