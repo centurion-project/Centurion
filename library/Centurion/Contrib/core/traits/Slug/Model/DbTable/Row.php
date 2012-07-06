@@ -17,8 +17,14 @@ class Core_Traits_Slug_Model_DbTable_Row extends Centurion_Traits_Model_DbTable_
         $slugParts = $this->_row->getSlugifyName();
 
         $slugifiedParts = array();
+        $modifedFields = $this->_row->getModifiedFields();
+        
+        if (isset($modifedFields['slug'])) {
+            return;
+        }
+        
         // If one of the column used to generate the slug has been modified OR if the row is new : generate a slug
-        if (count(array_intersect($this->_row->getModifiedFields(), (array) $slugParts)) || $this->isNew()) {
+        if (count(array_intersect($modifedFields, (array) $slugParts)) || $this->isNew()) {
             foreach ((array) $slugParts as $part) {
                 $partValue = $this->_row->{$part};
                 if (null == $partValue) {
