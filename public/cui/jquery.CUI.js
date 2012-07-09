@@ -686,12 +686,13 @@
          'tinymce':         ['cui/plugins/tinymce/jquery.tinymce.js'],
          'jquery-jstree':   ['cui/plugins/utils/mustache.js',
                              'cui/libs/jquery.cookie.js',
-                             'cui/plugins/jstree/jquery.tree.js']
+                             'cui/plugins/jstree/jquery.tree.js'],
+         'map' :            ['cui/plugins/map/mod-map.js']
     }
     
     $.fn.CUI = function(plugin, options) {
         options.basePath = [(options ? (options.basePath || '') : ''), '/'].join('');
-        
+
         return this.each(function(){
             switch (plugin) {
                 case 'grid':
@@ -701,7 +702,7 @@
                 break;
                 case 'switcher':
                 case 'multiselect':
-                    if(options.multiselectSortable == true) { 
+                    if(options.multiselectSortable == true) {
                         (new $.CUI.Include('jquery-ui', options.basePath));
                     }
                     (new $.CUI.Form(this, plugin, options));
@@ -748,7 +749,7 @@
                     };
                     settings = $.extend({}, defaultOptions, options);
                     swfu = new SWFUpload(settings);
-                    
+
                     $('#' + settings.custom_settings.progressTarget).CUI('sortable', { items: '.field-preview-wrapper', placeholder: 'ui-state-highlight'});
                 break;
                 case 'rte':
@@ -780,7 +781,7 @@
                         options['plugins'] = defaultOptions['plugins'] + ',' + options['add_plugins'];
                         delete(options['add_plugins']);
                     }
-                    
+
                     if (options && !options['extended_valid_elements'] && options['add_extended_valid_elements']) {
                     	options['extended_valid_elements'] = defaultOptions['extended_valid_elements'] + ',' + options['add_extended_valid_elements'];
                     	delete(options['add_extended_valid_elements']);
@@ -788,11 +789,150 @@
                     if (options && !options['theme_advanced_buttons1'] && options['add_buttons']) {
                         options['theme_advanced_buttons1'] = defaultOptions['theme_advanced_buttons1'] + ',' + options['add_buttons'];
                         delete(options['add_buttons']);
-                    }                    
+                    }
                     settings = $.extend({}, defaultOptions, options);
                     $(this).tinymce(settings);
                 break;
-                default: 
+                case 'map' :
+                   (new $.CUI.Include('map', options.basePath));
+                   var popinMap = {
+                       config : {
+                           mapDialog : 'dialog-map',
+                           lnkEdit : 'settings-map',
+                           clsAutocomplete : 'field-search',
+                           zoom:13
+                       },
+                       isInit : false,
+                       domDialogMap : null,
+                       dialogMap : null,
+                       inputSearch : null,
+                       inputLat : null,
+                       inputLng : null,
+                       init : function($elem){
+                            var that = this;
+                            //create dialog
+                            this.elem = $elem;
+                            this.domDialogMap =  $('#' + this.config.mapDialog, this.elem);
+
+                           //quick fix
+                           if(undefined == $.fn.dialog){
+                                (new $.CUI.Include('jquery-ui', options.basePath));
+                           }
+                            this.dialogMap = this.domDialogMap.dialog({
+                                'autoOpen' : false,
+                                'modal' : true,
+                                'draggable' : false,
+                                'open': function open(event, ui){
+                                    //check if lat lng value exist
+                                    var latMarker =  (that.inputLat.val() || 48.859),
+                                        lngMarker =  (that.inputLng.val() || 2.35);
+                                    if(!that.isInit){
+                                       that.buildMap();
+                                       if ( $('.' + that.config.clsAutocomplete, $(this)).length ){
+                                           that.inputSearch =  $('.' + that.config.clsAutocomplete + ' input', $(this));
+                                           that.buildAutocomplete();
+                                       }
+                                       that.addMarker(latMarker, lngMarker);
+                                       that.isInit = true;
+                                    } else {
+                                        that.updateMarkerPosition(latMarker,lngMarker);
+                                    }
+
+                                    that.updateLatLngInput(latMarker, lngMarker);
+                                    that.gmapDialog.zoomOn(1,that.config.zoom,false);
+
+                                },
+                                'close' : function close(){
+                                    that.inputSearch.val('');
+                                },
+                                'resizable': false,
+                                'width' : 433,
+                                'dialogClass': 'dialog-map'
+                            });
+
+                            this.attachEvents();
+
+                       },
+                       /*Attach events on link edits settings + buttons popin save and cancel*/
+                       attachEvents : function attachEvents(){
+                           var that = this;
+                           this.elem.find('.'+this.config.lnkEdit).bind('click', function(e){
+                               e.preventDefault();
+                               that.inputLat = $('#'+$(this).data('lat-id'));
+                               that.inputLng = $('#'+$(this).data('lng-id'));
+                               that.dialogMap.dialog('open');
+                           });
+
+                           this.domDialogMap.delegate('#ui-button-save','click', function(){
+                               that.updateInputs();
+                               that.dialogMap.dialog('close');
+                           });
+
+                           this.domDialogMap.delegate('#ui-button-cancel','click', function(){
+                               that.dialogMap.dialog('close');
+                           });
+
+                           $('.ui-widget-overlay').live('click', function(){
+                               that.dialogMap.dialog('close');
+                           });
+                       },
+                       /*Build the ooMap*/
+                       buildMap : function(){
+                            this.gmapDialog = new ooMap();
+                            this.gmapDialog.setup({
+                                mapId : 'map',
+                                lat : 10,
+                                lng : 10,
+                                zoom:3,
+                                visible : true,
+                                zoomControlStyle : "SMALL"
+                            });
+                       },
+                       /*Append the Input Search above the map and Attach Autocomplete Search*/
+                       buildAutocomplete : function(){
+                           var that = this;
+                           this.gmapDialog.findByAutocomplete(this.inputSearch,"ui-autocomplete-search", function(lat,lng){
+                               that.updateMarkerPosition(lat,lng);
+                           });
+                       },
+                       /*Add the marker : fix id to 1 in order to manage IT*/
+                       addMarker : function addMarker(lat,lng){
+                           var that = this;
+                            this.gmapDialog.addMarker({
+                                id : 1,
+                                latLng : {
+                                    lat : lat,
+                                    lng : lng
+                                }
+                            });
+
+                            //renderDraggable marker
+                            this.gmapDialog.renderDraggable(this.gmapDialog.getMarker(1),{
+                                dragEnd : function dragEnd(marker){
+                                    var pos = marker.getPosition();
+                                    that.updateLatLngInput(pos.Na, pos.Oa);
+                                }
+                            });
+                       },
+                       /*Store the marker position in data-value of the search input*/
+                       updateLatLngInput : function updateLatLngInput(lat,lng){
+                            this.inputSearch.data('lat', lat);
+                            this.inputSearch.data('lng', lng);
+                       },
+                       /*Update the marker position on the map*/
+                       updateMarkerPosition : function updateMarkerPosition(lat,lng){
+                             this.gmapDialog.setPosition(1, lat, lng);
+                             this.gmapDialog.zoomOn(1,this.config.zoom,false);
+                       },
+                       /*Update the form inputs value when the user validate the positino of the marker*/
+                       updateInputs : function updateInputs(){
+                           this.inputLat.val(this.inputSearch.data('lat'));
+                           this.inputLng.val(this.inputSearch.data('lng'));
+                       }
+                   }
+                   popinMap.init($(this));
+                break;
+                default:
                     // jQuery UI:
                     (new $.CUI.Include('jquery-ui', options.basePath));
                     ($(this)[plugin])(options);
