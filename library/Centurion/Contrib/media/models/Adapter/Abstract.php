@@ -23,10 +23,14 @@
  * @copyright   Copyright (c) 2008-2011 Octave & Octave (http://www.octaveoctave.com)
  * @license     http://centurion-project.org/license/new-bsd     New BSD License
  * @author      Florent Messa <florent.messa@gmail.com>
- * @author      Laurent Chenay <lc@octaveoctave.com>
+ * @author      Laurent Chenay <lc@centurion-project.org>
  */
 abstract class Media_Model_Adapter_Abstract
 {
+    /**
+     * Options for current adapter
+     * @var array
+     */
     protected $_options = null;
     
     abstract public function save($source, $dest);
@@ -38,21 +42,32 @@ abstract class Media_Model_Adapter_Abstract
     abstract public function read($dest);
     
     abstract public function getUrl($dest);
-    
+
+    /**
+     * @param array $options
+     * @return Media_Model_Adapter_Abstract
+     */
     public function setOptions(array $options)
     {
         $this->_options = $options;
         
         return $this;
     }
-    
+
+    /**
+     * Setup default options getting it from config file
+     * @return Media_Model_Adapter_Abstract
+     */
     protected function _setupOptions()
     {
         $this->_options = Centurion_Config_Manager::get('media.params');
         
         return $this;
     }
-    
+
+    /**
+     * @return array
+     */
     public function getOptions()
     {
         if (null === $this->_options)
@@ -60,7 +75,11 @@ abstract class Media_Model_Adapter_Abstract
         
         return $this->_options;
     }
-    
+
+    /**
+     * @param string $key
+     * @return mixed
+     */
     public function getOption($key)
     {
         if (null === $this->_options)
@@ -68,7 +87,13 @@ abstract class Media_Model_Adapter_Abstract
         
         return $this->_options[$key];
     }
-    
+
+    /**
+     * @param $pk
+     * @param $effect
+     * @param Zend_Date|int $mktime
+     * @return string
+     */
     public function getTemporaryKey($pk, $effect, $mktime = null)
     {
         if (null === $mktime) {
@@ -92,11 +117,17 @@ abstract class Media_Model_Adapter_Abstract
             $date = $mktime->toString('MMddYYYY-HH:mm');
         } else {
             $date = date('mdY-H:i', $mktime);
-	}
+        }
 
         return md5($pk . $date . $effect);
     }
-    
+
+    /**
+     * @param Centurion_Db_Table_Row_Abstract $row
+     * @param string $key
+     * @param $effect
+     * @return bool
+     */
     public function isValidKey($row, $key, $effect)
     {
         $lifetime = Centurion_Config_Manager::get('media.key_lifetime');
@@ -116,8 +147,10 @@ abstract class Media_Model_Adapter_Abstract
         }
         
         for ($i = 0; $i < $lifetimeValue; $i++) {
-            if ($key === $row->getTemporaryKey($effect, $date))
+            if ($key === $row->getTemporaryKey($effect, $date)) {
                 return true;
+            }
+
             switch($lifetimeUnit) {
                 case 'j':
                     $date->subDay(1);

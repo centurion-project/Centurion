@@ -26,13 +26,19 @@
  * @subpackage  Directory
  * @copyright   Copyright (c) 2008-2011 Octave & Octave (http://www.octaveoctave.com)
  * @license     http://centurion-project.org/license/new-bsd     New BSD License
- * @author      Laurent Chenay <lc@octaveoctave.com>
+ * @author      Laurent Chenay <lc@centurion-project.org>
  * @todo        Documentation
  */
 class Centurion_Config_Directory
 {
     protected static $_environment = null;
 
+    /**
+     * @static
+     * @param array $Arr1
+     * @param array $Arr2
+     * @return array
+     */
     public static function mergeArrays($Arr1, $Arr2)
     {
         foreach($Arr2 as $key => $value) {
@@ -71,7 +77,7 @@ class Centurion_Config_Directory
             sort($tabFile);
 
             $backendOptions = array('cache_dir' => APPLICATION_PATH . '/../data/cache/config/' );
-            $frontendOptions = array('master_files' => array_values($tabFile), 'automatic_serialization' => true);
+            $frontendOptions = array('master_files' => array_values($tabFile), 'automatic_serialization' => true, 'cache_id_prefix' => str_replace('-', '_', $environment));
             $cacheConfig = Zend_Cache::factory('File', 'File', $frontendOptions, $backendOptions);
 
             if (!($config = $cacheConfig->load(md5(implode('|', $tabFile))))) {
@@ -115,7 +121,12 @@ class Centurion_Config_Directory
         throw new Centurion_Exception('Path must be a directory', 500);
     }
 
-
+    /**
+     * @static
+     * @param $file
+     * @return false|mixed|Zend_Config_Ini|Zend_Config_Xml
+     * @deprecated
+     */
     protected static function _loadConfigCached($file)
     {
         $backendOptions = array('cache_dir' => APPLICATION_PATH . '/../data/cache/config/' );
@@ -132,6 +143,10 @@ class Centurion_Config_Directory
     }
 
     /**
+     * @static
+     * @param $file
+     * @return mixed|Zend_Config_Ini|Zend_Config_Xml
+     * @throws Zend_Application_Exception
      * @see Zend_Application->_loadConfig();
      */
     protected static function _loadConfig($file) {

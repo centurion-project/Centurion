@@ -2,26 +2,29 @@
 
 class Media_Form_Decorator_MultiFile extends Zend_Form_Decorator_Abstract
 {
-    protected static $_firstTime = true;
-
+    /**
+     * @param string $content
+     * @return string
+     */
     public function render($content)
     {
-        $view = Zend_Layout::getMvcInstance()->getView();
+        $element = $this->getElement();
+        $view = $element->getView();
 
         $headScript = $view->headScript();
 
         //TODO: set url on call, it's not a generic decorator if the url is hardcoded
         $url = $view->url(array(), 'media_upload', true);
 
-        $ticket = $this->_element->getAttrib('ticket');
+        $ticket = $element->getAttrib('ticket');
 
-        $name = $this->_element->getFile()->getFilename()->getName();
-        $inputName = $this->_element->getName();
-        $label = $this->_element->getLabel();
+        $name = $element->getFile()->getFilename()->getName();
+        $inputName = $element->getName();
+        $label = $element->getLabel();
 
         $fileTypes = array();
 
-        $fileExtensions = explode(',', $this->_element->getFile()->getExtension());
+        $fileExtensions = explode(',', $element->getFile()->getExtension());
 
         foreach ($fileExtensions as $extension) {
             $fileTypes[] = '*.' . $extension;
@@ -29,27 +32,34 @@ class Media_Form_Decorator_MultiFile extends Zend_Form_Decorator_Abstract
 
         $fileTypes = implode(';', $fileTypes);
 
+        /**
+         * @todo: get this limit in the validator
+         */
         $fileSizeLimit = '100MB';
-        $description = $this->_element->getFile()->getFileDescription();
+        $description = $element->getFile()->getFileDescription();
 
         $alreadyLoadedImage = array();
 
         $fileTable = Centurion_Db::getSingleton('media/file');
 
         if (null !== $this->_element->getValue()) {
+            /**
+             * @todo: We could make one sql request here to catch all fileId
+             */
             foreach ($this->_element->getValue() as $fileId) {
-                $fielRow = $fileTable->findOneById($fileId);
-                if (null !== $fielRow) {
-                    if ($fielRow->proxy_model == 'Media_Model_DbTable_Image')
-                        $alreadyLoadedImage[] = array($fileId, $fielRow->filename, $fielRow->getStaticUrl(array('resize' => array('maxWidth' => 100, 'maxHeight' => 100))));
-                    else
-                        $alreadyLoadedImage[] = array($fileId, $fielRow->filename, '');
+                $fileRow = $fileTable->findOneById($fileId);
+                if (null !== $fileRow) {
+                    if ($fileRow->proxy_model == 'Media_Model_DbTable_Image') {
+                        $alreadyLoadedImage[] = array($fileId, $fileRow->filename, $fileRow->getStaticUrl(array('resize' => array('maxWidth' => 100, 'maxHeight' => 100))));
+                    } else {
+                        $alreadyLoadedImage[] = array($fileId, $fileRow->filename, '');
+                    }
                 }
             }
         }
 
         $alreadyLoadedImage = json_encode($alreadyLoadedImage);
-        $basePath = Zend_Controller_Front::getInstance()->getBaseUrl(); 
+        $basePath = $view->baseUrl();
 
         $headScript->appendScript(<<<EOS
         $(function() {

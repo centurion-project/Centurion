@@ -22,9 +22,13 @@
  * @package     Centurion_Queue
  * @copyright   Copyright (c) 2008-2011 Octave & Octave (http://www.octaveoctave.com)
  * @license     http://centurion-project.org/license/new-bsd     New BSD License
- * @author      Laurent Chenay <lchenay@gmail.com>
+ * @author      Laurent Chenay <lc@centurion-project.org>
  */
 class Centurion_Queue extends ArrayObject {
+
+    /**
+     * @param array|Zend_Controller_Router_Route $data
+     */
     public function push($data)
     {
         $this->append($data);

@@ -128,4 +128,11 @@ class Cms_Model_DbTable_Flatpage extends Centurion_Db_Table_Abstract implements 
             )
         );
     }
+
+    public function ignoreForeignOnColumn()
+    {
+        return array(
+            'mptt_tree_id',
+        );
+    }
 }

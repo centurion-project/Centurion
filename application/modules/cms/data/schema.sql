@@ -79,3 +79,23 @@ ALTER TABLE `cms_flatpage`
   ADD CONSTRAINT `cms_flatpage__banner_id___media_file__id` FOREIGN KEY (`cover_id`) REFERENCES `media_file` (`id`),
   ADD CONSTRAINT `cms_flatpage__flatpage_template_id___cms_flatpage_template__id` FOREIGN KEY (`flatpage_template_id`) REFERENCES `cms_flatpage_template` (`id`) ON UPDATE CASCADE;
 SET FOREIGN_KEY_CHECKS=1;
+
+
+ALTER TABLE  `cms_flatpage` ADD INDEX (  `slug` );
+ALTER TABLE  `cms_flatpage` ADD INDEX (  `is_published` );
+ALTER TABLE  `cms_flatpage` ADD INDEX (  `mptt_lft` );
+ALTER TABLE  `cms_flatpage` ADD INDEX (  `mptt_rgt` );
+ALTER TABLE  `cms_flatpage` ADD INDEX (  `mptt_level` );
+ALTER TABLE  `cms_flatpage` ADD INDEX (  `mptt_tree_id` );
+ALTER TABLE  `cms_flatpage` ADD INDEX (  `original_id` ,  `language_id` ) ;
+
+ALTER TABLE  `cms_flatpage` ADD INDEX (  `language_id` );
+
+
+ALTER TABLE  `cms_flatpage` ADD FOREIGN KEY (  `original_id` ) REFERENCES  `cms_flatpage` (
+`id`
+);
+
+ALTER TABLE  `cms_flatpage` ADD FOREIGN KEY (  `language_id` ) REFERENCES  `translation_language` (
+`id`
+);

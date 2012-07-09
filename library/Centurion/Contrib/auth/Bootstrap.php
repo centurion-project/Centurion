@@ -65,7 +65,7 @@ class Auth_Bootstrap extends Centurion_Application_Module_Bootstrap
             $acl = $this->_getAcl();
 
             $cache->save($acl, 'Centurion_Acl', array('user', 'permission', 'group', 'belong', 'acl',
-                                                      '__auth_user', '__auth_permission', '__auth_group_permission',
+                                                     '__auth_user', '__auth_belong', '__auth_permission', '__auth_group_permission',
                                                       '__auth_user_permission'));
         }
 

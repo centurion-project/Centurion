@@ -58,13 +58,13 @@ class Media_Test_Model_DbTable_File extends PHPUnit_Framework_TestCase
         $row = $fileTable->createRow();
 
         $os = 'linux';
-        if (preg_match('`Window`i', $_SERVER['OS'])) {
+        if (isset($_SERVER['OS']) && preg_match('`Window`i', $_SERVER['OS'])) {
             $os = 'windows';
         }
         if ('linux' == $os) {
-            $this->assertEquals('../user', $row->getRelativePathFromTo('/home', '/user'));
-            $this->assertEquals('../../user', $row->getRelativePathFromTo('/home/lchenay', '/user'));
-            $this->assertEquals('../oo/test', $row->getRelativePathFromTo('/home/lchenay', '/home/oo/test'));
+            $this->assertEquals('../user', $row->getRelativePathFromTo('/home', '/user', false));
+            $this->assertEquals('../../user', $row->getRelativePathFromTo('/home/lchenay', '/user', false));
+            $this->assertEquals('../oo/test', $row->getRelativePathFromTo('/home/lchenay', '/home/oo/test', false));
         } else {
             $this->assertEquals('..\user', $row->getRelativePathFromTo('c:\home', 'c:\user', false));
             $this->assertEquals('..\..\user', $row->getRelativePathFromTo('c:\home\lchenay', 'c:\user', false));

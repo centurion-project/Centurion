@@ -26,10 +26,15 @@
  * @license     http://centurion-project.org/license/new-bsd     New BSD License
  * @author      Florent Messa <florent.messa@gmail.com>
  * @author      Mathias Desloges <m.desloges@gmail.com>
- * @author      Laurent Chenay <lc@octaveoctave.com>
+ * @author      Laurent Chenay <lc@centurion-project.org>
  */
 class Media_Model_DbTable_Row_Duplicate extends Centurion_Db_Table_Row_Abstract
 {
+    /**
+     * We remove the file on the adapter before removing it in DB.
+     *
+     * @return int
+     */
     public function delete()
     {
         if (!empty($this->adapter)) {
@@ -37,6 +42,6 @@ class Media_Model_DbTable_Row_Duplicate extends Centurion_Db_Table_Row_Abstract
             $staticAdapter->delete($this->dest);
         }
         
-        parent::delete();
+        return parent::delete();
     }
 }

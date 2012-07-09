@@ -207,4 +207,11 @@ class Core_Model_DbTable_Navigation extends Centurion_Db_Table_Abstract implemen
             )
        );
     }
+
+    public function ignoreForeignOnColumn()
+    {
+        return array(
+            'mptt_tree_id',
+        );
+    }
 }

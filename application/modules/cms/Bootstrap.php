@@ -161,7 +161,6 @@ class Cms_Bootstrap extends Centurion_Application_Module_Bootstrap
         $baseRoute = null;
         $this->_routePrefix = '';
 
-        //TODO: put in cache !!!
         if (false === ($data = $this->_getCache('core')->load('Cms_Flatpage_Route'))) {
              if (Zend_Registry::isRegistered('Centurion_Route_Queue')) {
                 $routeQueue = Zend_Registry::get('Centurion_Route_Queue');

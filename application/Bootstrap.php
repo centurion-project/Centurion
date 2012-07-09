@@ -11,7 +11,7 @@ class Bootstrap extends Centurion_Application_Bootstrap_Bootstrap
                 'stream' => array(
                     'writerName' => 'Stream',
                     'writerParams' => array(
-                        'stream' => APPLICATION_PATH . sprintf('/../data/logs/%s_application.log', Zend_Date::now()->toString('yyyy.MM.dd')),
+                        'stream' => APPLICATION_PATH . sprintf('/../data/logs/%s_%s_application.log', APPLICATION_ENV, Zend_Date::now()->toString('yyyy.MM.dd')),
                         'mode'   => 'a'
                     )
                 ),

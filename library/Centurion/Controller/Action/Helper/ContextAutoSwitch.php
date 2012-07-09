@@ -24,7 +24,7 @@
  * @copyright   Copyright (c) 2008-2011 Octave & Octave (http://www.octaveoctave.com)
  * @license     http://centurion-project.org/license/new-bsd     New BSD License
  * @author      Florent Messa <florent.messa@gmail.com>
- * @author      Laurent Chenay <lchenay@gmail.com>
+ * @author      Laurent Chenay <lc@centurion-project.org>
  * @author      Mathias Desloges <m.desloges@gmail.com>
  */
 class Centurion_Controller_Action_Helper_ContextAutoSwitch extends Zend_Controller_Action_Helper_Abstract
@@ -51,8 +51,6 @@ class Centurion_Controller_Action_Helper_ContextAutoSwitch extends Zend_Controll
     public function direct($actions = array('index', 'post', 'get', 'put', 'delete'))
     {
         $request = $this->getActionController()->getRequest();
-
-        $controller = $this->getActionController();
 
         // Set a Vary response header based on the Accept header
         $this->getResponse()->setHeader('Vary', 'Accept');

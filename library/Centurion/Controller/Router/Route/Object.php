@@ -24,7 +24,7 @@
  * @subpackage  Router
  * @copyright   Copyright (c) 2008-2011 Octave & Octave (http://www.octaveoctave.com)
  * @license     http://centurion-project.org/license/new-bsd     New BSD License
- * @author      Laurent Chenay <lc@octaveoctave.com>
+ * @author      Laurent Chenay <lc@centurion-project.org>
  */
 class Centurion_Controller_Router_Route_Object extends Centurion_Controller_Router_Route
 {
@@ -62,20 +62,10 @@ class Centurion_Controller_Router_Route_Object extends Centurion_Controller_Rout
                 }
             }
             unset($data['object']);
+        } else {
+            throw new Zend_Controller_Router_Exception('No object given in a route object, of the object is not valid');
         }
         
         return parent::assemble($data, $reset, $encode, $partial);
-    }
-    
-    /**
-     * Matches a user submitted path with parts defined by a map. Assigns and
-     * returns an array of variables on a successful match.
-     *
-     * @param string $path Path used to match against this routing map
-     * @return array|false An array of assigned values or a false on a mismatch
-     */
-    public function match($path, $partial = false)
-    {
-        return parent::match($path, $partial);
     }
 }

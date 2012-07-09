@@ -3,6 +3,18 @@ require_once dirname(__FILE__) . '/../../../../TestHelper.php';
 
 class Centurion_Db_Table_SelectTest extends PHPUnit_Framework_TestCase
 {
+
+    /**
+     * @covers Centurion_Db_Table_Select::forcePrefix
+     */
+    public function testForcePrefix()
+    {
+        $select = Centurion_Db::getSingleton('user/profile')->select(true);
+        
+        $this->assertEquals('`user_profile`.`user_id`', $select->forcePrefix('`user_profile`.`user_id`'));
+        $this->assertEquals('`user_profile`.`user_id`', $select->forcePrefix('`user_id`'));
+    }
+
     /**
      * @covers Centurion_Db_Table_Select::normalizeCondition
      */
@@ -254,12 +266,38 @@ class Centurion_Db_Table_SelectTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     *
-     * @todo this could be maybe move to an user mapper
-     * @static
-     * @param bool $withProfile
-     * @return mixed
+     * @covers Centurion_Db_Table_Select::hasColumn
      */
+    public function testFunctionIsInQuery()
+    {
+        $simpleTable = new Asset_Model_DbTable_Simple();
+        $select = $simpleTable->select(true);
+        $this->assertTrue($select->isInQuery('id'));
+
+        $select->reset(Zend_Db_Select::COLUMNS);
+        $this->assertFalse($select->isInQuery('id'));
+    }
+
+    public function testFunctionFilterWithArray()
+    {
+        $simpleTable = new Asset_Model_DbTable_Simple();
+        $simpleTable->filter(array(array('id', 1)));
+
+        try {
+            $simpleTable->fetchAll();
+        } catch (Exception $e) {
+            $this->fail('No exception should be raised when using array as value of filter function');
+        }
+    }
+
+
+    /**
+    *
+    * @todo this could be maybe move to an user mapper
+    * @static
+    * @param bool $withProfile
+    * @return mixed
+    */
     public static function getUserForTest($withProfile = false)
     {
         $data = array(

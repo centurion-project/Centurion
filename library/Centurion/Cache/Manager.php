@@ -22,7 +22,7 @@
  * @package     Centurion_Cache
  * @copyright   Copyright (c) 2008-2011 Octave & Octave (http://www.octaveoctave.com)
  * @license     http://centurion-project.org/license/new-bsd     New BSD License
- * @author      Laurent Chenay <lc@octaveoctave.com>
+ * @author      Laurent Chenay <lc@centurion-project.org>
  * @todo        Documentation
  */
 class Centurion_Cache_Manager extends Zend_Cache_Manager
@@ -88,7 +88,7 @@ class Centurion_Cache_Manager extends Zend_Cache_Manager
      * @param $signal Centurion_Signal_Abstract
      * @param $sender Centurion_Db_Table_Abstract
      * @param $row array|Centurion_Db_Table_Abstract|Centurion_Db_Table_Row_Abstract
-     * @return Centurion_Cache_Manager
+     * @return $this
      */
     public function insertTable($signal, $sender, $row)
     {
@@ -111,6 +111,9 @@ class Centurion_Cache_Manager extends Zend_Cache_Manager
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function preSignalTable()
     {
         $args = func_get_args();
@@ -132,6 +135,9 @@ class Centurion_Cache_Manager extends Zend_Cache_Manager
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function signalTable()
     {
         list($signal, $table) = func_get_args();
@@ -157,6 +163,11 @@ class Centurion_Cache_Manager extends Zend_Cache_Manager
         return $this;
     }
 
+    /**
+     * @param $signal
+     * @param \Centurion_Db_Table_Row_Abstract $row
+     * @return $this
+     */
     public function signalRow($signal, Centurion_Db_Table_Row_Abstract $row)
     {
         $pk = is_string($row->pk) || is_int($row->pk) ? $row->pk : md5(serialize($row->pk));
@@ -174,7 +185,7 @@ class Centurion_Cache_Manager extends Zend_Cache_Manager
      * @param $mode
      * @param $tags
      * @param $frontend
-     * @return Centurion_Cache_Manager
+     * @return $this
      */
     public function cleanCacheAsynchronous($mode = Zend_Cache::CLEANING_MODE_ALL, array $tags = array(), $frontend = null)
     {
@@ -197,8 +208,9 @@ class Centurion_Cache_Manager extends Zend_Cache_Manager
                     $this->_shutdownClean[$frontend][$mode] = true;
                     break;
                 case Zend_Cache::CLEANING_MODE_MATCHING_ANY_TAG:
-                    if (!isset($this->_shutdownClean[$frontend][$mode]))
+                    if (!isset($this->_shutdownClean[$frontend][$mode])) {
                         $this->_shutdownClean[$frontend][$mode] = array();
+                    }
 
                     foreach ($tags as $tag) {
                         $this->_shutdownClean[$frontend][$mode][$tag] = $tag;
@@ -217,6 +229,11 @@ class Centurion_Cache_Manager extends Zend_Cache_Manager
         return $this;
     }
 
+    /**
+     * @param string $mode
+     * @param array $tags
+     * @return $this
+     */
     public function clean($mode = Zend_Cache::CLEANING_MODE_ALL, $tags = array())
     {
          foreach ($this->getBackends() as $key => $backend) {
@@ -280,7 +297,7 @@ class Centurion_Cache_Manager extends Zend_Cache_Manager
     /**
      * Destruct function for cleaning cache
      *
-     * @return Centurion_Cache_Manager
+     * @return $this
      */
     public function __destruct()
     {

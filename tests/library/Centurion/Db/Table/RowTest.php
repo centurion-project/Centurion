@@ -181,7 +181,7 @@ class Centurion_Db_Table_RowTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers Centurion_Db_Table_Row_Abstract::__get
+     * @covers Centurion_Db_Table_Row_Abstract::columnsExists
      */
     public function testUnExistantColumnsWithColumnsExistsFunction()
     {
@@ -195,7 +195,56 @@ class Centurion_Db_Table_RowTest extends PHPUnit_Framework_TestCase
         $this->assertFalse($row->columnsExists('label'));
     }
 
+    /**
+     * @covers Centurion_Db_Table_Row_Abstract::__set
+     */
+    public function testFunction__Set()
+    {
+        $table = new Asset_Model_DbTable_Simple();
+        $row = $table->createRow();
 
+        $row->id = 'test';
+
+        try {
+            $row->imnotacolumn = 'test';
+            $this->fail('Setting a column that not exist should raised an exception');
+        } catch (Centurion_Db_Table_Exception $e) {
+
+        }
+
+    }
+
+    /**
+     * @covers Centurion_Db_Table_Row_Abstract::getModifiedData
+     * @covers Centurion_Db_Table_Row_Abstract::reset
+     */
+    public function testModifiedData()
+    {
+        $table = new Asset_Model_DbTable_Simple();
+        $row = $table->createRow();
+
+        $row->save();
+
+        $row->title = 'test';
+
+        $this->assertTrue(array_key_exists('title', $row->getModifiedData()));
+        $row->reset();
+        $this->assertFalse(array_key_exists('title', $row->getModifiedData()));
+    }
+
+    public function testFunctionGetModifiedFields()
+    {
+        $table = new Asset_Model_DbTable_Simple();
+        $row = $table->createRow();
+
+        $this->assertEmpty($row->getModifiedFields());
+
+        $row->title = "test";
+        $this->assertEquals(array('title' => true), $row->getModifiedFields());
+
+        $row->reset();
+        $this->assertEmpty($row->getModifiedFields());
+    }
 
 }
 

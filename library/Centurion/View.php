@@ -158,7 +158,7 @@ class Centurion_View extends Zend_View
     /**
      * 
      * @param boolean $isPartial
-     * @return Centurion_View
+     * @return $this
      */
     public function setIsPartial($isPartial)
     {

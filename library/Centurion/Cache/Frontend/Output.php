@@ -24,7 +24,7 @@
  * @subpackage  Frontend
  * @copyright   Copyright (c) 2008-2011 Octave & Octave (http://www.octaveoctave.com)
  * @license     http://centurion-project.org/license/new-bsd     New BSD License
- * @author      Laurent Chenay <lc@octaveoctave.com>
+ * @author      Laurent Chenay <lc@centurion-project.org>
  */
 class Centurion_Cache_Frontend_Output extends Zend_Cache_Frontend_Output
 {
@@ -47,7 +47,7 @@ class Centurion_Cache_Frontend_Output extends Zend_Cache_Frontend_Output
      * Add a tag to the current cache (if have one)
      *
      * @param string|Centurion_Db_Table_Abstract|Centurion_Db_Table_Row_Abstract $tag
-     * @return Centurion_Cache_Frontend_Page
+     * @return $this
      */
     public function addTag($tag)
     {

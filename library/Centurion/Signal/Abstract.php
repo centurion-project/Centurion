@@ -23,7 +23,7 @@
  * @copyright   Copyright (c) 2008-2011 Octave & Octave (http://www.octaveoctave.com)
  * @license     http://centurion-project.org/license/new-bsd     New BSD License
  * @author      Florent Messa <florent.messa@gmail.com>
- * @author      Laurent Chenay <lc@octaveoctave.com>
+ * @author      Laurent Chenay <lc@centurion-project.org>
  */
 abstract class Centurion_Signal_Abstract extends Centurion_Collection
 {
@@ -56,17 +56,19 @@ abstract class Centurion_Signal_Abstract extends Centurion_Collection
         }
 
         if (is_object($sender)) {
-            if ($method === Centurion_Signal_Abstract::UNSHIFT)
+            if ($method === Centurion_Signal_Abstract::UNSHIFT) {
                 $this->_setupObjectContainer($sender)->unshift($receiver);
-            else
+            }else {
                 $this->_setupObjectContainer($sender)->push($receiver);
+            }
 
             return $this;
         } elseif(is_string($sender)) {
-            if ($method === Centurion_Signal_Abstract::UNSHIFT)
+            if ($method === Centurion_Signal_Abstract::UNSHIFT) {
                 $this->_classnameCollection->unshift(array($sender => $receiver));
-            else
+            } else {
                 $this->_classnameCollection->push(array($sender => $receiver));
+            }
 
             return $this;
         } elseif (is_array($sender)) {

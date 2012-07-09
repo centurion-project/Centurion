@@ -26,6 +26,7 @@
  * @license     http://centurion-project.org/license/new-bsd     New BSD License
  * @author      Florent Messa <florent.messa@gmail.com>
  * @author      Mathias Desloges <m.desloges@gmail.com>
+ * @author      Laurent Chenay <lc@centurion-project.org>
  */
 class Media_Model_DbTable_File extends Centurion_Db_Table_Abstract
 {
@@ -157,7 +158,7 @@ class Media_Model_DbTable_File extends Centurion_Db_Table_Abstract
                     }
 
                     $proxyData[$key] = $value;
-                   unset($data[$key]);
+                    unset($data[$key]);
                 }
 
                 $proxyData = $data;
@@ -189,11 +190,6 @@ class Media_Model_DbTable_File extends Centurion_Db_Table_Abstract
     protected function _setupProxyBelong($row)
     {
         return array(get_class($row->getTable()), $row->pk);
-    }
-
-    protected function _populate(array $data)
-    {
-
     }
 
     public function update(array $data, $where)
@@ -284,5 +280,12 @@ class Media_Model_DbTable_File extends Centurion_Db_Table_Abstract
                          ->where('id = ?', $fileId);
 
         return $select->fetchRow();
+    }
+
+    public function ignoreForeignOnColumn()
+    {
+        return array(
+            'file_id',
+        );
     }
 }

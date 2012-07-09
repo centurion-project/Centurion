@@ -25,7 +25,7 @@
  * @copyright   Copyright (c) 2008-2011 Octave & Octave (http://www.octaveoctave.com)
  * @license     http://centurion-project.org/license/new-bsd     New BSD License
  * @author      Florent Messa <florent.messa@gmail.com>
- * @author      Laurent Chenay <lc@octaveoctave.com>
+ * @author      Laurent Chenay <lc@centurion-project.org>
  */
 abstract class Centurion_Image_Adapter_Abstract
 {
@@ -36,6 +36,10 @@ abstract class Centurion_Image_Adapter_Abstract
     const RIGHT  = 4;
     const BOTTOM = 1;
 
+    /**
+     * Store if current image has been modified. It avoid to recompress an image that is same as original
+     * @var bool
+     */
     protected $_hasBeenModified = false;
     
     protected $_thumbWidth = null;
@@ -370,11 +374,17 @@ abstract class Centurion_Image_Adapter_Abstract
 
     }
 
+    /**
+     * @return int
+     */
     public function getThumbHeight()
     {
         return $this->_thumbHeight;
     }
 
+    /**
+     * @return int
+     */
     public function getThumbWidth()
     {
         return $this->_thumbWidth;

@@ -57,3 +57,34 @@ ALTER TABLE  `centurion_navigation` ADD FOREIGN KEY ( `proxy_model` ) REFERENCES
 );
 alter table centurion_navigation add constraint fk_navigation__navigation_parent_id___navigation__id foreign key (mptt_parent_id)
       references centurion_navigation (id) on delete restrict on update restrict;
+
+ALTER TABLE  `centurion_content_type` ADD INDEX (  `name` );
+
+ALTER TABLE  `centurion_navigation` ADD INDEX (  `order` );
+ALTER TABLE  `centurion_navigation` ADD INDEX (  `is_visible` );
+ALTER TABLE  `centurion_navigation` ADD INDEX (  `is_in_menu` );
+ALTER TABLE  `centurion_navigation` ADD INDEX (  `mptt_lft` );
+ALTER TABLE  `centurion_navigation` ADD INDEX (  `mptt_rgt` );
+ALTER TABLE  `centurion_navigation` ADD INDEX (  `mptt_level` );
+ALTER TABLE  `centurion_navigation` ADD INDEX (  `mptt_tree_id` );
+ALTER TABLE  `centurion_navigation` ADD INDEX (  `mptt_parent_id` );
+ALTER TABLE  `centurion_navigation` ADD INDEX (  `original_id` ,  `language_id` ) ;
+ALTER TABLE  `centurion_navigation` CHANGE  `original_id`  `original_id` INT( 11 ) UNSIGNED NULL DEFAULT NULL;
+ALTER TABLE  `centurion_navigation` ADD FOREIGN KEY (  `original_id` ) REFERENCES  `centurion_navigation` (
+`id`
+);
+
+ALTER TABLE  `centurion_navigation` ADD INDEX (  `can_be_deleted` );
+
+ALTER TABLE  `centurion_navigation` ADD INDEX (  `language_id` );
+
+ALTER TABLE  `centurion_navigation` CHANGE  `language_id`  `language_id` INT( 11 ) UNSIGNED NULL DEFAULT NULL;
+ALTER TABLE  `centurion_navigation` ADD FOREIGN KEY (  `language_id` ) REFERENCES  `translation_language` (
+`id`
+);
+
+
+ALTER TABLE  `centurion_navigation` ADD FOREIGN KEY (  `language_id` ) REFERENCES  `translation_language` (
+`id`
+);
+
