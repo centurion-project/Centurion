@@ -2,7 +2,7 @@
 <ul class="<?php echo (isset($this->isRoot) && $this->isRoot === true) ? 'jstree-tree' : 'jstree-open'; ?>">
     <?php foreach ($this->tree as $key => $page): $this->page = $page;?>
         <li id="page-<?php echo $page->pk ?>"<?php if (isset($this->openedNode[$page->pk]) || (null !== $page->getChildren() && $page->getChildren()->count() > 0)) { if ($page->getLevel() > 3) echo ' class="jstree-open"'; else echo 'class="jstree-closed"';}?>>
-            <a href="<?php echo $this->url(array('action' => 'edit', 'controller' => $this->controllerName, 'module' => $this->moduleName, 'id' => $page->pk), 'default'); ?>" class="page <?php if (isset($this->publishColumn) && !$page->{$this->publishColumn}): ?>hidden<?php endif ?>">
+            <a href="<?php echo $this->url(array('saving' => null, 'action' => 'edit', 'controller' => $this->controllerName, 'module' => $this->moduleName, 'id' => $page->pk), 'default'); ?>" class="page <?php if (isset($this->publishColumn) && !$page->{$this->publishColumn}): ?>hidden<?php endif ?>">
             <?php echo $page->{$this->titleColumn};?></a>
             <div class="cells">
                 <div class="online">

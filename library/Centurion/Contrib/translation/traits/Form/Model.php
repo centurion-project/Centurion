@@ -10,6 +10,9 @@ class Translation_Traits_Form_Model extends Centurion_Traits_Form_Model_Abstract
         Centurion_Signal::factory('on_populate_with_instance')->connect(array($this, 'populateWithInstance'), $this->_form);
         Centurion_Signal::factory('pre_populate')->connect(array($this, 'prePopulate'), $this->_form);
         Centurion_Signal::factory('on_form_get_toolbar')->connect(array($this, 'onFormGetToolbar'), $this->_form);
+
+        $this->_form->enableElement('original_id');
+        $this->_form->enableElement('language_id');
     }
 
     /**
@@ -74,7 +77,7 @@ class Translation_Traits_Form_Model extends Centurion_Traits_Form_Model_Abstract
                                                     $this->getView()->translate('Language'),
                                                     (string) Translation_Traits_Common::getDefaultLanguage()->name));
 
-        
+
         if ($this->getModel()->isOriginalForcedToDefaultLanguage()) {
 
             $f = new Zend_Form_Element_Hidden(array('disableTranslator' => true, 'name' => Translation_Traits_Model_DbTable::LANGUAGE_FIELD,
@@ -96,7 +99,6 @@ class Translation_Traits_Form_Model extends Centurion_Traits_Form_Model_Abstract
 
             $this->addElement($f, Translation_Traits_Model_DbTable::LANGUAGE_FIELD);
         }
-
     }
 
     public function prePopulate($signal, $sender, $values)

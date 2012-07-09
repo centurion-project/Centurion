@@ -1,5 +1,31 @@
 <?php
+/**
+ * Centurion
+ *
+ * LICENSE
+ *
+ * This source file is subject to the new BSD license that is bundled
+ * with this package in the file LICENSE.txt.
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@centurion-project.org so we can send you a copy immediately.
+ *
+ * @category    Centurion
+ * @package     Centurion_Test
+ * @subpackage  Centurion_Test_PHPUnit
+ * @copyright   Copyright (c) 2008-2011 Octave & Octave (http://www.octaveoctave.com)
+ * @license     http://centurion-project.org/license/new-bsd     New BSD License
+ * @version    $Id$
+ */
 
+/**
+ * @category    Centurion
+ * @package     Centurion_Test
+ * @subpackage  Centurion_Test_PHPUnit
+ * @copyright   Copyright (c) 2008-2011 Octave & Octave (http://www.octaveoctave.com)
+ * @license     http://centurion-project.org/license/new-bsd     New BSD License
+ * @author      Laurent Chenay <lc@centurion-project.org>
+ */
 class Centurion_Test_PHPUnit_ControllerTestCase extends Zend_Test_PHPUnit_ControllerTestCase 
 {
     public function __construct($name = NULL, array $data = array(), $dataName = '')
@@ -87,6 +113,35 @@ class Centurion_Test_PHPUnit_ControllerTestCase extends Zend_Test_PHPUnit_Contro
         return true;
     }
 
+    public function is200($url)
+    {
+        $this->resetResponse();
+        $this->resetRequest();
+
+        try {
+            $this->dispatch($url);
+            if ($this->getResponse()->getHttpResponseCode() != 200) {
+                return false;
+            }
+        } catch (Centurion_Controller_Action_Exception $e) {
+            return false;
+        }
+
+        return true;
+    }
+
+    public function assert200($url) {
+        if (!$this->is200($url)) {
+            $this->fail('The action not raised the 200 code');
+        }
+    }
+
+    public function assertNot200($url) {
+        if ($this->is200($url)) {
+            $this->fail('The action raised the 200 code. It should not');
+        }
+    }
+
     public function assert404($url)
     {
         if (!$this->is404($url)) {
@@ -99,5 +154,19 @@ class Centurion_Test_PHPUnit_ControllerTestCase extends Zend_Test_PHPUnit_Contro
         if ($this->is404($url)) {
             $this->fail('The action raised 404 exception. It should not.');
         }
+    }
+
+    /**
+     * Method to change of locale in follow tests to test the translation mechanism
+     * @param string $locale
+     */
+    protected function _switchLocale($locale){
+        //Switch to required language
+        Zend_Registry::get('Zend_Translate')->setLocale($locale);
+        Zend_Locale::setDefault($locale);
+        Zend_Registry::set('Zend_Locale', $locale);
+        Centurion_Config_Manager::set(Translation_Traits_Common::DEFAULT_LOCALE_KEY, $locale);
+        Zend_Controller_Front::getInstance()->getRouter()->setParam('language', $locale);
+        Zend_Controller_Front::getInstance()->getRouter()->setGlobalParam('language', $locale);
     }
 }

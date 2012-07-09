@@ -1,5 +1,29 @@
 <?php
+/**
+ * Centurion
+ *
+ * LICENSE
+ *
+ * This source file is subject to the new BSD license that is bundled
+ * with this package in the file LICENSE.txt.
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@centurion-project.org so we can send you a copy immediately.
+ *
+ * @category    Centurion
+ * @package     Centurion_Controller
+ * @copyright   Copyright (c) 2008-2011 Octave & Octave (http://www.octaveoctave.com)
+ * @license     http://centurion-project.org/license/new-bsd     New BSD License
+ * @version     $Id$
+ */
 
+/**
+ * @category    Centurion
+ * @package     Centurion_Controller
+ * @copyright   Copyright (c) 2008-2011 Octave & Octave (http://www.octaveoctave.com)
+ * @license     http://centurion-project.org/license/new-bsd     New BSD License
+ * @author      Laurent Chenay <lc@octaveoctave.com>
+ */
 class Centurion_Controller_Mptt extends Centurion_Controller_Action
 {
     const POSITION_BEFORE = 'before';
@@ -66,13 +90,28 @@ class Centurion_Controller_Mptt extends Centurion_Controller_Action
 
     protected $_recursiveDelete = true;
 
+    
+    /**
+     * @var array extra param to pass to each request
+     */
+    protected $_extraParam = array();
+
     public function init()
     {
+        $this->view->infos = array();
+        $this->view->errors = array();
+        
         parent::init();
 
+        $this->view->formViewScript = array();
         $this->getHelper('ContextAutoSwitch')->direct(array('index', 'create', 'delete'));
 
         $this->getRequest()->setParams($this->getHelper('params')->direct());
+
+        if ($this->getRequest()->getParam('saving') == 'done') {
+            $this->view->infos[] = $this->view->translate('Saving has been done.');
+            $this->getRequest()->setParam('saving', null);
+        }
     }
 
     public function preDispatch()
@@ -156,7 +195,9 @@ class Centurion_Controller_Mptt extends Centurion_Controller_Action
 
         $this->view->form = $this->_getForm(array(), $row);
         $this->_processValues();
-        $this->renderIfNotExists('mptt/edit', null, true);
+
+        $this->_formViewScript = 'mptt/edit.phtml';
+        $this->_renderForm($this->view->form);
     }
 
     public function newAction()
@@ -175,7 +216,9 @@ class Centurion_Controller_Mptt extends Centurion_Controller_Action
         $this->view->form = $this->_getForm();
         $this->view->form->populate($this->_request->getParam(Centurion_Controller_CRUD::PARAM_FORM_VALUES, array()));
         $this->_processValues();
-        $this->renderIfNotExists('mptt/create', null, true);
+
+        $this->_formViewScript = 'mptt/create.phtml';
+        $this->_renderForm($this->view->form);
     }
 
     public function moveAction()
@@ -206,6 +249,34 @@ class Centurion_Controller_Mptt extends Centurion_Controller_Action
                 $row->moveTo();
                 //$this->forward404(sprintf('Type %s is unknown', $type));
         }
+    }
+
+
+    /**
+     * Import from Centurion_Controller_CRUD to call trait to overload form rendering
+     */
+    public function _preRenderForm()
+    {
+        Centurion_Traits_Common::checkTraitOverload($this, '_preRenderForm', array(), false);
+    }
+
+    /**
+     * Variant of renderIfNotExists, used by create/new and edit/get
+     * to support Traits for CRUD Controller in MPTT controlelr (They can overload the view to use)
+     * @param string $action : default view to use if the action does not exist
+     *
+     * @todo use renderToResponse instead
+     */
+    protected function _renderForm($form)
+    {
+        $this->view->form = $form;
+        $this->view->formViewScript[] = 'grid/_form.phtml';
+
+        $this->_preRenderForm();
+
+        $script = substr($this->view->selectScript(array($this->_formViewScript, 'grid/form.phtml')), 0, -6);
+        //$script = substr($this->view->selectScript(array(sprintf('%s/form.phtml', $this->_request->getControllerName()), 'grid/form.phtml')), 0, -6);
+        $this->render($script, true, true);
     }
 
     /**
@@ -397,7 +468,9 @@ class Centurion_Controller_Mptt extends Centurion_Controller_Action
                             );
                         }
 
-                         $url = $this->getHelper('url')->url($params, 'default', true);
+                        $params['saving'] = 'done';
+
+                        $url = $this->getHelper('url')->url(array_merge($this->_extraParam, $params), 'default', true);
                     }
                 }
 
@@ -421,8 +494,9 @@ class Centurion_Controller_Mptt extends Centurion_Controller_Action
     protected function _getForm($options = array(), Centurion_Db_Table_Row_Abstract $instance = null)
     {
         if (null === $this->_form) {
-            if (!isset($options['method']))
+            if (!isset($options['method'])) {
                 $options['method'] = Centurion_Form::METHOD_POST;
+            }
 
             $this->_form = new $this->_formClass($options, $instance);
             $this->_form->cleanForm();
@@ -474,8 +548,6 @@ class Centurion_Controller_Mptt extends Centurion_Controller_Action
                 throw new Exception('Not valid name');
             }
         } catch (Exception $e) {
-            echo $e->getMessage();
-            echo $e->getTraceAsString();
             $this->_helper->json(array('statut' => 400, 'message' => 'not valid request', 'exception' => $e->getTrace()));
         }
     }

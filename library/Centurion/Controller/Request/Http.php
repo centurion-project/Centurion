@@ -24,7 +24,7 @@
  * @subpackage  Request
  * @copyright   Copyright (c) 2008-2011 Octave & Octave (http://www.octaveoctave.com)
  * @license     http://centurion-project.org/license/new-bsd     New BSD License
- * @author      Laurent Chenay <lc@octaveoctave.com>
+ * @author      Laurent Chenay <lc@centurion-project.org>
  */
 class Centurion_Controller_Request_Http extends Zend_Controller_Request_Http
 {
@@ -40,7 +40,7 @@ class Centurion_Controller_Request_Http extends Zend_Controller_Request_Http
         if ($requestUri === null) {
             if (isset($_SERVER['HTTP_X_REWRITE_URL'])) { // check this first so IIS will catch
                 $requestUri = $_SERVER['HTTP_X_REWRITE_URL'];
-            } elseif (
+            } else if (
                 // IIS7 with URL Rewrite: make sure we get the unencoded url (double slash problem)
                 isset($_SERVER['IIS_WasUrlRewritten'])
                 && $_SERVER['IIS_WasUrlRewritten'] == '1'
@@ -48,19 +48,19 @@ class Centurion_Controller_Request_Http extends Zend_Controller_Request_Http
                 && $_SERVER['UNENCODED_URL'] != ''
                 ) {
                 $requestUri = $_SERVER['UNENCODED_URL'];
-            } elseif (isset($_SERVER['REQUEST_URI'])) {
+            } else if (isset($_SERVER['REQUEST_URI'])) {
                 $requestUri = $_SERVER['REQUEST_URI'];
                 // Http proxy reqs setup request uri with scheme and host [and port] + the url path, only use url path
                 $schemeAndHttpHost = $this->getScheme() . '://' . $this->getHttpHost();
                 if (strpos($requestUri, $schemeAndHttpHost) === 0) {
                     $requestUri = substr($requestUri, strlen($schemeAndHttpHost));
                 }
-            } elseif (isset($_SERVER['REDIRECT_URL'])) {  // Check if using mod_rewrite
+            } else if (isset($_SERVER['REDIRECT_URL'])) {  // Check if using mod_rewrite
                 $requestUri = $_SERVER['REDIRECT_URL'];
                 if (isset($_SERVER['REDIRECT_QUERYSTRING'])) {
                     $parseUriGetVars = $_SERVER['REDIRECT_QUERYSTRING'];
                 }
-            } elseif (isset($_SERVER['ORIG_PATH_INFO'])) { // IIS 5.0, PHP as CGI
+            } else if (isset($_SERVER['ORIG_PATH_INFO'])) { // IIS 5.0, PHP as CGI
                 $requestUri = $_SERVER['ORIG_PATH_INFO'];
                 if (!empty($_SERVER['QUERY_STRING'])) {
                     $requestUri .= '?' . $_SERVER['QUERY_STRING'];
@@ -68,7 +68,7 @@ class Centurion_Controller_Request_Http extends Zend_Controller_Request_Http
             } else {
                 return $this;
             }
-        } elseif (!is_string($requestUri)) {
+        } else if (!is_string($requestUri)) {
             return $this;
         } else {
             // Set GET items, if available

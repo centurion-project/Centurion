@@ -1,4 +1,29 @@
 <?php
+/**
+ * Centurion
+ *
+ * LICENSE
+ *
+ * This source file is subject to the new BSD license that is bundled
+ * with this package in the file LICENSE.txt.
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@centurion-project.org so we can send you a copy immediately.
+ *
+ * @category    Centurion
+ * @package     Centurion_Form
+ * @copyright   Copyright (c) 2008-2011 Octave & Octave (http://www.octaveoctave.com)
+ * @license     http://centurion-project.org/license/new-bsd     New BSD License
+ * @version     $Id$
+ */
+
+/**
+ * @category    Centurion
+ * @package     Centurion_Locale
+ * @copyright   Copyright (c) 2008-2011 Octave & Octave (http://www.octaveoctave.com)
+ * @license     http://centurion-project.org/license/new-bsd     New BSD License
+ * @author      Laurent Chenay <lc@octaveoctave.com>
+ */
 class Centurion_Form_DisplayGroup extends Zend_Form_DisplayGroup
 {
     /**
@@ -113,8 +138,62 @@ class Centurion_Form_DisplayGroup extends Zend_Form_DisplayGroup
         return array_merge($this->_orders, $this->_elements, $this->_displayGroups, $this->_subForms);
     }
 
+    /**
+     * Move the position of an element with a pivot element.
+     *
+     * @param   string          $elementName
+     * @param   string          $action
+     * @param   string          $pivotElementName OPTIONAL
+     * @return  Centurion_Form
+     */
     public function moveElement($elementName, $action, $pivotElementName = null)
     {
-        // @todo : ré-implement ordering management inside display group
+        $elementName = (string) $elementName;
+        if (!array_key_exists($elementName, $this->_orders)) {
+            throw new Centurion_Form_Exception(sprintf('Element "%s" does not exist.', $elementName));
+        }
+
+        unset($this->_orders[$elementName]);
+
+        if (null !== $pivotElementName) {
+            $pivotElementName = (string) $pivotElementName;
+
+            if (!array_key_exists($pivotElementName, $this->_orders)) {
+                throw new Centurion_Form_Exception(sprintf('$pivotElementName "%s" does not exist.', $pivotElementName));
+            }
+
+            $pivotPosition = array_search($pivotElementName, array_keys($this->_orders));
+        }
+
+        switch ($action) {
+            case Centurion_Form::FIRST:
+                $this->_orders = array_merge(array($elementName => null), $this->_orders);
+                break;
+            case Centurion_Form::LAST:
+                $this->_orders = array_merge($this->_orders, array($elementName => count($this->_orders)));
+                break;
+            case Centurion_Form::BEFORE:
+                if (null === $pivotElementName) {
+                    throw new Centurion_Form_Exception(sprintf('Unable to move element "%s" without a relative $element.', $elementName));
+                }
+
+                $pivot = $pivotPosition ? $pivotPosition - 1 : 0;
+
+                $this->_order = array_merge(array_slice($this->_orders, 0, $pivot), array($elementName   => null),
+                    array_slice($this->_orders, $pivot));
+                break;
+            case Centurion_Form::AFTER:
+                if (null === $pivotElementName) {
+                    throw new Centurion_Form_Exception(sprintf('Unable to move element "%s" without a relative element.', $elementName));
+                }
+
+                $this->_order = array_merge(array_slice($this->_orders, 0, $pivotPosition + 1), array($elementName   => null),
+                    array_slice($this->_orders, $pivotPosition + 1));
+                break;
+            default:
+                throw new Centurion_Form_Exception(sprintf('Unknown move operation for element "%s".', $elementName));
+        }
+
+        return $this;
     }
 }

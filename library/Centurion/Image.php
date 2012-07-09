@@ -42,7 +42,7 @@ class Centurion_Image
      */
     public static function factory($adapterClass = null, $adapterOptions = null)
     {
-        if (! $adapterClass) {
+        if (null === $adapterClass) {
             if (extension_loaded('gd')) {
                 $adapterClass = 'Centurion_Image_Adapter_GD';
             } else {

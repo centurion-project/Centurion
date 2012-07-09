@@ -22,7 +22,7 @@
  * @package     Centurion_Ftp
  * @copyright   Copyright (c) 2008-2011 Octave & Octave (http://www.octaveoctave.com)
  * @license     http://centurion-project.org/license/new-bsd     New BSD License
- * @author      Laurent Chenay <lchenay@gmail.com>
+ * @author      Laurent Chenay <lc@centurion-project.org>
  */
 class Centurion_Ftp 
 { 
@@ -234,7 +234,7 @@ class Centurion_Ftp
      * Set the command timeout period in seconds
      * 
      * @param int $timeout The timeout period
-     * @return Centurion_Ftp
+     * @return $this
      */ 
     public function setTimeout($timeout) 
     { 
@@ -253,7 +253,7 @@ class Centurion_Ftp
      * Set whether or not to use an SSL connection
      * 
      * @param boolean $ssl [optional]
-     * @return Centurion_Ftp
+     * @return $this
      */ 
     public function setSecure($ssl = true) 
     { 
@@ -266,7 +266,7 @@ class Centurion_Ftp
      * Turn passive mode on or off
      * 
      * @param boolean $passive [optional] Whether or not to use passive mode
-     * @return Centurion_Ftp
+     * @return $this
      */ 
     public function setPassive($passive = true) 
     { 
@@ -279,7 +279,7 @@ class Centurion_Ftp
     /**
      * Send the PASV command
      * 
-     * @return Centurion_Ftp
+     * @return $this
      */ 
     protected function _setPassive() 
     { 
@@ -352,7 +352,7 @@ class Centurion_Ftp
      * Set the ASCII file types for automatic transfer mode
      * 
      * @param array $types
-     * @return Centurion_Ftp
+     * @return $this
      */ 
     public function setAsciiTypes($types) 
     { 
@@ -365,7 +365,7 @@ class Centurion_Ftp
      * Add an ASCII file type for automatic transfer mode
      * 
      * @param string $type
-     * @return Centurion_Ftp
+     * @return $this
      */ 
     public function addAsciiType($type) 
     { 
@@ -391,7 +391,7 @@ class Centurion_Ftp
      * 
      * @param string $path The file or directory
      * @param int|string $permissions The permissions as an octal e.g. 0777 or string e.g. 'rwxrwxrwx'
-     * @return 
+     * @return $this
      */ 
     public function chmod($path, $permissions) 
     { 

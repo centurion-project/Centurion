@@ -35,7 +35,7 @@ class Centurion_Application_Module_Autoloader extends Zend_Application_Module_Au
     public function initDefaultResourceTypes()
     {
         parent::initDefaultResourceTypes();
-        $basePath = $this->getBasePath();
+
         $this->addResourceTypes(array(
             'controllershelpers' => array(
                 'namespace' => 'Controller_Action_Helper',
@@ -60,10 +60,15 @@ class Centurion_Application_Module_Autoloader extends Zend_Application_Module_Au
         ));
     }
 
+    /**
+     * @param $key
+     * @return bool|mixed
+     */
     public function getComponent($key)
     {
-        if (isset($this->_components[$key]))
+        if (isset($this->_components[$key])) {
             return $this->_components[$key];
+        }
 
         return false;
     }

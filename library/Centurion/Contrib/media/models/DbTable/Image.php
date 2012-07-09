@@ -26,7 +26,7 @@
  * @license     http://centurion-project.org/license/new-bsd     New BSD License
  * @author      Florent Messa <florent.messa@gmail.com>
  * @author      Mathias Desloges <m.desloges@gmail.com>
- * @author      Laurent Chenay <lc@octaveoctave.com>
+ * @author      Laurent Chenay <lc@centurion-project.org>
  */
 class Media_Model_DbTable_Image extends Centurion_Db_Table_Abstract
 {
@@ -79,8 +79,13 @@ class Media_Model_DbTable_Image extends Centurion_Db_Table_Abstract
         'edge'      => 'p'
     );
 
+    /**
+     * @param array $data
+     * @return mixed
+     */
     public function insert(array $data)
     {
+        //TODO: why this code ?
         if (isset($data['width']) && isset($data['height'])) {
             $data[Centurion_Db_Table_Abstract::VERBOSE] = false;
             return parent::insert($data);
@@ -89,11 +94,21 @@ class Media_Model_DbTable_Image extends Centurion_Db_Table_Abstract
         return parent::insert($this->_getImageSize($data['local_filename']));
     }
 
+    /**
+     * @param array $data
+     * @param array|string $where
+     * @return int
+     * @TODO: $data is not send to parent. Something is not normal
+     */
     public function update(array $data, $where)
     {
         return parent::update($this->_getImageSize($data['local_filename']), $where);
     }
 
+    /**
+     * @param $filename
+     * @return array with 2 keys: height and width
+     */
     protected function _getImageSize($filename)
     {
         if (!is_file($filename)) {
@@ -108,6 +123,9 @@ class Media_Model_DbTable_Image extends Centurion_Db_Table_Abstract
         );
     }
 
+    /**
+     * @return array array of mime with extension
+     */
     public function getMimeTypes()
     {
         return array(
@@ -152,6 +170,12 @@ class Media_Model_DbTable_Image extends Centurion_Db_Table_Abstract
         );
     }
 
+    /**
+     * @static
+     * @param $effects
+     * @return array
+     * @todo: test it
+     */
     public static function effectsString2Array($effects)
     {
         $effectResult = array();
@@ -182,6 +206,12 @@ class Media_Model_DbTable_Image extends Centurion_Db_Table_Abstract
         return $effectResult;
     }
 
+    /**
+     * @static
+     * @param $effects
+     * @return string
+     * @todo: test it
+     */
     public static function effectsArray2String($effects)
     {
         $result = '';

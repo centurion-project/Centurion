@@ -25,7 +25,7 @@
  * @copyright   Copyright (c) 2008-2011 Octave & Octave (http://www.octaveoctave.com)
  * @license     http://centurion-project.org/license/new-bsd     New BSD License
  * @author      Florent Messa <florent.messa@gmail.com>
- * @author      Laurent Chenay <lchenay@gmail.com>
+ * @author      Laurent Chenay <lc@centurion-project.org>
  */
 abstract class Centurion_Db_Table_Row_Abstract extends Zend_Db_Table_Row_Abstract implements Centurion_Traits_Traitsable
 {
@@ -200,7 +200,14 @@ abstract class Centurion_Db_Table_Row_Abstract extends Zend_Db_Table_Row_Abstrac
 
                 self::$_relationship[$className][$pkValue]
                     = $this->findParentRow($referenceMap[$columnName]['refTableClass'],
-                    $columnName);
+                                           $columnName);
+                if (null === self::$_relationship[$className][$pkValue]) { 
+                    self::$_relationship[$className][$pkValue] = false; 
+                }
+            }
+            
+            if (false == self::$_relationship[$className][$pkValue]) {
+                return null;
             }
             return self::$_relationship[$className][$pkValue];
         }
@@ -532,8 +539,14 @@ abstract class Centurion_Db_Table_Row_Abstract extends Zend_Db_Table_Row_Abstrac
                 if (!isset(self::$_relationship[$className][$this->{$column}])) {
                     self::$_relationship[$className][$this->{$column}]
                         = $this->findParentRow($referenceMap[$columnName]['refTableClass'], $columnName, $select);
+                    if (null === self::$_relationship[$className][$this->{$column}]) { 
+                        self::$_relationship[$className][$this->{$column}] = false; 
+                    }
                 }
-
+            
+                if (false == self::$_relationship[$className][$this->{$column}]) {
+                    return null;
+                }
                 return self::$_relationship[$className][$this->{$column}];
             }
             $dependentTables = $this->getTable()->info('dependentTables');
@@ -627,7 +640,20 @@ abstract class Centurion_Db_Table_Row_Abstract extends Zend_Db_Table_Row_Abstrac
 
                 $rowClassName = $table->getRowClass();
 
-                self::$_relationship[$className][$this->{$column}] = new $rowClassName($rowData);
+                $exist = true;
+                foreach($table->info('primary') as $pkfield) {
+                    if(empty($rowData['data'][$pkfield])) {
+                        $exist = false;
+                        break;
+                    }
+                }
+                if(!$exist) {
+                    self::$_relationship[$className][$this->{$column}] = false;
+                }
+                else {
+                    self::$_relationship[$className][$this->{$column}] = new $rowClassName($rowData);
+                }
+                
             }
         }
     }
@@ -905,6 +931,9 @@ abstract class Centurion_Db_Table_Row_Abstract extends Zend_Db_Table_Row_Abstrac
         }
     }
 
+    /**
+     * @return Media_Model_DbTable_Row_File
+     */
     public function getPx()
     {
         return Centurion_Db::getSingleton('media/file')->getPx();
@@ -935,6 +964,10 @@ abstract class Centurion_Db_Table_Row_Abstract extends Zend_Db_Table_Row_Abstrac
         return new Zend_Date($this->{Centurion_Inflector::tableize($by)}, $dateFormat);
     }
 
+    /**
+     * @TODO: this function fail if multiple primary key
+     * @return string
+     */
     public function __toString()
     {
         return sprintf('%s-%s', get_class($this), $this->getPrimaryKey());
@@ -1036,7 +1069,10 @@ abstract class Centurion_Db_Table_Row_Abstract extends Zend_Db_Table_Row_Abstrac
     public function getCacheTag($relation = null)
     {
         if (null === $relation) {
-            $pk = is_string($this->pk) || is_int($this->pk) ? $this->pk : md5(serialize($this->pk));
+            $pk = $this->pk;
+            if (is_string($pk) || is_int($pk)) {
+                $pk = md5(serialize($pk));
+            }
             return sprintf('__%s__%s', $this->getTable()->info(Centurion_Db_Table_Abstract::NAME), $pk);
         } else {
             $dependentTables = $this->getTable()->info('dependentTables');
@@ -1574,21 +1610,13 @@ abstract class Centurion_Db_Table_Row_Abstract extends Zend_Db_Table_Row_Abstrac
     }
 
     /**
-     * @return array
+     * @return array of key that have been modifier
      * @todo documentation
      * @TODO : i thinks we could resuse getModifiedData
      */
     public function getModifiedFields()
     {
-        $fields = array();
-        if (!$this->isNew()) {
-            foreach ($this->_data as $field => $value) {
-                if (isset($this->_cleanData[$field]) && $this->_cleanData[$field] != $value) {
-                    $fields[] = $field;
-                }
-            }
-        }
-        return $fields;
+        return $this->_modifiedFields;
     }
 
     /**

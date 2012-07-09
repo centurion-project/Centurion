@@ -49,7 +49,7 @@ class Centurion_View_Helper_Extend extends Zend_View_Helper_Abstract
      * @param string $parent         FULL FILENAME of master view script
      * @param string $defaultSection Name of auto-opened section. Pass false to
      *                                disable auto-open.
-     * @return Zend_View_Helper_Extend
+     * @return $this
      */
     public function extend($parent = null, $defaultSection = 'content')
     {
@@ -96,7 +96,7 @@ class Centurion_View_Helper_Extend extends Zend_View_Helper_Abstract
      * closed when this is called.
      *
      * @param string $key Section name
-     * @return Zend_View_Helper_Extend
+     * @return $this
      */
     public function section($key)
     {
@@ -111,7 +111,7 @@ class Centurion_View_Helper_Extend extends Zend_View_Helper_Abstract
      * Define the default content of a section.
      *
      * @param string $key Section name
-     * @return Zend_View_Helper_Extend
+     * @return $this
      */
     public function define($key = null)
     {
@@ -127,7 +127,7 @@ class Centurion_View_Helper_Extend extends Zend_View_Helper_Abstract
     /**
      * Close a section.
      *
-     * @return Zend_View_Helper_Extend
+     * @return $this
      */
     public function end()
     {
@@ -150,7 +150,7 @@ class Centurion_View_Helper_Extend extends Zend_View_Helper_Abstract
      * Actually, that's impossible since the master view is evaluated last, so
      * some shenanigans are happening here.
      *
-     * @return Zend_View_Helper_Extend
+     * @return $this
      */
     public function super()
     {
@@ -174,7 +174,7 @@ class Centurion_View_Helper_Extend extends Zend_View_Helper_Abstract
      *
      * @param string $key     Section name
      * @param string $content The content
-     * @return Zend_View_Helper_Extend
+     * @return $this
      */
     public function setSectionDefault($key, $content)
     {
@@ -224,7 +224,7 @@ class Centurion_View_Helper_Extend extends Zend_View_Helper_Abstract
      * Sets the content of the currently open section.
      *
      * @param string $content The content
-     * @return Zend_View_Helper_Extend
+     * @return $this
      */
     public function setCurrentSection($content)
     {
@@ -239,7 +239,7 @@ class Centurion_View_Helper_Extend extends Zend_View_Helper_Abstract
      *
      * @param string $key     Section name
      * @param string $content The content
-     * @return Zend_View_Helper_Extend
+     * @return $this
      */
     public function setSection($key, $content)
     {

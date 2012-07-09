@@ -358,7 +358,7 @@ class Core_Traits_Mptt_Model_DbTable_Row extends Centurion_Traits_Model_DbTable_
     /**
      * Returns the root node of this model instance's tree.
      *
-     * @return Centurion_Db_Table_Row_Mptt
+     * @return $this
      */
     public function getRoot()
     {
@@ -456,9 +456,13 @@ class Core_Traits_Mptt_Model_DbTable_Row extends Centurion_Traits_Model_DbTable_
         $this->_row->refresh();
 
         if ($this->_row->getTable()->isRecursiveDelete()) {
-            foreach ($this->getChildren() as $node) {
-                if ($node->id !== $this->id)
-                    $node->delete();
+            $children = $this->getChildren();
+            if(!empty($children)){
+	            foreach ($children as $node) {
+	                if ($node->id !== $this->id){
+	                    $node->delete();
+                    }
+	            }
             }
         }
 
@@ -472,7 +476,7 @@ class Core_Traits_Mptt_Model_DbTable_Row extends Centurion_Traits_Model_DbTable_
      *
      * @param string $columnName Column name
      * @param string $value Value
-     * @return Centurion_Db_Table_Row_Mptt
+     * @return $this
      */
     protected function _setData($columnName, $value)
     {

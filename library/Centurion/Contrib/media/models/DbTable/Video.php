@@ -40,46 +40,74 @@ class Media_Model_DbTable_Video extends Centurion_Db_Table_Abstract
 
     protected $_name = 'media_video';
 
+    /**
+     * @var Centurion_Movie_Flv
+     */
     protected $_movie = null;
     
     public function insert(array $data)
     {
-        if (!isset($data['width']) || $data['width'] == 0)
+        if (!isset($data['width']) || $data['width'] == 0) {
             $data['width'] = (int) $this->_getWidth($data['local_filename']);
-        if (!isset($data['height']) || $data['height'] == 0)
+        }
+        if (!isset($data['height']) || $data['height'] == 0) {
             $data['height'] = (int) $this->_getHeight($data['local_filename']);
-        if (!isset($data['duration']) || $data['duration'] == 0)
+        }
+        if (!isset($data['duration']) || $data['duration'] == 0) {
             $data['duration'] = $this->_getDuration($data['local_filename']);
+        }
         
         $data[Centurion_Db_Table_Abstract::VERBOSE] = false;
         
         return parent::insert($data);
     }
-    
+
+    /**
+     * @param string $filename
+     * @todo: We should not use media.uploads_dir here.
+     */
     protected function _loadIfNotLoaded($filename)
     {
-        if ($this->_movie === null)
-            $this->_movie = Centurion_Movie::factory(Centurion_Config_Manager::get('media.uploads_dir') . DIRECTORY_SEPARATOR . $filename);
+        if ($this->_movie === null) {
+            $this->_movie = Centurion_Movie::factory(
+                Centurion_Config_Manager::get('media.uploads_dir') . DIRECTORY_SEPARATOR . $filename
+            );
+        }
     }
-    
+
+    /**
+     * @param $filename
+     * @return int
+     */
     protected function _getWidth($filename)
     {
         $this->_loadIfNotLoaded($filename);
         return $this->_movie->getMetadata('width');
     }
-    
+
+    /**
+     * @param $filename
+     * @return int
+     */
     protected function _getHeight($filename)
     {
         $this->_loadIfNotLoaded($filename);
         return $this->_movie->getMetadata('height');
     }
-    
+
+    /**
+     * @param $filename
+     * @return int
+     */
     protected function _getDuration($filename)
     {
         $this->_loadIfNotLoaded($filename);
         return $this->_movie->getMetadata('duration');
     }
-    
+
+    /**
+     * @return array
+     */
     public function getMimeTypes()
     {
         return array(

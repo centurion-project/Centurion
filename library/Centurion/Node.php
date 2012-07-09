@@ -74,7 +74,12 @@ class Centurion_Node implements Countable, IteratorAggregate
     {
         return new ArrayIterator($this->_children);
     }
-    
+
+    /**
+     * @param $node
+     * @param $connType
+     * @return $this
+     */
     public function add($node, $connType)
     {
         if ($this->contains($node) && $this->_connector === $connType) {
@@ -99,7 +104,10 @@ class Centurion_Node implements Countable, IteratorAggregate
         
         return $this;
     }
-    
+
+    /**
+     * @return $this
+     */
     public function negate()
     {
         $this->_children = array(self::newInstance($this->_children, $this->_connector, !$this->_negated));

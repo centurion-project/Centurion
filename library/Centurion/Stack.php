@@ -22,7 +22,7 @@
  * @package     Centurion_Stack
  * @copyright   Copyright (c) 2008-2011 Octave & Octave (http://www.octaveoctave.com)
  * @license     http://centurion-project.org/license/new-bsd     New BSD License
- * @author      Laurent Chenay <lchenay@gmail.com>
+ * @author      Laurent Chenay <lc@centurion-project.org>
  */
 class Centurion_Stack  {  
     
@@ -31,15 +31,25 @@ class Centurion_Stack  {
      */
     private $_data = array();
  
-
+    /**
+     * @param $data
+     * @return Centurion_Stack
+     */
     public function push($data){
-        array_push($this->_data,$data);
+        array_push($this->_data, $data);
+        return $this;
     }
-    
+
+    /**
+     * @return mixed
+     */
     public function pop(){
         return array_pop($this->_data);
     }
-    
+
+    /**
+     * @return bool
+     */
     public function isEmpty(){
         return empty($this->_data);
     }

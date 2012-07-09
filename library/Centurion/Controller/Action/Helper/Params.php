@@ -24,7 +24,7 @@
  * @subpackage  Helper
  * @copyright   Copyright (c) 2008-2011 Octave & Octave (http://www.octaveoctave.com)
  * @license     http://centurion-project.org/license/new-bsd     New BSD License
- * @author      Laurent Chenay <lchenay@gmail.com>
+ * @author      Laurent Chenay <lc@centurion-project.org>
  */
 class Centurion_Controller_Action_Helper_Params extends Zend_Controller_Action_Helper_Abstract
 {
@@ -146,6 +146,9 @@ class Centurion_Controller_Action_Helper_Params extends Zend_Controller_Action_H
         return $this->getRequest()->getPost();
     }
 
+    /**
+     * @return array
+     */
     public function direct()
     {
         return $this->getSubmitParams();
