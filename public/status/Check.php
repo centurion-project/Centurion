@@ -468,10 +468,10 @@ class Check {
 
         $this->_checkRedirect();
 
+        $this->_checkPermission();
         $this->_checkDbConnect();
         $this->_checkDbTable();
 
-        $this->_checkPermission();
         $this->_checkDocumentRoot();
     }
 
