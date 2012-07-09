@@ -1,7 +1,6 @@
 <?php
 class Core_Traits_Slug_Form_Model extends Centurion_Traits_Form_Abstract
 {
-    
     public function __construct($form)
     {
         parent::__construct($form);

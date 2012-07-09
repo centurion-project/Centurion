@@ -215,9 +215,9 @@ abstract class Centurion_Db_Table_Rowset_Abstract extends Zend_Db_Table_Rowset
      */
     public function delete()
     {
-    	foreach ($this as $row) {
-    		$row->delete();
-    	}
+        foreach ($this as $row) {
+            $row->delete();
+        }
     }
 
     /**
