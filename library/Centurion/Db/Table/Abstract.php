@@ -26,7 +26,7 @@
  * @license     http://centurion-project.org/license/new-bsd     New BSD License
  * @author      Florent Messa <florent.messa@gmail.com>
  * @author      Nicolas Duteil <nd@octaveoctave.com>
- * @author      Laurent Chenay <lchenay@gmail.com>
+ * @author      Laurent Chenay <lc@centurion-project.org>
  * @author      Antoine Roesslinger <ar@octaveoctave.com>
  */
 abstract class Centurion_Db_Table_Abstract extends Zend_Db_Table_Abstract implements Countable, Centurion_Traits_Traitsable
@@ -80,14 +80,24 @@ abstract class Centurion_Db_Table_Abstract extends Zend_Db_Table_Abstract implem
 
     protected $_config = array();
 
+    /**
+     * Default options for cache backend defined in config ('resources.cachemanager.class')
+     * Setted by the main bootstrap in /application
+     * @var array
+     */
     protected static $_defaultBackendOptions = array();
 
+    /**
+     * Default options for cache frontent defined in config ('resources.cachemanager.class')
+     * Setted by the main bootstrap in /application
+     * @var array
+     */
     protected static $_defaultFrontendOptions = array();
 
     protected $_traitQueue;
 
     private static $_filtersOn = self::FILTERS_ON;
-    private static $_previousFiltersStatus = self::FILTERS_ON;
+    private static $_previousFiltersStatus = array(self::FILTERS_ON);
 
     public static function getFiltersStatus()
     {
@@ -102,12 +112,17 @@ abstract class Centurion_Db_Table_Abstract extends Zend_Db_Table_Abstract implem
 
     public static function saveFiltersStatus()
     {
-        self::$_previousFiltersStatus = self::$_filtersOn;
+        self::$_previousFiltersStatus[] = self::$_filtersOn;
+
     }
 
     public static function restoreFiltersStatus()
     {
-        self::$_filtersOn = self::$_previousFiltersStatus;
+        if(count(self::$_previousFiltersStatus)){
+            self::$_filtersOn = array_pop(self::$_previousFiltersStatus);
+        } else{
+            throw new Exception('Error, there are no previous status in the stack');
+        }
     }
 
     public static function switchFiltersStatus()
@@ -837,11 +852,11 @@ abstract class Centurion_Db_Table_Abstract extends Zend_Db_Table_Abstract implem
                             );
                         }
 
-            /*
-            * Fix : Suround, in the implode, AND with withspaces because if the relation is build with several key            
-            * the implode returned : "myKey=XANDmySecondKey=Y" instead of "myKey=X AND mySecondKey=Y"
-            */
-                        foreach ($this->fetchAll(implode(' AND ', $where)) as $row) { 
+                        /*
+                        * Fix : Suround, in the implode, AND with withspaces because if the relation is build with several key            
+                        * the implode returned : "myKey=XANDmySecondKey=Y" instead of "myKey=X AND mySecondKey=Y"
+                        */
+                        foreach ($this->fetchAll(implode(' AND ', $where)) as $row) {
                             $rowsAffected += $row->delete();
                         }
 

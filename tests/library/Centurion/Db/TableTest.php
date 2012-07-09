@@ -2,7 +2,7 @@
 
 require_once dirname(__FILE__) . '/../../../TestHelper.php';
 
-class Centurion_Db_Table_TableTest extends PHPUnit_Framework_TestCase
+class Centurion_Db_TableTest extends PHPUnit_Framework_TestCase
 {
     public function testGenRefRuleName()
     {

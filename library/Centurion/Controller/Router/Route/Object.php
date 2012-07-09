@@ -24,7 +24,7 @@
  * @subpackage  Router
  * @copyright   Copyright (c) 2008-2011 Octave & Octave (http://www.octaveoctave.com)
  * @license     http://centurion-project.org/license/new-bsd     New BSD License
- * @author      Laurent Chenay <lc@octaveoctave.com>
+ * @author      Laurent Chenay <lc@centurion-project.org>
  */
 class Centurion_Controller_Router_Route_Object extends Centurion_Controller_Router_Route
 {
@@ -62,6 +62,8 @@ class Centurion_Controller_Router_Route_Object extends Centurion_Controller_Rout
                 }
             }
             unset($data['object']);
+        } else {
+            throw new Zend_Controller_Router_Exception('No object given in a route object, of the object is not valid');
         }
         
         return parent::assemble($data, $reset, $encode, $partial);

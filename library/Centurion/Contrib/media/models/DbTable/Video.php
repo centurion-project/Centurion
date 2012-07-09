@@ -47,12 +47,15 @@ class Media_Model_DbTable_Video extends Centurion_Db_Table_Abstract
     
     public function insert(array $data)
     {
-        if (!isset($data['width']) || $data['width'] == 0)
+        if (!isset($data['width']) || $data['width'] == 0) {
             $data['width'] = (int) $this->_getWidth($data['local_filename']);
-        if (!isset($data['height']) || $data['height'] == 0)
+        }
+        if (!isset($data['height']) || $data['height'] == 0) {
             $data['height'] = (int) $this->_getHeight($data['local_filename']);
-        if (!isset($data['duration']) || $data['duration'] == 0)
+        }
+        if (!isset($data['duration']) || $data['duration'] == 0) {
             $data['duration'] = $this->_getDuration($data['local_filename']);
+        }
         
         $data[Centurion_Db_Table_Abstract::VERBOSE] = false;
         
@@ -65,8 +68,11 @@ class Media_Model_DbTable_Video extends Centurion_Db_Table_Abstract
      */
     protected function _loadIfNotLoaded($filename)
     {
-        if ($this->_movie === null)
-            $this->_movie = Centurion_Movie::factory(Centurion_Config_Manager::get('media.uploads_dir') . DIRECTORY_SEPARATOR . $filename);
+        if ($this->_movie === null) {
+            $this->_movie = Centurion_Movie::factory(
+                Centurion_Config_Manager::get('media.uploads_dir') . DIRECTORY_SEPARATOR . $filename
+            );
+        }
     }
 
     /**

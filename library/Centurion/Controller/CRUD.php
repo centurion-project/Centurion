@@ -24,7 +24,7 @@
  * @subpackage  Admin
  * @copyright   Copyright (c) 2008-2011 Octave & Octave (http://www.octaveoctave.com)
  * @license     http://centurion-project.org/license/new-bsd     New BSD License
- * @author      Laurent Chenay <lc@octaveoctave.com>
+ * @author      Laurent Chenay <lc@centurion-project.org>
  */
 
 class Centurion_Controller_CRUD extends Centurion_Controller_AGL
@@ -63,6 +63,7 @@ class Centurion_Controller_CRUD extends Centurion_Controller_AGL
     {
         $this->view->infos = array();
         $this->view->errors = array();
+        $this->view->formViewScript = array();
 
 //        $this->getHelper('ContextAutoSwitch')->direct();
 //        $this->_request->setParams($this->getHelper('params')->direct());
@@ -125,7 +126,10 @@ class Centurion_Controller_CRUD extends Centurion_Controller_AGL
     {
         if ($this->getRequest()->isPost()) {
             $posts = $this->_request->getPost();
-            $this->_getForm()->removeElement('id');
+            $_form = $this->_getForm();
+            $_form->removeElement('id');
+            //To simulate prePopulate before validate value fixx  #6317
+            Centurion_Signal::factory('post_form_pre_validate')->send($_form, array($posts));
             $this->_processValues($posts);
         }
     }
@@ -329,7 +333,14 @@ class Centurion_Controller_CRUD extends Centurion_Controller_AGL
                     throw new Exception('Column is not in the row');
                 }
 
-                $object->{$column} =  !((int)$this->_getParam('value'));
+                $value = (int) $this->_getParam('value');
+                if ($value == 1) {
+                    $value = 0;
+                } else {
+                    $value = 1;
+                }
+
+                $object->{$column} =  $value;
                 $object->save();
 
                 $this->_postSwitch($object);
@@ -404,7 +415,7 @@ class Centurion_Controller_CRUD extends Centurion_Controller_AGL
     protected function _renderForm($form)
     {
         $this->view->form = $form;
-        $this->view->formViewScript = 'grid/_form.phtml';
+        $this->view->formViewScript[] = 'grid/_form.phtml';
 
         $this->_preRenderForm();
 

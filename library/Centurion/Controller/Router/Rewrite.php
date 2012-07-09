@@ -24,7 +24,7 @@
  * @subpackage  Router
  * @copyright   Copyright (c) 2008-2011 Octave & Octave (http://www.octaveoctave.com)
  * @license     http://centurion-project.org/license/new-bsd     New BSD License
- * @author      Laurent Chenay <lc@octaveoctave.com>
+ * @author      Laurent Chenay <lc@centurion-project.org>
  */
 class Centurion_Controller_Router_Rewrite extends Zend_Controller_Router_Rewrite
 {
@@ -63,5 +63,54 @@ class Centurion_Controller_Router_Rewrite extends Zend_Controller_Router_Rewrite
                 $this->addRoute($chainName, $chainRoute);
             }
         }
+    }
+
+    /**
+     * Add default routes which are used to mimic basic router behaviour
+     *
+     * @return Zend_Controller_Router_Rewrite
+     */
+    public function addDefaultRoutes()
+    {
+        if (!$this->hasRoute('default')) {
+            $dispatcher = $this->getFrontController()->getDispatcher();
+            $request = $this->getFrontController()->getRequest();
+
+            //$1 'Zend/Controller/Router/Route/Module.php';
+            $compat = new Centurion_Controller_Router_Route_Module(array(), $dispatcher, $request);
+
+            $this->_routes = array_merge(array('default' => $compat), $this->_routes);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Generates a URL path that can be used in URL creation, redirection, etc.
+     *
+     * @param  array $userParams Options passed by a user used to override parameters
+     * @param  mixed $name The name of a Route to use
+     * @param  bool $reset Whether to reset to the route defaults ignoring URL params
+     * @param  bool $encode Tells to encode URL parts on output
+     * @throws Zend_Controller_Router_Exception
+     * @return string Resulting absolute URL path
+     */
+    public function assemble($userParams, $name = null, $reset = false, $encode = true)
+    {
+        if ($name == null) {
+            try {
+                $name = $this->getCurrentRouteName();
+            } catch (Zend_Controller_Router_Exception $e) {
+                $name = 'default';
+            }
+        }
+
+        if ($name == 'default') {
+            if ($this->_useDefaultRoutes) {
+                $this->addDefaultRoutes();
+            }
+        }
+
+        return parent::assemble($userParams, $name, $reset, $encode);
     }
 }

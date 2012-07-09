@@ -2,24 +2,32 @@
 
 class Core_Traits_Slug_Model_DbTable_Row extends Centurion_Traits_Model_DbTable_Row_Abstract
 {
-
     protected $_requiredFields = array('slug');
 
+    protected $_slugColumnsSeparator = '-';
+    protected $_slugIteratorSeparator = '_';
+    
     public function init(){
         parent::init();
-
+        
         Centurion_Signal::factory('pre_save')->connect(array($this, 'preSave'), $this->_row);
     }
 
     public function preSave()
     {
         // Get the column used to generate the slug
-        $slugParts = $this->_row->getSlugifyName();
+        $slugParts = (array) $this->_row->getSlugifyName();
 
         $slugifiedParts = array();
+        $modifiedFields = $this->_row->getModifiedFields();
+        
+        if (isset($modifiedFields['slug'])) {
+            return;
+        }
+
         // If one of the column used to generate the slug has been modified OR if the row is new : generate a slug
-        if (count(array_intersect($this->_row->getModifiedFields(), (array) $slugParts)) || $this->isNew()) {
-            foreach ((array) $slugParts as $part) {
+        if (count(array_intersect(array_keys($modifiedFields), $slugParts)) || $this->isNew()) {
+            foreach ($slugParts as $part) {
                 $partValue = $this->_row->{$part};
                 if (null == $partValue) {
                     continue;
@@ -29,10 +37,10 @@ class Core_Traits_Slug_Model_DbTable_Row extends Centurion_Traits_Model_DbTable_
             }
 
             // Assemble the slugified values to get a slug
-            $slug = implode('-', $slugifiedParts);
+            $slug = implode($this->_slugColumnsSeparator, $slugifiedParts);
 
             if (null == $slug) {
-                $slug = '-';
+                $slug = $this->_slugColumnsSeparator;
             }
 
             // Get the current slug of the row ($currentSlug = null if the row is new)
@@ -43,7 +51,7 @@ class Core_Traits_Slug_Model_DbTable_Row extends Centurion_Traits_Model_DbTable_
              * Explanation : If a slug is already taken by another row, the generated slug is {expected_slug}_#
              *               where # is an incremental value of the number of occurrences of this slug
              */
-            if ($separatorPos = strpos($this->_row->slug, '_')) {
+            if ($separatorPos = strpos($this->_row->slug, $this->_slugIteratorSeparator)) {
                 $currentSlug = substr($currentSlug, 0, $separatorPos);
             }
 
@@ -52,8 +60,14 @@ class Core_Traits_Slug_Model_DbTable_Row extends Centurion_Traits_Model_DbTable_
 
             $select = $this->getTable()->select();
             $filters = array();
-            // TODO : Comment needed here
-            if(method_exists($this->_row, 'getFilterFieldsForSlug')) {
+            
+            /**
+             * A function named getFilterFieldsForSlug could be defined in the row,
+             * to filter the search of duplicate field by a given column.
+             * Exemple if my table have a category_id, i could tell slug trait, to have uniq slug in a category.
+             * In that case 2 row, of different category, could have the same slug.
+             */
+            if (method_exists($this->_row, 'getFilterFieldsForSlug')) {
                 $filterField = $this->_row->getFilterFieldsForSlug();
                 if(is_array($filterField)) {
                     foreach($filterField as $field) {
@@ -61,12 +75,16 @@ class Core_Traits_Slug_Model_DbTable_Row extends Centurion_Traits_Model_DbTable_
                     }
                 }
             }
-            // TODO : Comment needed here
+
+            /**
+             * We ignore the current row for duplicate slug search
+             */
             if (!$this->_row->isNew()) {
                 foreach($this->_getPrimaryKey() as $key => $value) {
                     $filters[Centurion_Db_Table_Select::OPERATOR_NEGATION . $key] = $value;
                 }
             }
+            
             // Generate the array used for filters method to find identical slug
             $filters['slug__' . Centurion_Db_Table_Select::OPERATOR_CONTAINS] = $slug.'%';
 
@@ -77,7 +95,7 @@ class Core_Traits_Slug_Model_DbTable_Row extends Centurion_Traits_Model_DbTable_
             if ($rows->count() > 0) {
                 $identicalSlugIds = array();
                 foreach ($rows as $row) {
-                    if ($separatorPos = strpos($row->slug, '_')) {
+                    if ($separatorPos = strpos($row->slug, $this->_slugIteratorSeparator)) {
                         $identicalSlugIds[] = substr($row->slug, ++$separatorPos);
                     }
                 }
@@ -97,7 +115,7 @@ class Core_Traits_Slug_Model_DbTable_Row extends Centurion_Traits_Model_DbTable_
                     }
                 }
                 // Add suffix "_#" at the end of the generated slug
-                $slug .= '_' . $i;
+                $slug .= $this->_slugIteratorSeparator . $i;
             }
 
             $this->_row->slug = $slug;

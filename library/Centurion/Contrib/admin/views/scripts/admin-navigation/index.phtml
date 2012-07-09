@@ -12,7 +12,7 @@ $(function() {
 $(function(){
     $('#autocomplete').CUI('autocomplete', {
         basePath: '<?php echo Zend_Controller_Front::getInstance()->getBaseUrl(); ?>', 
-        source: "<?php echo $this->url(array('action' => 'autocomplete'));?>",
+        source: "<?php echo $this->url(array('saving' => null, 'action' => 'autocomplete'));?>",
         select: function(event, rws) {
             $("#pk", $("#formAutocomplete")).val(rws.item.pk);
             $("#model", $("#formAutocomplete")).val(rws.item.model);
@@ -26,8 +26,8 @@ $urls = array();
     if (isset($this->types)) :
         foreach ($this->types as $type => $config):
 
-           $extraParam = array();
-           $extraParam['_next'] = urlencode($this->url(array('action' => 'add-proxy', 'proxy_pk' => '___pk___', 'proxy_model' => '___model___')));
+           $extraParam = array('saving' => null);
+           $extraParam['_next'] = $this->url(array('saving' => 'done', 'action' => 'add-proxy', 'proxy_pk' => '___pk___', 'proxy_model' => '___model___'));
            $url = $this->url(array_merge($config['urlNew'], $extraParam));
            $urls[] = '\'' . $type .'\' : "' . addslashes($url) . '"';
         endforeach;
@@ -47,7 +47,7 @@ $(function(){
 
 
 <?php $this->headScript()->captureEnd(); ?>
-<form id="formAutocomplete" class="form form-highlight" method="post" action="<?php $this->url(array('module' => 'admin', 'controller' => 'admin-navigation', 'action' => 'add-proxy'), 'default');?>" >
+<form id="formAutocomplete" class="form form-highlight" method="post" action="<?php $this->url(array('saving' => null, 'module' => 'admin', 'controller' => 'admin-navigation', 'action' => 'add-proxy'), 'default');?>" >
     <fieldset>
         <legend>Add a content</legend>
         <div class="float-left">

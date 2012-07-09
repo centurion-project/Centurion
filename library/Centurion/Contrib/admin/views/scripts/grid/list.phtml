@@ -41,17 +41,29 @@ $this->headScript()->captureEnd();
 <?php $this->placeholder('headling_1')->captureStart();?>
 
 <?php if (isset($this->error) || isset($this->infos)) : ?>
-    <div class="ui-state-message"> 
-        <?php if (isset($this->error)): ?>
-            <p class="ui-state-error">
-                <?php echo $this->error;?>
-            </p>
+    <div class="ui-state-message">
+        <?php if (isset($this->errors)):
+            $this->errors = (array) $this->errors;
+            foreach ($this->errors as $error):
+                ?>
+                    <p class="ui-state-error"">
+                        <?php echo $error;?>
+                    </p>
+                <?php
+            endforeach;
+            ?>
         <?php endif;?>
-        <?php if (isset($this->infos)): ?>
-            <p class="ui-state-highlight">
-                <?php echo $this->infos;?>
-            </p>
-        <?php endif;?>
+        <?php if (isset($this->infos)):
+            $this->infos = (array) $this->infos;
+
+            foreach ($this->infos as $info):
+                ?>
+                <p class="ui-state-highlight">
+                    <?php echo $info;?>
+                </p>
+                <?php
+            endforeach;
+        endif;?>
     </div>
 <?php endif;?>
 

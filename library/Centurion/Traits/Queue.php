@@ -3,8 +3,9 @@ class Centurion_Traits_Queue extends Centurion_Queue
 {
     public function push($trait)
     {
-        if (!$trait instanceof Centurion_Traits_Abstract)
+        if (!$trait instanceof Centurion_Traits_Abstract) {
             throw new Centurion_Traits_Exception('Centurion_Trait_Queue can only handle trait object');
+        }
         
         parent::push($trait);
         

@@ -155,4 +155,18 @@ class Centurion_Test_PHPUnit_ControllerTestCase extends Zend_Test_PHPUnit_Contro
             $this->fail('The action raised 404 exception. It should not.');
         }
     }
+
+    /**
+     * Method to change of locale in follow tests to test the translation mechanism
+     * @param string $locale
+     */
+    protected function _switchLocale($locale){
+        //Switch to required language
+        Zend_Registry::get('Zend_Translate')->setLocale($locale);
+        Zend_Locale::setDefault($locale);
+        Zend_Registry::set('Zend_Locale', $locale);
+        Centurion_Config_Manager::set(Translation_Traits_Common::DEFAULT_LOCALE_KEY, $locale);
+        Zend_Controller_Front::getInstance()->getRouter()->setParam('language', $locale);
+        Zend_Controller_Front::getInstance()->getRouter()->setGlobalParam('language', $locale);
+    }
 }

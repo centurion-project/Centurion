@@ -22,7 +22,7 @@
  * @package     Centurion_Contrib
  * @copyright   Copyright (c) 2008-2011 Octave & Octave (http://www.octaveoctave.com)
  * @license     http://centurion-project.org/license/new-bsd     New BSD License
- * @author      Laurent Chenay <lc@octaveoctave.com>
+ * @author      Laurent Chenay <lc@centurion-project.org>
  * @author      Florent Messa <florent.messa@gmail.com>
  */
 class Media_Model_Adapter_Ftp extends Media_Model_Adapter_Abstract

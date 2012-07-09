@@ -232,5 +232,19 @@ class Centurion_Db_Table_RowTest extends PHPUnit_Framework_TestCase
         $this->assertFalse(array_key_exists('title', $row->getModifiedData()));
     }
 
+    public function testFunctionGetModifiedFields()
+    {
+        $table = new Asset_Model_DbTable_Simple();
+        $row = $table->createRow();
+
+        $this->assertEmpty($row->getModifiedFields());
+
+        $row->title = "test";
+        $this->assertEquals(array('title' => true), $row->getModifiedFields());
+
+        $row->reset();
+        $this->assertEmpty($row->getModifiedFields());
+    }
+
 }
 

@@ -24,8 +24,9 @@
  * @copyright   Copyright (c) 2008-2011 Octave & Octave (http://www.octaveoctave.com)
  * @license     http://centurion-project.org/license/new-bsd     New BSD License
  * @author      Florent Messa <florent.messa@gmail.com>
- * @author      Laurent Chenay <lchenay@gmail.com>
+ * @author      Laurent Chenay <lc@centurion-project.org>
  * @author      Mathias Desloges <m.desloges@gmail.com>
+ * @deprecated
  */
 class Centurion_Rest_Controller_CRUD extends Centurion_Rest_Controller
 {

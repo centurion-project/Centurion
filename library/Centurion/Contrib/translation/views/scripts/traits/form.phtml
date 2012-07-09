@@ -14,4 +14,4 @@ if (count($fields)) {
     ));
 }
 
-echo $this->partial($this->formViewScript, $this);
+echo $this->partial(array_pop($this->formViewScript), $this);

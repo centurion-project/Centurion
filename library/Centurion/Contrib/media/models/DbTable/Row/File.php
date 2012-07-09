@@ -26,7 +26,7 @@
  * @license     http://centurion-project.org/license/new-bsd     New BSD License
  * @author      Florent Messa <florent.messa@gmail.com>
  * @author      Mathias Desloges <m.desloges@gmail.com>
- * @author      Laurent Chenay <lc@octaveoctave.com>
+ * @author      Laurent Chenay <lc@centurion-project.org>
  */
 class Media_Model_DbTable_Row_File extends Centurion_Db_Table_Row_Abstract
 {
@@ -40,6 +40,13 @@ class Media_Model_DbTable_Row_File extends Centurion_Db_Table_Row_Abstract
     public function __toString()
     {
         return $this->filename;
+    }
+
+    public function init()
+    {
+        $this->_specialGets['permalink'] = 'getStaticUrl';
+
+        return parent::init();
     }
 
     /**
