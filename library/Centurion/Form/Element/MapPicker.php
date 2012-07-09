@@ -108,7 +108,7 @@ EOS;
 
     public function getValue()
     {
-
+        return $this->_longitude . ',' . $this->_longitude;
     }
 
     public function setValue($value)

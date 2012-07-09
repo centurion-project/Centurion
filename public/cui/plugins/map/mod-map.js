@@ -349,8 +349,8 @@
                             return {
                                 label: item.formatted_address,
                                 value: item.formatted_address,
-                                lat : item.geometry.location.Na,
-                                lng : item.geometry.location.Oa
+                                lat : item.geometry.location.Ra,
+                                lng : item.geometry.location.Sa
                             }
                         }))
                       } 

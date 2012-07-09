@@ -16,22 +16,5 @@ class IndexController extends Centurion_Controller_Action
     {
         // action body
     }
-
-    public function testAction()
-    {
-        $this->_helper->layout->setLayout('admin');
-
-        $form = new Centurion_Form();
-
-        $form->addElement('MapPicker', 'map');
-
-        $form->addElement('submit', 'submit');
-
-        if ($this->getRequest()->isPost()) {
-            $form->isValid($this->getRequest()->getParams());
-        }
-
-        $this->view->form = $form;
-    }
 }
 
