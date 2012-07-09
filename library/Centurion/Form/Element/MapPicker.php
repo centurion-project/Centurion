@@ -35,8 +35,10 @@ class Centurion_Form_Element_MapPicker extends Zend_Form_Element
 
     public function render(Zend_View_Interface $view = null)
     {
+        /**
+         * The js for Google map must be added only once even they have multiple instance of mapPicker.
+         */
         static $_firstTime = true;
-
         if ($_firstTime) {
             if (null === $view) {
                 $view = $this->getView();
@@ -45,6 +47,7 @@ class Centurion_Form_Element_MapPicker extends Zend_Form_Element
             $_firstTime = false;
         }
 
+        
         $name = $this->getName();
         $this->setIsArray(true);
 
@@ -52,7 +55,11 @@ class Centurion_Form_Element_MapPicker extends Zend_Form_Element
         $latName = $name . '[coord_lat]';
         $longId = $name . '-coord_long';
         $latId = $name . '-coord_lat';
-
+        
+        $translatedWording = $view->escape($view->translate('City, address...'));
+        $translatedCancel = $view->translate('Cancel');
+        $translatedSave = $view->translate('Save');
+        
         return <<<EOS
     <div class="form-item form-location">
         <fieldset class="form-input-text">
@@ -77,22 +84,23 @@ class Centurion_Form_Element_MapPicker extends Zend_Form_Element
                 </div>
             </div>
         </fieldset>
+        
         <div id="dialog-map" title="Edit settings marker" class="form-dialog">
             <div class="dialog-inner">
                 <div id="map"></div>
                 <div class="field-wrapper field-search">
-                    <input type="text" placeholder="City, address..." class="field-text field-text-map-search" />
+                    <input type="text" placeholder="$translatedWording" class="field-text field-text-map-search" />
                     <span class="ui-icon ui-icon-search"></span>
                 </div>
             </div>
             <div class="dialog-buttons">
                 <button id="ui-button-cancel" class="ui-button ui-button-nicy ui-button-text-icon" role="button" aria-disabled="false">
                     <span class="ui-button-icon-primary ui-icon ui-icon-red ui-icon-nicy-cross"></span>
-                    <span class="ui-button-text ui-button-text-red">Cancel</span>
+                    <span class="ui-button-text ui-button-text-red">$translatedCancel</span>
                 </button>
                 <button id="ui-button-save" class="ui-button ui-button-nicy ui-button-text-icon" role="button" aria-disabled="false">
                     <span class="ui-button-icon-primary ui-icon ui-icon-nicy-arrow-right"></span>
-                    <span class="ui-button-text">Save</span>
+                    <span class="ui-button-text">$translatedSave</span>
                 </button>
             </div>
         </div>
@@ -106,11 +114,18 @@ class Centurion_Form_Element_MapPicker extends Zend_Form_Element
 EOS;
     }
 
+    /**
+     * @return mixed|string
+     */
     public function getValue()
     {
         return $this->_longitude . ',' . $this->_longitude;
     }
 
+    /**
+     * @param mixed $value
+     * @return void|Zend_Form_Element
+     */
     public function setValue($value)
     {
         if (is_array($value)) {
@@ -123,12 +138,19 @@ EOS;
         }
     }
 
+    /**
+     * @param string $locale
+     * @return $this
+     */
     public function setLocale($locale = null)
     {
         $this->_locale = $locale;
         return $this;
     }
 
+    /**
+     * @return string the current local
+     */
     public function getLocale()
     {
         if ($this->_locale == null) {
