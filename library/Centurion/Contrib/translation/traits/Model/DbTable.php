@@ -193,28 +193,10 @@ class Translation_Traits_Model_DbTable extends Core_Traits_Version_Model_DbTable
 //        else
 //            $method = 'joinInner';
             
-        if (in_array($childName, $select->getPart(Centurion_Db_Table_Select::FROM))) {
-            echo '<pre>';
-            $e = new Exception();
-            print_r($e->getTraceAsString());
-            die();
-        }
-        
-        try {
             $select->$method(sprintf('%s AS ' . $childName, $this->_modelInfo[Centurion_Db_Table_Abstract::NAME]),
                              new Zend_Db_Expr(sprintf($childName . '.original_id = %s.id AND ' . $childName . '.language_id = %s', $alias, $currentLanguage['id'])),
                              new Zend_Db_Expr(implode(', ', $childCols)));
                              
-        }catch (Exception $e) {
-//            var_dump(array_key_exists($childName, $select->getPart(Centurion_Db_Table_Select::FROM)));
-//            var_dump($select->getPart(Centurion_Db_Table_Select::FROM));
-            echo '<pre>';
-            echo $e->getMessage();
-            echo "\n";
-            echo $e->getTraceAsString();
-            echo $select->__toString()."\n";
-            die();
-        }
         if (!$this->_model->ifNotExistsGetDefault()) {
             $select->where(new Zend_Db_Expr(sprintf($childName . '.language_id = %u OR %s.language_id = %u', $currentLanguage['id'], $alias, $currentLanguage['id'])));
         }

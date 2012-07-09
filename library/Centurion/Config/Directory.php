@@ -33,6 +33,12 @@ class Centurion_Config_Directory
 {
     protected static $_environment = null;
 
+    /**
+     * @static
+     * @param array $Arr1
+     * @param array $Arr2
+     * @return array
+     */
     public static function mergeArrays($Arr1, $Arr2)
     {
         foreach($Arr2 as $key => $value) {
@@ -137,6 +143,10 @@ class Centurion_Config_Directory
     }
 
     /**
+     * @static
+     * @param $file
+     * @return mixed|Zend_Config_Ini|Zend_Config_Xml
+     * @throws Zend_Application_Exception
      * @see Zend_Application->_loadConfig();
      */
     protected static function _loadConfig($file) {

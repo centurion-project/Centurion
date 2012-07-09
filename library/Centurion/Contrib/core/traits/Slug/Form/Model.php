@@ -1,7 +1,6 @@
 <?php
 class Core_Traits_Slug_Form_Model extends Centurion_Traits_Form_Abstract
 {
-    
     public function __construct($form)
     {
         parent::__construct($form);
@@ -14,7 +13,7 @@ class Core_Traits_Slug_Form_Model extends Centurion_Traits_Form_Abstract
     {
         if (isset($this->_form->showSlugField)) {
             $elementLabels = $this->_elementLabels;
-            $elementLabels['slug'] = 'Slug';
+            $elementLabels['slug'] = $this->_translate('Slug');
             $this->_elementLabels = $elementLabels;
         }
     }

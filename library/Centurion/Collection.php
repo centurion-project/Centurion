@@ -44,7 +44,7 @@ class Centurion_Collection extends Centurion_Access implements Countable, Iterat
 
     /**
      * @param array $data
-     * @return Centurion_Collection
+     * @return $this
      */
     public function setData(array $data)
     {
@@ -138,7 +138,7 @@ class Centurion_Collection extends Centurion_Access implements Countable, Iterat
 
     /**
      * @param mixed $value
-     * @return Centurion_Collection
+     * @return $this
      */
     public function push($value)
     {
@@ -148,7 +148,7 @@ class Centurion_Collection extends Centurion_Access implements Countable, Iterat
 
     /**
      * @param mixed $value
-     * @return Centurion_Collection
+     * @return $this
      */
     public function unshift($value)
     {
@@ -181,7 +181,7 @@ class Centurion_Collection extends Centurion_Access implements Countable, Iterat
      *
      * @param string $key Key
      * @param string $value Value
-     * @return Centurion_Collection
+     * @return $this
      */
     public function set($key, $value)
     {
@@ -198,7 +198,7 @@ class Centurion_Collection extends Centurion_Access implements Countable, Iterat
      * Remove a value from the stack with a key.
      *
      * @param string $key Key for removing the element
-     * @return Centurion_Collection
+     * @return $this
      */
     public function remove($key)
     {

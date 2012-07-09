@@ -146,6 +146,10 @@ abstract class Centurion_Form_Model_Abstract extends Centurion_Form
      */
     protected $_elementLabels = array();
 
+    /**
+     * @var null
+     * @todo this seems to be unused
+     */
     protected $_fields = null;
 
     protected $_values = null;
@@ -206,7 +210,7 @@ abstract class Centurion_Form_Model_Abstract extends Centurion_Form
         $this->_postGenerate();
 
     }
-    
+
     public function __wakeup()
     {
         if (null !== $this->getElement('_XSRF')) {
@@ -214,11 +218,6 @@ abstract class Centurion_Form_Model_Abstract extends Centurion_Form
             $this->addElement('Hash', '_XSRF', array('salt' => $this->getAttrib('id')));
         }
     }
-
-//    public function __call($function, $args)
-//    {
-//
-//    }
 
     /**
      * Retrieve instance of model form.
@@ -330,7 +329,10 @@ abstract class Centurion_Form_Model_Abstract extends Centurion_Form
     {
         $this->_instance = $instance;
         if (null !== $instance) {
-            $this->addElement('Hash', '_XSRF', array('salt' => $this->getAttrib('id') . '_' . $instance->id));
+            if ($el = $this->getElement('_XSRF')) {
+                $this->addElement('Hash', '_XSRF', array('salt' => $this->getAttrib('id') . '_' . $instance->id));
+            }
+            
             $this->populate($instance->toArray());
 
             $this->setSubInstance()
@@ -356,6 +358,9 @@ abstract class Centurion_Form_Model_Abstract extends Centurion_Form
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function setSubInstance()
     {
         $parentReferenceMap = $this->getModel()->getReferenceMap();
@@ -368,6 +373,10 @@ abstract class Centurion_Form_Model_Abstract extends Centurion_Form
         return $this;
     }
 
+    /**
+     * @param Centurion_Db_Table_Row_Abstract|null $instance
+     * @return $this
+     */
     public function populateWithInstance(Centurion_Db_Table_Row_Abstract $instance = null)
     {
         if (null !== $instance) {
@@ -392,7 +401,7 @@ abstract class Centurion_Form_Model_Abstract extends Centurion_Form
      */
     public function hasInstance()
     {
-        return null !== $this->_instance;
+        return (null !== $this->_instance);
     }
 
     /**
@@ -407,6 +416,10 @@ abstract class Centurion_Form_Model_Abstract extends Centurion_Form
         return $this->_model;
     }
 
+    /**
+     * @param Centurion_Db_Table_Abstract $model
+     * @return $this
+     */
     public function setModel(Centurion_Db_Table_Abstract $model)
     {
         $this->_model = $model;
@@ -440,6 +453,10 @@ abstract class Centurion_Form_Model_Abstract extends Centurion_Form
         return $this->_instance;
     }
 
+    /**
+     * @param null|array $values
+     * @return Centurion_Db_Table_Row_Abstract|null
+     */
     public function saveInstance($values = null)
     {
         if ($values === null) {
@@ -525,6 +542,10 @@ abstract class Centurion_Form_Model_Abstract extends Centurion_Form
         return $this->_cleanValues(parent::getValues($suppressArrayNotation));
     }
 
+    /**
+     * @param array|null $values
+     * @return $this
+     */
     public function setValues($values)
     {
         $this->_values = $values;
@@ -532,6 +553,10 @@ abstract class Centurion_Form_Model_Abstract extends Centurion_Form
         return $this;
     }
 
+    /**
+     * @param string $columnName
+     * @return bool
+     */
     public function isExcluded($columnName)
     {
         if (in_array($columnName, $this->_exclude)) {
@@ -545,6 +570,10 @@ abstract class Centurion_Form_Model_Abstract extends Centurion_Form
         return false;
     }
 
+    /**
+     * @param string $columnName
+     * @return bool
+     */
     public function isDisabled($columnName)
     {
         if (in_array($columnName, $this->_disable)) {
@@ -580,6 +609,7 @@ abstract class Centurion_Form_Model_Abstract extends Centurion_Form
 
         return $this;
     }
+
 
     public function setDisable(array $disable)
     {
@@ -633,12 +663,11 @@ abstract class Centurion_Form_Model_Abstract extends Centurion_Form
         return $this->_isNew;
     }
 
-    protected function _doSave($adapter = null)
+    /**
+     * @return $this
+     */
+    protected function _doSave()
     {
-        if (null === $adapter) {
-            $adapter = $this->getModel()->getAdapter();
-        }
-
         $this->saveInstance();
 
         return $this;
@@ -869,10 +898,10 @@ abstract class Centurion_Form_Model_Abstract extends Centurion_Form
             $refForeignArray = $intersectionTable->getReferenceMap($manyDependentTable['refforeign']);
             /*
             * TODO : BEURK !
-            * Rendre cette partie plus générique :
-            * Renvoyer du formulaire un objet serialisé qui permettrait de récupérer les infos
-            * nécessaires à l'enregistrement d'une row dans la table d'intersection dans le cas où
-            * celle ci est identifiée par plusieurs colonnes.
+            * Rendre cette partie plus gÃ©nÃ©rique :
+            * Renvoyer du formulaire un objet serialisÃ© qui permettrait de rÃ©cupÃ©rer les infos
+            * nÃ©cessaires Ã  l'enregistrement d'une row dans la table d'intersection dans le cas oÃ¹
+            * celle ci est identifiÃ©e par plusieurs colonnes.
             */
             if ($refForeignArray['columns'][0] == 'proxy_pk' && $refForeignArray['columns'][1] == 'proxy_model') {
                 $select->filter(array(

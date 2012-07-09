@@ -4,6 +4,7 @@ class Media_Model_DbTable_MultiuploadTicket extends Centurion_Db_Table_Abstract
 {
     /*
      * TTL in second
+     * @var int
      */
     protected $_ttl = 600;
 

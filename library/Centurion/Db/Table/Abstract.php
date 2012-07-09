@@ -97,7 +97,7 @@ abstract class Centurion_Db_Table_Abstract extends Zend_Db_Table_Abstract implem
     protected $_traitQueue;
 
     private static $_filtersOn = self::FILTERS_ON;
-    private static $_previousFiltersStatus = self::FILTERS_ON;
+    private static $_previousFiltersStatus = array(self::FILTERS_ON);
 
     public static function getFiltersStatus()
     {
@@ -112,12 +112,17 @@ abstract class Centurion_Db_Table_Abstract extends Zend_Db_Table_Abstract implem
 
     public static function saveFiltersStatus()
     {
-        self::$_previousFiltersStatus = self::$_filtersOn;
+        self::$_previousFiltersStatus[] = self::$_filtersOn;
+
     }
 
     public static function restoreFiltersStatus()
     {
-        self::$_filtersOn = self::$_previousFiltersStatus;
+        if(count(self::$_previousFiltersStatus)){
+            self::$_filtersOn = array_pop(self::$_previousFiltersStatus);
+        } else{
+            throw new Exception('Error, there are no previous status in the stack');
+        }
     }
 
     public static function switchFiltersStatus()

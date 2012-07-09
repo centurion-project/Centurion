@@ -22,7 +22,7 @@ class Centurion_View_Helper_Partial extends Zend_View_Helper_Partial
      *                              view. Otherwise, the module in which the
      *                              partial resides
      * @param  array $model Variables to populate in the view
-     * @return string|Zend_View_Helper_Partial
+     * @return string|$this
      */
     public function partial($name = null, $module = null, $model = null)
     {

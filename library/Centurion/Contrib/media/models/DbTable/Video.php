@@ -40,6 +40,9 @@ class Media_Model_DbTable_Video extends Centurion_Db_Table_Abstract
 
     protected $_name = 'media_video';
 
+    /**
+     * @var Centurion_Movie_Flv
+     */
     protected $_movie = null;
     
     public function insert(array $data)
@@ -58,7 +61,11 @@ class Media_Model_DbTable_Video extends Centurion_Db_Table_Abstract
         
         return parent::insert($data);
     }
-    
+
+    /**
+     * @param string $filename
+     * @todo: We should not use media.uploads_dir here.
+     */
     protected function _loadIfNotLoaded($filename)
     {
         if ($this->_movie === null) {
@@ -67,25 +74,40 @@ class Media_Model_DbTable_Video extends Centurion_Db_Table_Abstract
             );
         }
     }
-    
+
+    /**
+     * @param $filename
+     * @return int
+     */
     protected function _getWidth($filename)
     {
         $this->_loadIfNotLoaded($filename);
         return $this->_movie->getMetadata('width');
     }
-    
+
+    /**
+     * @param $filename
+     * @return int
+     */
     protected function _getHeight($filename)
     {
         $this->_loadIfNotLoaded($filename);
         return $this->_movie->getMetadata('height');
     }
-    
+
+    /**
+     * @param $filename
+     * @return int
+     */
     protected function _getDuration($filename)
     {
         $this->_loadIfNotLoaded($filename);
         return $this->_movie->getMetadata('duration');
     }
-    
+
+    /**
+     * @return array
+     */
     public function getMimeTypes()
     {
         return array(

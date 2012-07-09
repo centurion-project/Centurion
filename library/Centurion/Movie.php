@@ -26,6 +26,11 @@
  */
 class Centurion_Movie
 {
+    /**
+     * @static
+     * @param $filename
+     * @return Centurion_Movie_Flv
+     */
     public static function factory($filename)
     {
         /**
