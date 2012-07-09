@@ -66,6 +66,12 @@ class Centurion_Controller_Mptt extends Centurion_Controller_Action
 
     protected $_recursiveDelete = true;
 
+    
+    /**
+     * @var array extra param to pass to each request
+     */
+    protected $_extraParam = array();
+
     public function init()
     {
         $this->view->infos = array();
