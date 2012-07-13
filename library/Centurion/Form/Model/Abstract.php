@@ -1078,7 +1078,10 @@ abstract class Centurion_Form_Model_Abstract extends Centurion_Form
                 continue;
             }
 
-
+            if (!isset($this->_elementLabels[$key])) {
+                continue;
+            }
+            
             $options = array(
                     'label'         =>  $this->_getElementLabel($key)
                 );
