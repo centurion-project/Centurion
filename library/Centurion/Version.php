@@ -26,7 +26,7 @@
  */
 final class Centurion_Version
 {
-    const VERSION = '0.2';
+    const VERSION = '0.3';
 
     /**
      * The latest stable version Zend Framework available
