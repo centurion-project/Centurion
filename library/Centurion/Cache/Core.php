@@ -37,7 +37,11 @@ class Centurion_Cache_Core extends Zend_Cache_Core
         
         return $data;
     }
-    
+
+    /**
+     * @param $tag
+     * @return $this
+     */
     public function addTag($tag)
     {
         Centurion_Cache_TagManager::addTag($tag);

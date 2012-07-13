@@ -39,6 +39,10 @@ class Centurion_View_Helper_SmartTextCrop
         return 0 !== preg_match('(<[^>]+>)', $string, $matches);
     }
 
+    /**
+     * @param $tag
+     * @return $this
+     */
     protected function _openTag($tag)
     {
         $tag = trim($tag);
@@ -115,8 +119,12 @@ class Centurion_View_Helper_SmartTextCrop
     }
 
     /**
-     *
-     * @return String
+     * @param string $html
+     * @param int $limit
+     * @param bool $cropWord
+     * @param bool $cropTag
+     * @param array $tagWhilteList
+     * @return $this|string
      */
     public function smartTextCrop($html = '', $limit = 0, $cropWord = false, $cropTag = true, $tagWhilteList = array())
     {

@@ -242,6 +242,7 @@ class Check {
                     );
                 }
             } catch (Exception $e) {
+                $this->_dbRessource = null;
                 if ($e->getCode() == 1049) {
                     $this->_checklist[] = array(
                         'code' => -1,
@@ -249,6 +250,14 @@ class Check {
                         'isNotSecure' => true,
                         'text' => 'BDD  ' . $config['resources']['db']['params']['dbname'] . ' does not exists',
                         'alt' => '',
+                    );
+                } if( $e->getCode() == 1045) {
+                    $this->_checklist[] = array(
+                        'code' => -1,
+                        'canBeBetter' => true,
+                        'isNotSecure' => true,
+                        'text' => 'Your mysql credential is not valid.',
+                        'alt' => 'Change it in application/db.ini',
                     );
                 } else {
                     throw $e;
@@ -459,10 +468,10 @@ class Check {
 
         $this->_checkRedirect();
 
+        $this->_checkPermission();
         $this->_checkDbConnect();
         $this->_checkDbTable();
 
-        $this->_checkPermission();
         $this->_checkDocumentRoot();
     }
 

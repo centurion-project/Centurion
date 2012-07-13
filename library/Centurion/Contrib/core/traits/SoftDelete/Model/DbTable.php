@@ -30,6 +30,9 @@ class Core_Traits_SoftDelete_Model_DbTable extends Centurion_Traits_Model_DbTabl
             return;
         }
 
+        /**
+         * @TODO: add manage of alias
+         */
         $select->where($name . '.is_deleted  = 0');
     }
 

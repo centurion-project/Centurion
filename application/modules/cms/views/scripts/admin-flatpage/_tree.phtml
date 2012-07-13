@@ -23,9 +23,9 @@
             </div>
 
             <?php if ($children = $page->getChildren()): ?>
-            <?php if ($children->count()): ?>
-            <?php echo $this->partial('admin-flatpage/_tree.phtml', array_merge($this->getVars(), array('tree' => $children, 'isRoot' => false))); ?>
-            <?php endif ?>
+                <?php if ($children->count()): ?>
+                    <?php echo $this->partial('admin-flatpage/_tree.phtml', array_merge($this->getVars(), array('tree' => $children, 'isRoot' => false))); ?>
+                <?php endif ?>
             <?php endif ?>
         </li>
     <?php endforeach ?>

@@ -32,7 +32,15 @@
 class Centurion_Config_Directory
 {
     protected static $_environment = null;
+    
+    protected static $_noCache = false;
 
+    /**
+     * @static
+     * @param array $Arr1
+     * @param array $Arr2
+     * @return array
+     */
     public static function mergeArrays($Arr1, $Arr2)
     {
         foreach($Arr2 as $key => $value) {
@@ -72,9 +80,14 @@ class Centurion_Config_Directory
 
             $backendOptions = array('cache_dir' => APPLICATION_PATH . '/../data/cache/config/' );
             $frontendOptions = array('master_files' => array_values($tabFile), 'automatic_serialization' => true, 'cache_id_prefix' => str_replace('-', '_', $environment));
-            $cacheConfig = Zend_Cache::factory('File', 'File', $frontendOptions, $backendOptions);
+            
+            try {
+                $cacheConfig = Zend_Cache::factory('File', 'File', $frontendOptions, $backendOptions);
+            } catch (Exception $e) {
+                self::$_noCache = true;
+            }
 
-            if (!($config = $cacheConfig->load(md5(implode('|', $tabFile))))) {
+            if (self::$_noCache || !($config = $cacheConfig->load(md5(implode('|', $tabFile))))) {
                 $config = array();
 
                 foreach($tabFile as $file) {
@@ -90,7 +103,9 @@ class Centurion_Config_Directory
                     }
                 }
 
-                $cacheConfig->save($config);
+                if (!self::$_noCache) {
+                    $cacheConfig->save($config);
+                }
             }
 
             if ($recursivelyLoadModuleConfig && isset($config['resources']) && isset($config['resources']['modules'])) {
@@ -137,6 +152,10 @@ class Centurion_Config_Directory
     }
 
     /**
+     * @static
+     * @param $file
+     * @return mixed|Zend_Config_Ini|Zend_Config_Xml
+     * @throws Zend_Application_Exception
      * @see Zend_Application->_loadConfig();
      */
     protected static function _loadConfig($file) {

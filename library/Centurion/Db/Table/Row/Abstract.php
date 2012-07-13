@@ -223,14 +223,30 @@ abstract class Centurion_Db_Table_Row_Abstract extends Zend_Db_Table_Row_Abstrac
         $manyDependentTables = $this->getTable()->info('manyDependentTables');
         if (isset($manyDependentTables[$columnName])) {
             if (!isset($this->_children[$columnName])) {
+			    $data = $manyDependentTables[$columnName];
                 Centurion_Db_Table_Abstract::setFiltersStatus(true);
+                $select = Centurion_Db::getSingletonByClassName($data['refTableClass'])->select();
+
+                $refForeignCond = null;
+
+                if (isset($data['refforeigncond'])) {
+                    $refForeignCond = $data['refforeigncond'];
+                }
+
+                //TODO: this should be remove after. It's only for retrocompatibility
+                if (!isset($data['refforeign']) && isset($data['columns'])) {
+                    $data['refforeign'] = substr($data['columns']['foreign'], 0, -3);
+                    $data['reflocal'] = substr($data['columns']['local'], 0, -3);
+                }
+
                 $this->_children[$columnName]
-                    = $this->findManyToManyRowset($manyDependentTables[$columnName]['refTableClass'],
-                    $manyDependentTables[$columnName]['intersectionTable'],
-                    substr($manyDependentTables[$columnName]['columns']['local'], 0, -3),
-                    substr($manyDependentTables[$columnName]['columns']['foreign'], 0, -3)
-                );
-                $this->_children[$columnName]->setIntersectionColumns($manyDependentTables[$columnName]['columns']);
+                    = $this->findManyToManyRowset($data['refTableClass'],
+                                                  $data['intersectionTable'],
+                                                  $data['reflocal'],
+                                                  $data['refforeign'],
+                                                  $select, $refForeignCond);
+                //todo: fix this
+                //$this->_children[$columnName]->setIntersectionColumns($manyDependentTables[$extractedColumnName]['columns']);
                 Centurion_Db_Table_Abstract::restoreFiltersStatus();
             }
 

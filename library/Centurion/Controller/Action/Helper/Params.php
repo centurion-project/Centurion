@@ -146,6 +146,9 @@ class Centurion_Controller_Action_Helper_Params extends Zend_Controller_Action_H
         return $this->getRequest()->getPost();
     }
 
+    /**
+     * @return array
+     */
     public function direct()
     {
         return $this->getSubmitParams();

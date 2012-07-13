@@ -1,4 +1,30 @@
 <?php
+/**
+ * Centurion
+ *
+ * LICENSE
+ *
+ * This source file is subject to the new BSD license that is bundled
+ * with this package in the file LICENSE.txt.
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@centurion-project.org so we can send you a copy immediately.
+ *
+ * @category    Centurion
+ * @package     Centurion_Controller
+ * @copyright   Copyright (c) 2008-2011 Octave & Octave (http://www.octaveoctave.com)
+ * @license     http://centurion-project.org/license/new-bsd     New BSD License
+ * @version     $Id$
+ */
+
+/**
+ * @category    Centurion
+ * @package     Centurion_Controller
+ * @subpackage  Centurion_Controller_Router
+ * @copyright   Copyright (c) 2008-2011 Octave & Octave (http://www.octaveoctave.com)
+ * @license     http://centurion-project.org/license/new-bsd     New BSD License
+ * @author      Laurent Chenay <lc@octaveoctave.com>
+ */
 class Centurion_Controller_Router_Route_Module extends Zend_Controller_Router_Route_Module
 {
     
@@ -64,24 +90,32 @@ class Centurion_Controller_Router_Route_Module extends Zend_Controller_Router_Ro
                     $url .= '/' . $arrayValue;
                 }
             } else {
-                if ($encode) $value = urlencode(urlencode($value));
+                if ($encode) {
+                    $value = urlencode(urlencode($value));
+                }
                 $url .= '/' . $key;
                 $url .= '/' . $value;
             }
         }
 
         if (!empty($url) || $action !== $this->_defaults[$this->_actionKey]) {
-            if ($encode) $action = urlencode($action);
+            if ($encode) {
+                $action = urlencode($action);
+            }
             $url = '/' . $action . $url;
         }
 
         if (!empty($url) || $controller !== $this->_defaults[$this->_controllerKey]) {
-            if ($encode) $controller = urlencode($controller);
+            if ($encode) {
+                $controller = urlencode($controller);
+            }
             $url = '/' . $controller . $url;
         }
 
         if (isset($module)) {
-            if ($encode) $module = urlencode($module);
+            if ($encode) {
+                $module = urlencode($module);
+            }
             $url = '/' . $module . $url;
         }
 

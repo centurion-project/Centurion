@@ -7,7 +7,8 @@ class Centurion_View_Filter_Extend
     /**
      * Receive a reference of the view upon instantiation.
      *
-     * @param Zend_View_Interface$view
+     * @param Zend_View_Interface $view
+     * @return $this
      */
     public function setView($view)
     {

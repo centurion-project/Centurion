@@ -16,7 +16,5 @@ class IndexController extends Centurion_Controller_Action
     {
         // action body
     }
-
-
 }
 

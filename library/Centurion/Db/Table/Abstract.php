@@ -120,8 +120,7 @@ abstract class Centurion_Db_Table_Abstract extends Zend_Db_Table_Abstract implem
     {
         if(count(self::$_previousFiltersStatus)){
             self::$_filtersOn = array_pop(self::$_previousFiltersStatus);
-        }
-        else{
+        } else{
             throw new Exception('Error, there are no previous status in the stack');
         }
     }

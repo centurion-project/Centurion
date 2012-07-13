@@ -58,7 +58,7 @@ class Centurion_Application extends Zend_Application
      * Set options for Centurion_Config_Manager
      *
      * @param array $options Options
-     * @return Centurion_Application
+     * @return $this
      */
     public function setOptions(array $options)
     {
