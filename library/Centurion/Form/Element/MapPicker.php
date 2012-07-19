@@ -59,6 +59,9 @@ class Centurion_Form_Element_MapPicker extends Zend_Form_Element
         $translatedWording = $view->escape($view->translate('City, address...'));
         $translatedCancel = $view->translate('Cancel');
         $translatedSave = $view->translate('Save');
+
+        $longitudeValue = $this->_longitude;
+        $latitudeValue = $this->_latitude;
         
         return <<<EOS
     <div class="form-item form-location">
@@ -69,13 +72,13 @@ class Centurion_Form_Element_MapPicker extends Zend_Form_Element
                     <div class="form-item">
                         <label for="coord_long">Longitude</label>
                         <div class="field-wrapper">
-                             <input type="text" name="$longName" id="$longId" value="4.0564" class=" field-text" />
+                             <input type="text" name="$longName" id="$longId" value="$longitudeValue" class=" field-text" />
                         </div>
                     </div>
                     <div class="form-item">
                         <label for="coord_lat">Latitude</label>
                         <div class="field-wrapper">
-                             <input type="text" name="$latName" id="$latId" value="9.70676" class=" field-text" />
+                             <input type="text" name="$latName" id="$latId" value="$latitudeValue" class=" field-text" />
                         </div>
                     </div>
                     <div class="actions">
