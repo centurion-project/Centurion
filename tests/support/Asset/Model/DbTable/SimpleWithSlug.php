@@ -22,6 +22,5 @@ EOS
     protected function _destructTable()
     {
         $this->getDefaultAdapter()->query('Drop table test_simple_with_slug');
-        echo 'ici';
     }
 }
