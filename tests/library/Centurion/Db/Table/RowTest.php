@@ -215,6 +215,44 @@ class Centurion_Db_Table_RowTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * @covers Centurion_Db_Table_Row_Abstract::__isset
+     */
+    public function testFunction__Isset()
+    {
+        $table = new Asset_Model_DbTable_Simple();
+        $row = $table->createRow();
+        $row->save();
+        $row->title = 'title';
+
+        // this column exists
+        $this->assertTrue(isset($row->title), 'calling isset on a set column returned false');
+
+        // this column doesn't exist
+        $this->assertFalse(isset($row->unexistent), 'calling isset on an unset column returned true');
+
+        $tableWithRef = new Asset_Model_DbTable_WithRef();
+        $withRef = $tableWithRef->createRow();
+        $withRef->simple_id = $row->id;
+        $withRef->save();
+
+        // this column is a referenceMap
+        $this->assertTrue(isset($withRef->simple), 'calling isset on a reference returned false');
+
+        // this column is a reference field
+        $this->assertTrue(isset($withRef->simple__title), 'calling isset on a reference\'s field returned false');
+
+        $tableSpecialGet = new Asset_Model_DbTable_WithSpecialGet();
+        $withSpecialGet = $tableSpecialGet->createRow();
+        $withSpecialGet->save();
+
+        // this column is a special get with a methodName as string
+        $this->assertTrue(isset($withSpecialGet->method), 'Calling isset on a specialget by string returned false');
+
+        // this column is a special get with a callable array as parameter
+        $this->assertTrue(isset($withSpecialGet->arrayGet), 'Calling isset on a specialget by callable array returned false');
+    }
+
+    /**
      * @covers Centurion_Db_Table_Row_Abstract::getModifiedData
      * @covers Centurion_Db_Table_Row_Abstract::reset
      */
