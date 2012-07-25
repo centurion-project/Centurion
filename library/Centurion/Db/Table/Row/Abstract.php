@@ -385,8 +385,12 @@ abstract class Centurion_Db_Table_Row_Abstract extends Zend_Db_Table_Row_Abstrac
 
         //Test special get column
         if (array_key_exists($columnName, $this->_specialGets)) {
-            if (!method_exists($this, $this->_specialGets[$columnName])) {
-                throw new Centurion_Db_Table_Exception(sprintf("Specified method \"%s\" does not exist", $this->_specialGets[$columnName]));
+            $callbackValue = $this->_specialGets[$columnName];
+            if(is_string($callbackValue)) {
+                $callbackValue = array($this, $callbackValue);
+            }
+            if(!is_callable($callbackValue)) {
+                throw new Centurion_Db_Table_Exception(sprintf("Specified callback uncallable for %s", $columnName));
             }
             return true;
         }
