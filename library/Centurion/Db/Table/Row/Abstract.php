@@ -238,10 +238,24 @@ abstract class Centurion_Db_Table_Row_Abstract extends Zend_Db_Table_Row_Abstrac
                     $data['refforeign'] = substr($data['columns']['foreign'], 0, -3);
                     $data['reflocal'] = substr($data['columns']['local'], 0, -3);
                 }
+                
+                //Support of ordered many to many to avoid regression
+                $intersectionTable = $data['intersectionTable'];
+                if (is_string($intersectionTable)) {
+              	    //this operation is also performed in the next call to findManyToManyRowset()
+                    $intersectionTable = $this->_getTableFromString($intersectionTable);
+                }
+
+                if (in_array('order', $intersectionTable->info('cols'))) {
+                    // Use adapter from intersection table to ensure correct query construction
+	            $interName = $intersectionTable->info(Centurion_Db_Table::NAME);
+              	    //findManyToManyRowset() not perform this because we send a select object to the method
+                    $select->order($interName.'.order asc');
+                }
 
                 $this->_children[$columnName]
                     = $this->findManyToManyRowset($data['refTableClass'],
-                                                  $data['intersectionTable'],
+                                                  $intersectionTable,
                                                   $data['reflocal'],
                                                   $data['refforeign'],
                                                   $select, $refForeignCond);
