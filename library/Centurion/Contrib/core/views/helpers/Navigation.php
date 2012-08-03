@@ -53,6 +53,15 @@ class Centurion_View_Helper_Navigation extends Zend_View_Helper_Navigation
             return $this->_helpers[$proxy];
         }
 
+        //To keep compliance with normal behavior of Zend_View_Helper_Navigation
+        //(Because, the namespace of the Zend Navigation was not registered into the plugin loader)
+        if (!$this->view->getPluginLoader('helper')->getPaths(Zend_View_Helper_Navigation::NS)) {
+            $this->view->addHelperPath(
+                str_replace('_', '/', Zend_View_Helper_Navigation::NS),
+                Zend_View_Helper_Navigation::NS);
+        }
+        //End support for the normal behavior
+
         if (!$this->view->getPluginLoader('helper')->getPaths(self::NS)) {
             $this->view->addHelperPath(
                     str_replace('_', '/', self::NS),
