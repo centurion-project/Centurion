@@ -411,10 +411,12 @@ class Centurion_Controller_CRUD extends Centurion_Controller_AGL
     protected function _renderForm($form)
     {
         $this->view->form = $form;
-        $this->view->formViewScript = 'grid/_form.phtml';
 
         $this->_preRenderForm();
 
+        $this->view->formViewScript = 'grid/_form.phtml';
+        
+        
         $script = substr($this->view->selectScript(array($this->_formViewScript, 'grid/form.phtml')), 0, -6);
         //$script = substr($this->view->selectScript(array(sprintf('%s/form.phtml', $this->_request->getControllerName()), 'grid/form.phtml')), 0, -6);
         $this->render($script, true, true);
