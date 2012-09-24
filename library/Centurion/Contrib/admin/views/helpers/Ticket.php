@@ -49,6 +49,8 @@ class Admin_View_Helper_Ticket extends Zend_View_Helper_Abstract
                 unset($actionUrl['ticket']);
             $actionUrl = $this->view->url($actionUrl);
         }
+
+        $actionUrl = preg_replace ('/\?ticket=[a-zA-Z0-9]{32}/', '', $actionUrl);        
         
         return $actionUrl;
     }
