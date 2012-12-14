@@ -398,6 +398,44 @@ class Centurion_Db_Table_Select extends Zend_Db_Table_Select implements Countabl
 
         $interTable = Centurion_Db::getSingletonByClassName($ref['intersectionTable']);
         $interTableName = $interTable->info(Centurion_Db_Table_Abstract::NAME);
+        $interRefMap = $interTable->info(Centurion_Db_Table_Abstract::REFERENCE_MAP);
+
+        //To support new pattern for many to many where developper define references in the intersection table,
+        //and not directly local and foreign columns in the interserction table
+        $interColumnLocal = null;
+        if(isset($ref['columns']['local'])){
+            $interColumnLocal = $ref['columns']['local'];
+        }
+        elseif(isset($ref['reflocal'])){
+            $interColumnLocal = $interRefMap[$ref['reflocal']]['columns'];
+        }
+        else{
+            throw new Exception(
+                sprintf(
+                    'Referenced local column in the intersection table is not defined for the rule ',
+                    $rule,
+                    get_class($localTable)
+                )
+            );
+        }
+
+        $interColumnForeign = null;
+        if(isset($ref['columns']['foreign'])){
+            $interColumnForeign = $ref['columns']['foreign'];
+        }
+        elseif(isset($ref['reflocal'])){
+            $interColumnForeign = $interRefMap[$ref['refforeign']]['columns'];
+        }
+        else{
+            throw new Exception(
+                sprintf(
+                    'Referenced foreign column in the intersection table is not defined for the rule ',
+                    $rule,
+                    get_class($localTable)
+                )
+            );
+        }
+        //End support for the new many to many pattern
 
         $refTable = Centurion_Db::getSingletonByClassName($ref['refTableClass']);
         $refTableName = $refTable->info(Centurion_Db_Table_Abstract::NAME);
@@ -425,7 +463,7 @@ class Centurion_Db_Table_Select extends Zend_Db_Table_Select implements Countabl
 
         do {
             $joinCond = sprintf('%s.%s = %s.%s', $tableName,
-                                                 $this->_adapter->quoteIdentifier($ref['columns']['local']),
+                                                 $this->_adapter->quoteIdentifier($interColumnLocal),
                                                  $this->_adapter->quoteIdentifier($localTableName),
                                                  $this->_adapter->quoteIdentifier($localPrimary));
 
@@ -440,7 +478,7 @@ class Centurion_Db_Table_Select extends Zend_Db_Table_Select implements Countabl
             if ($interTableName !== $this->_uniqueCorrelation($interTableName)) {
                 $quotedInterTableName = $this->_adapter->quoteIdentifier($this->_uniqueCorrelation($interTableName));
                 $joinCond = sprintf('%s.%s = %s.%s', $quotedInterTableName,
-                                                 $this->_adapter->quoteIdentifier($ref['columns']['local']),
+                                                 $this->_adapter->quoteIdentifier($interColumnLocal),
                                                  $this->_adapter->quoteIdentifier($localTableName),
                                                  $this->_adapter->quoteIdentifier($localPrimary));
             } else {
@@ -451,7 +489,7 @@ class Centurion_Db_Table_Select extends Zend_Db_Table_Select implements Countabl
         }
 
         $joinCond = sprintf('%s.%s = %s.%s', $interTableName,
-                                             $this->_adapter->quoteIdentifier($ref['columns']['foreign']),
+                                             $this->_adapter->quoteIdentifier($interColumnForeign),
                                              $this->_adapter->quoteIdentifier($refTableName),
                                              $this->_adapter->quoteIdentifier($refPrimary));
 
@@ -465,7 +503,7 @@ class Centurion_Db_Table_Select extends Zend_Db_Table_Select implements Countabl
             if ($refTableName !== $this->_uniqueCorrelation($refTableName)) {
                 $quotedRefTableName = $this->_adapter->quoteIdentifier($this->_uniqueCorrelation($refTableName));
                 $joinCond = sprintf('%s.%s = %s.%s', $quotedInterTableName,
-                                             $this->_adapter->quoteIdentifier($ref['columns']['foreign']),
+                                             $this->_adapter->quoteIdentifier($interColumnForeign),
                                              $quotedRefTableName,
                                              $this->_adapter->quoteIdentifier($refPrimary));
             }
