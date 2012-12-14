@@ -228,7 +228,7 @@ class Admin_Form_Filter extends Centurion_Form
                 case Centurion_Controller_CRUD::FILTER_BEHAVIOR_CONTAINS:
                     $tabs = explode(' ', $value);
                     foreach ($tabs as $value) {
-                        $sqlFilter[] = array($this->_filters[$key]['column'] . Centurion_Db_Table_Select::RULES_SEPARATOR . Centurion_Db_Table_Select::OPERATOR_CONTAINS, '%' . $value . '%');
+                        $sqlFilter[$this->_filters[$key]['column'] . Centurion_Db_Table_Select::RULES_SEPARATOR . Centurion_Db_Table_Select::OPERATOR_CONTAINS][] = '%' . $value . '%';
                     }
                     break;
                 case Centurion_Controller_CRUD::FILTER_BEHAVIOR_IN:
