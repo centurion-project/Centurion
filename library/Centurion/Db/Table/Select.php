@@ -690,6 +690,7 @@ class Centurion_Db_Table_Select extends Zend_Db_Table_Select implements Countabl
                     $foreignTable = Centurion_Db::getSingletonByClassName($dependentRefMap[$rule[1]]['refTableClass']);
                     $uniqName = $this->addDependentTable($rule[1], $localTable, array(), $rule[0]);
                 } else {
+                    $uniqName = $this->_adapter->quoteIdentifier($this->getTable()->info('name'));
                     $sqlField = sprintf('%s.%s', $uniqName,
                                                  $this->_adapter->quoteIdentifier($dependentRefMap[$rule[1]]['columns']));
                 }
