@@ -20,7 +20,15 @@ $json['rows'] = array();
 foreach ($this->result as $key => $result) {
     $this->row = $result['row'];
     unset($result['row']);
-    $tab = array_values($result);    
+    $tab = array();
+    foreach($result as $column) {
+        //Forcing a call to __toString Magic Method
+        if (is_object($column)) {
+            $tab[] = (string) $column;
+        } else {
+            $tab[] = $column;
+        }
+    }    
     array_push($tab, $this->partial($this->_selectScript(array(sprintf('%s/_actions.phtml', $this->controller), 'grid/_actions.phtml')), $this));
     $json['rows'][] = $tab;
 }
