@@ -90,9 +90,16 @@ class Centurion_View_Helper_Navigation_Menu extends Zend_View_Helper_Navigation_
     protected function _renderMenu(Zend_Navigation_Container $container,
                                    $ulClass,
                                    $indent,
+                                   $innerIndent,
                                    $minDepth,
                                    $maxDepth,
-                                   $onlyActive)
+                                   $onlyActive,
+                                   $expandSibs,
+                                   $ulId,
+                                   $addPageClassToLi,
+                                   $activeClass,
+                                   $parentClass,
+                                   $renderParentClass)
     {
         $html = '';
 
