@@ -1051,9 +1051,9 @@ abstract class Centurion_Db_Table_Row_Abstract extends Zend_Db_Table_Row_Abstrac
      *
      * @return array|string|int
      */
-    public function getPrimaryKey()
+    public function getPrimaryKey($useDirty = true)
     {
-        $primary = $this->_getPrimaryKey(true);
+        $primary = $this->_getPrimaryKey($useDirty);
         if (count($primary) === 1) {
             return current($primary);
         }
