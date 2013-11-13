@@ -94,7 +94,6 @@ class Admin_AdminNavigationController extends Centurion_Controller_Mptt implemen
             foreach ($types as $type) {
                 if (isset($type['className']) && $row->proxy->getTable() instanceof $type['className']) {
                     if (isset($type['urlEdit'])) {
-                        $type['urlEdit']['_next'] = $this->view->url(array('action' => 'index'));
                         $type['urlEdit']['id'] = $row->proxy->id;
                         $this->_redirect($this->view->url($type['urlEdit']));
                         die();
