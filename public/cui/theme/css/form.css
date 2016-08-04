@@ -313,6 +313,8 @@ form.form .progressBarInProgress,
 form.form .progressBarComplete,
 form.form .progressBarError {   clear:both; }
 .fsUploadProgress 
+.ui-state-highlight,
+.item-order
 .ui-state-highlight {           margin:0 0 5px 175px; _margin-left:86px; position:relative; top:-5px; z-index:1;
                                 zoom:1; background:#ffc; height:58px; width:427px; float:left; }
 .form-main .form-group 

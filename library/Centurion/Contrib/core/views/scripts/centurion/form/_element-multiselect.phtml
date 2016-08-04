@@ -1,0 +1,73 @@
+<?php
+    /**
+     * @class
+     * Generate a multiselect orderable.
+     * This decorator extends of Zend_Form_Decorator_ViewScript to set the view to use
+     * and add the basePath to find the view resource
+     *
+     * @package Core
+     * @author Richard DELOGE, rd@octaveoctave.com, Claire Sosset, cs@octaveoctave.com
+     * @copyright Octave & Octave
+     */
+
+    //Extract information from element to build the html element
+    $options = $this->element->getMultiOptions();
+    $name = $this->element->getName();
+    $array_name = $name.'[]';
+    $values = $this->element->getValue();
+?>
+<script type="text/javascript">
+<?php $this->headScript()->captureStart(); ?>
+$(function() {
+    //Add Element
+    $(".field-add-item select").change(function(){
+        var _newValue = $(this).val();
+        if($(this).val() != ''){ /* If the user selected an entry and not the blank element */
+            var _optionSelected = $(this).find('option:selected'); /* extract the select's option selected */
+            $(this).parent().next().append( /* Add a new item in the list */
+                $('<div>', {'class':'field-wrapper field-item-wrapper field-preview-wrapper'})
+                    .append( $('<input>', {'type':'checkbox', 'checked':'checked', 'value':_newValue, 'class':'field-checkbox', 'name':<?php echo json_encode($array_name) ?>} ) )
+                    .append( $('<div>', {'class':'title'}).html( _optionSelected.text() ) )
+            );
+            _optionSelected.remove(); /* remove it to avoid duplicate */
+        }
+    });
+
+    //sortable
+    $(".fieldset.item-order").CUI('sortable', {
+        items: '.field-item-wrapper',
+        placeholder: 'ui-state-highlight'
+    });
+});
+<?php $this->headScript()->captureEnd(); ?>
+</script>
+<div class="form-item">
+    <label for="<?php echo $name ?>"><?php echo $this->element->getLabel() ?></label>
+    <div class="field-wrapper field-add-item">
+        <select>
+            <?php asort($options); //to display non-selected element by alpha?>
+            <?php foreach($options as $key=>$option): ?>
+                <?php if(!in_array($key, $values)): //not add already selected element to prevent duplication ?>
+                    <option value="<?php echo $key;?>"><?php echo $option;?></option>
+                <?php endif; ?>
+            <?php endforeach; ?>
+        </select>
+        <p class="field-description"><?php echo $this->element->getDescription() ?></p>
+    </div>
+    <div class="fieldset item-order">
+    <input type="hidden" name="<?php echo $array_name; ?>" value="" />
+    <?php if(!empty($values)): //Print the list of already selected element. To remove it, use checkbox ?>
+        <?php foreach($values as $key) : ?>
+            <?php
+                $id=$key;
+                $label=$options[$id];
+            ?>
+            <div class="field-wrapper field-item-wrapper field-preview-wrapper">
+                <input type="checkbox" checked="checked" value="<?php echo $id ?>" class="field-checkbox" name="<?php echo $array_name ?>" />
+                <div class="title"><?php echo $label ?></div>
+            </div>
+        <?php endforeach ?>
+    <?php endif ?>
+    </div>
+    <div class="clear"></div>
+</div>
