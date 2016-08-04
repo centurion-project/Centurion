@@ -360,7 +360,7 @@ body#login .ui-button .ui-icon { display:none; }
 /* Autocomplete */
 .ui-autocomplete {                  position: absolute; cursor: default; padding:10px 0; width:auto; text-align:left; 
                                     background:#fff; border:solid 1px #ccc} 
-.ui-autocomplete-loading {          background: white url('images/ui-anim_basic_16x16.gif') right center no-repeat; }
+.ui-autocomplete-loading {          background: white url('../../cui/theme/images/ui-anim_basic_16x16.gif') right center no-repeat; }
 * html .ui-autocomplete {           width:1px; } /* without this, the menu expands to 100% in IE6 */
 .ui-menu {                          }
 .ui-menu .ui-menu {                 margin-top: 0; } 
