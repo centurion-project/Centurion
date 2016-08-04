@@ -47,6 +47,9 @@ class Centurion_Controller_Action_Helper_List extends Zend_Controller_Action_Hel
      */
     public function direct($object, array $options = array())
     {
+        if (is_null($object)) {
+            throw new Centurion_Exception('Object in param is null');
+        }
         $options = array_merge(self::$options, $options);
 
         if (true === $options['isPaginated']) {
