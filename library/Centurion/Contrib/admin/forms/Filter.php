@@ -146,7 +146,6 @@ class Admin_Form_Filter extends Centurion_Form
                                 $filterData['data'][$refRow->pk] = $refRow->__toString();
                             }
                             asort($filterData['data']);
-                            //Add before a joker to disable this filter
                             $filterData['data'] = array('' => $this->_translate('All')) + $filterData['data'];
                         }
                     }

@@ -19,7 +19,7 @@
                 $buttonId = 0;
                 foreach ($this->toolbarActions as $value => $label) :
                 $buttonId++;?>
-                    <input type="radio" name="event" value="<?php echo $value?>" id="input-<?php echo $this->toolBarName . ' ' . $buttonId;?>" /><label for="input-<?php echo $this->toolBarName . ' ' . $buttonId;?>"><?php echo $label?></label>
+                    <input type="radio" name="event" value="<?php echo $value?>" id="input-<?php echo $this->toolBarName . '-' . $buttonId;?>" /><label for="input-<?php echo $this->toolBarName . '-' . $buttonId;?>"><?php echo $label?></label>
                 <?php endforeach;?>
 
             </span>

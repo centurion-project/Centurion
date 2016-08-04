@@ -1,7 +1,7 @@
 <?php
     $baseUrl = $this->baseUrl();
-    $this->headMeta()->appendHttpEquiv('Content-Type', 'text/html; charset=UTF-8')
-                     ->appendHttpEquiv('Content-Language', 'fr-FR');
+    $this->headMeta()->appendHttpEquiv('Content-Type', 'text/html; charset=UTF-8');
+                     //->appendHttpEquiv('Content-Language', 'fr-FR');
     $this->headLink()->headLink(array('rel' => 'favicon' , 'href' => $baseUrl.'/images/favicon.ico'), 'PREPEND');
     $this->headScript()->prependFile($baseUrl.'/layouts/backoffice/js/all.js');
     $this->headScript()->prependFile($baseUrl.'/cui/jquery.CUI.js');
@@ -21,11 +21,6 @@
     <?php echo $this->headMeta() ?>
     <?php echo $this->headStyle() ?>
     <?php echo $this->headScript() ?>
-
-    <META http-equiv="Cache-Control" content="no-cache">
-    <META http-equiv="Pragma" content="no-cache">
-    <META http-equiv="Cache" content="no store">
-    <META http-equiv="Expires" content="0">
 </head>
 
 <body id="<?php echo $this->placeholder('body_id'); ?>" class="toggle-sidebars">
@@ -43,6 +38,7 @@
                   $menu = $this->navigation()->menu()->setUseTranslator(false);
                   if ($navigation !== null) :
                       echo $this->navigation()->menu()
+                                              ->setPrefix('global-menu')
                                               ->setUlClass('main')
                                               ->renderMenu($navigation, array('maxDepth' =>  1));
                     endif;
@@ -71,7 +67,8 @@
                 $current = $menu->findActive($navigation, 0, 0);
             ?>
             <?php if ($current): ?>
-                <?php echo $menu->renderMenu($current['page'], array('ulClass' => 'contents')) ?>
+                <?php echo $menu->setPrefix('left-menu')
+                                ->renderMenu($current['page'], array('ulClass' => 'contents')) ?>
             <?php endif; ?>
         </nav>
         <?php endif; ?>

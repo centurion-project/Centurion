@@ -408,7 +408,7 @@ class Centurion_ZFDebug_Controller_Plugin_Debug extends Zend_Controller_Plugin_A
                 .Centurion_ZFDebug_panel .pre {font: 11px/1.4em Monaco, Lucida Console, monospace; margin:0 0 0 22px}
                 #Centurion_ZFDebug_exception { border:1px solid #CD0A0A;display: block; }
             </style>
-            <script type="text/javascript" charset="utf-8">
+            <script type="text/javascript">
                 if (typeof jQuery == "undefined") {
                     var scriptObj = document.createElement("script");
                     scriptObj.src = "'.$this->_options['jquery_path'].'";
